@@ -127,8 +127,8 @@ export default function DashboardPage() {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-3xl font-bold">{nfts.filter(nft => nft.type === "land").length}</p>
-                      <p className="text-sm text-zinc-400">Virtual properties owned</p>
+                      <p className="text-3xl font-bold text-white">{nfts.filter(nft => nft.type === "land").length}</p>
+                      <p className="text-sm text-white">Virtual properties owned</p>
                     </CardContent>
                   </Card>
 
@@ -140,8 +140,8 @@ export default function DashboardPage() {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-3xl font-bold">{nfts.filter(nft => nft.type === "portal").length}</p>
-                      <p className="text-sm text-zinc-400">Virtual gateways owned</p>
+                      <p className="text-3xl font-bold text-white">{nfts.filter(nft => nft.type === "portal").length}</p>
+                      <p className="text-sm text-white">Virtual gateways owned</p>
                     </CardContent>
                   </Card>
 
@@ -153,8 +153,8 @@ export default function DashboardPage() {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-3xl font-bold">{nfts.reduce((sum, nft) => sum + nft.visitors, 0).toLocaleString()}</p>
-                      <p className="text-sm text-zinc-400">Across all properties</p>
+                      <p className="text-3xl font-bold text-white">{nfts.reduce((sum, nft) => sum + nft.visitors, 0).toLocaleString()}</p>
+                      <p className="text-sm text-white">Across all properties</p>
                     </CardContent>
                   </Card>
 
@@ -166,8 +166,8 @@ export default function DashboardPage() {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-3xl font-bold">{nfts.filter(nft => nft.rentalStatus === "rented").length}</p>
-                      <p className="text-sm text-zinc-400">Currently rented out</p>
+                      <p className="text-3xl font-bold text-white">{nfts.filter(nft => nft.rentalStatus === "rented").length}</p>
+                      <p className="text-sm text-white">Currently rented out</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -199,11 +199,11 @@ export default function DashboardPage() {
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div className="rounded-md bg-zinc-800/50 p-2">
-                            <span className="text-zinc-400">Size</span>
+                            <span className="text-white">Size</span>
                             <p className="font-medium text-white">{nft.size}</p>
                           </div>
                           <div className="rounded-md bg-zinc-800/50 p-2">
-                            <span className="text-zinc-400">Visitors</span>
+                            <span className="text-white">Visitors</span>
                             <p className="font-medium text-white">{nft.visitors.toLocaleString()}</p>
                           </div>
                         </div>
@@ -255,11 +255,11 @@ export default function DashboardPage() {
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div className="rounded-md bg-zinc-800/50 p-2">
-                            <span className="text-zinc-400">Size</span>
+                            <span className="text-white">Size</span>
                             <p className="font-medium text-white">{nft.size}</p>
                           </div>
                           <div className="rounded-md bg-zinc-800/50 p-2">
-                            <span className="text-zinc-400">Visitors</span>
+                            <span className="text-white">Visitors</span>
                             <p className="font-medium text-white">{nft.visitors.toLocaleString()}</p>
                           </div>
                         </div>
@@ -274,10 +274,16 @@ export default function DashboardPage() {
                           <Button variant="outline" className="border-amber-500 text-amber-400 hover:bg-amber-950/20">
                             <Settings className="mr-2 h-4 w-4" /> Manage
                           </Button>
-                          {nft.rentalStatus === "rented" && (
-                            <Badge variant="secondary" className="bg-amber-500/20 text-amber-400">
-                              Rented until {nft.rentalEndDate}
-                            </Badge>
+                          {nft.opensea && (
+                            <a
+                              href={nft.opensea}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 text-sm text-purple-300 hover:text-purple-200"
+                            >
+                              <span>View on OpenSea</span>
+                              <ExternalLink className="h-4 w-4" />
+                            </a>
                           )}
                         </div>
                       </CardContent>
@@ -287,27 +293,9 @@ export default function DashboardPage() {
               </TabsContent>
 
               <TabsContent value="rentals" className="mt-0">
-                <div className="rounded-xl border border-amber-700/30 bg-zinc-900/50 p-6 backdrop-blur">
-                  <h2 className="mb-4 text-xl font-bold">Rental Management</h2>
-                  <div className="grid gap-6 md:grid-cols-2">
-                    <div>
-                      <h3 className="mb-2 text-lg font-semibold">Active Rentals</h3>
-                      <div className="space-y-4">
-                        {nfts.filter(nft => nft.rentalStatus === "rented").map((nft) => (
-                          <div key={nft.id} className="rounded-lg bg-zinc-800/50 p-4">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="font-medium">{nft.name}</p>
-                                <p className="text-sm text-zinc-400">Rental ends: {nft.rentalEndDate}</p>
-                              </div>
-                              <Button variant="outline" size="sm" className="border-amber-500 text-amber-400 hover:bg-amber-950/20">
-                                View Details
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                <div className="grid gap-6 md:grid-cols-1">
+                  <div className="rounded-xl border border-amber-700/30 bg-zinc-900/50 p-6 backdrop-blur">
+                    <h3 className="mb-4 text-2xl font-semibold">Rental Properties</h3>
                     <div>
                       <h3 className="mb-2 text-lg font-semibold">Available for Rent</h3>
                       <div className="space-y-4">
@@ -315,11 +303,29 @@ export default function DashboardPage() {
                           <div key={nft.id} className="rounded-lg bg-zinc-800/50 p-4">
                             <div className="flex items-center justify-between">
                               <div>
-                                <p className="font-medium">{nft.name}</p>
-                                <p className="text-sm text-zinc-400">{nft.type === "land" ? "Land" : "Portal"}</p>
+                                <p className="font-medium text-white">{nft.name}</p>
+                                <p className="text-sm text-white">{nft.type === "land" ? "Land" : "Portal"}</p>
                               </div>
                               <Button variant="outline" size="sm" className="border-amber-500 text-amber-400 hover:bg-amber-950/20">
                                 List for Rent
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="mt-8">
+                      <h3 className="mb-2 text-lg font-semibold">Currently Rented Out</h3>
+                      <div className="space-y-4">
+                        {nfts.filter(nft => nft.rentalStatus === "rented").map((nft) => (
+                          <div key={nft.id} className="rounded-lg bg-zinc-800/50 p-4">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="font-medium text-white">{nft.name}</p>
+                                <p className="text-sm text-white">{nft.type === "land" ? "Land" : "Portal"}</p>
+                              </div>
+                              <Button variant="outline" size="sm" className="border-red-500 text-red-400 hover:bg-red-950/20">
+                                End Rental
                               </Button>
                             </div>
                           </div>

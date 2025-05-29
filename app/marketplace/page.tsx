@@ -667,7 +667,7 @@ function LandCard({ plot }: LandCardProps) {
       </div>
 
       <CardHeader>
-        <CardTitle>{plot.name}</CardTitle>
+        <CardTitle className="text-white">{plot.name}</CardTitle>
         <CardDescription className="flex items-center gap-1">
           <MapPin className="h-3 w-3" /> {plot.location}
         </CardDescription>
@@ -699,8 +699,8 @@ function LandCard({ plot }: LandCardProps) {
           <div>
             <p className="text-sm text-zinc-400">Price</p>
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold">${(plot.price * 1000).toLocaleString()}</span>
-              {plot.type === "faberland" && <span className="text-sm text-zinc-400">≈ {plot.price} ETH</span>}
+              <span className="text-2xl font-bold text-white">${(plot.price * 1000).toLocaleString()}</span>
+              {plot.type === "faberland" && <span className="text-sm text-white">≈ {plot.price} ETH</span>}
             </div>
           </div>
           {plot.available ? (
