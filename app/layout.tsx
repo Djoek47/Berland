@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Faberland - The Ultimate Metaverse Experience",
   description: "Experience a new dimension of reality where digital and physical worlds converge.",
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({
