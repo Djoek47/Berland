@@ -76,7 +76,7 @@ export default function MetaverseNavbar() {
             Discover
           </Link>
           <Link href="/business-advantages" className="text-sm text-white transition-colors hover:text-amber-400">
-            Business Benefits
+            Roadmap
           </Link>
           <Link href="/about" className="text-sm text-white transition-colors hover:text-amber-400">
             About
@@ -131,7 +131,7 @@ export default function MetaverseNavbar() {
                   className="text-white transition-colors hover:text-amber-400"
                   onClick={() => setIsOpen(false)}
                 >
-                  Business Benefits
+                  Roadmap
                 </Link>
                 <Link
                   href="/about"

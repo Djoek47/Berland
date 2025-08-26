@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label"
 import { ExternalLink, Info, MapPin, Gem, Clock, Tag, Search, Filter, X } from "lucide-react"
 import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
+import { PlotDatabase } from "@/lib/database"
 
 interface LandPlot {
   id: string
@@ -217,16 +218,13 @@ export default function MarketplacePage() {
 
   // Apply filters
   useEffect(() => {
-    // Get sold Faberplots from localStorage
-    const soldFaberplots = JSON.parse(localStorage.getItem('soldFaberplots') || '[]')
-    
     let result = [...landPlots]
     
-    // Mark sold Faberplots as unavailable
+    // Mark sold Faberplots as unavailable using database
     result = result.map(plot => {
       if (plot.type === "faberplot") {
         const plotNumber = parseInt(plot.id.replace('faberplot-', ''))
-        if (soldFaberplots.includes(plotNumber)) {
+        if (PlotDatabase.isPlotSold(plotNumber)) {
           return { ...plot, available: false }
         }
       }

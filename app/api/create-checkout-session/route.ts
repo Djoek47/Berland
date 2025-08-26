@@ -1,15 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe, calculateAmount } from '@/lib/stripe'
+import { PlotDatabase } from '@/lib/database'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { plotId, plotName, selectedTerm, monthlyRent, userEmail, userAddress, isRenewal, currentEndDate, plotImage } = body
 
-    // For renewals, we don't need userEmail since we're extending an existing plot
+    // Validate required fields
     if (!plotId || !plotName || !monthlyRent) {
       return NextResponse.json(
         { error: 'Missing required fields' },
+        { status: 400 }
+      )
+    }
+
+    // Check if plot is already sold (for new rentals)
+    if (!isRenewal && PlotDatabase.isPlotSold(plotId)) {
+      return NextResponse.json(
+        { error: 'Plot is already sold' },
+        { status: 400 }
+      )
+    }
+
+    // Validate wallet address for new rentals
+    if (!isRenewal && !userAddress) {
+      return NextResponse.json(
+        { error: 'Wallet address is required for new rentals' },
         { status: 400 }
       )
     }

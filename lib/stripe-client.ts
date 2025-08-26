@@ -15,7 +15,7 @@ export const createCheckoutSession = async (checkoutData: {
   selectedTerm: 'monthly' | 'quarterly' | 'yearly'
   monthlyRent: number
   userEmail: string
-  userAddress?: string
+  userAddress: string // Now required
 }) => {
   try {
     const response = await fetch('/api/create-checkout-session', {
@@ -45,7 +45,7 @@ export const redirectToCheckout = async (checkoutData: {
   selectedTerm: 'monthly' | 'quarterly' | 'yearly'
   monthlyRent: number
   userEmail: string
-  userAddress?: string
+  userAddress: string // Now required
 }) => {
   try {
     const stripe = await getStripe()

@@ -13,6 +13,8 @@ import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
 // Removed thirdweb import - using Stripe now
 import { useRouter } from "next/navigation"
+import { PlotDatabase } from "@/lib/database"
+import { useWallet } from "@/hooks/use-wallet"
 
 interface NFT {
   id: string
@@ -47,7 +49,7 @@ interface Faberplot {
 
 export default function DashboardPage() {
   const router = useRouter()
-  // Removed useAddress - using Stripe now
+  const { isConnected, address, isLoading: walletLoading } = useWallet()
   const [activeTab, setActiveTab] = useState("overview")
   const [nfts, setNfts] = useState<NFT[]>([])
   const [faberplots, setFaberplots] = useState<Faberplot[]>([])
@@ -58,8 +60,17 @@ export default function DashboardPage() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [isRenewing, setIsRenewing] = useState<number | null>(null)
 
+  // Handle wallet disconnection - redirect to main page
+  useEffect(() => {
+    if (!walletLoading && !isConnected) {
+      router.push('/')
+    }
+  }, [isConnected, walletLoading, router])
+
   // Load NFTs and Faberplots
   useEffect(() => {
+    if (!isConnected) return // Don't load data if not connected
+    
     setIsLoading(true)
     // Simulate loading NFTs from blockchain
     setTimeout(() => {
@@ -87,7 +98,7 @@ export default function DashboardPage() {
       
       setIsLoading(false)
     }, 1000)
-     }, []) // Only run once on component mount
+  }, [isConnected]) // Run when wallet connection changes
 
   // Real-time countdown for expiring plots
   useEffect(() => {
@@ -100,6 +111,8 @@ export default function DashboardPage() {
 
   // Handle expired plots - separate from rendering
   useEffect(() => {
+    if (!isConnected) return // Don't process if not connected
+    
     // Only check for expired plots if we have plots
     const userFaberplots = JSON.parse(localStorage.getItem('userFaberplots') || '[]')
     if (userFaberplots.length === 0) return
@@ -123,13 +136,8 @@ export default function DashboardPage() {
         const isExpired = timeLeft <= 0
 
         if (isExpired) {
-          // Remove from soldFaberplots to make it available again
-          const soldFaberplots = JSON.parse(localStorage.getItem('soldFaberplots') || '[]')
-          const soldIndex = soldFaberplots.indexOf(plot.id)
-          if (soldIndex > -1) {
-            soldFaberplots.splice(soldIndex, 1)
-            localStorage.setItem('soldFaberplots', JSON.stringify(soldFaberplots))
-          }
+          // Remove from database to make it available again
+          PlotDatabase.removeExpiredPlots()
 
           // Mark for removal from userFaberplots
           hasExpiredPlots = true
@@ -143,12 +151,14 @@ export default function DashboardPage() {
         setFaberplots(updatedFaberplots)
       }
     }
-  }, [currentTime]) // Only run when currentTime changes
+  }, [currentTime, isConnected]) // Only run when currentTime changes or connection status changes
 
   // No pending rental logic needed - using Stripe directly
 
   // Handle URL parameters for rental flow
   useEffect(() => {
+    if (!isConnected) return // Don't process if not connected
+    
     const urlParams = new URLSearchParams(window.location.search)
     const success = urlParams.get('success')
     const sessionId = urlParams.get('session_id')
@@ -182,11 +192,11 @@ export default function DashboardPage() {
              // Don't call setRefreshTrigger here to avoid infinite loop
            }
         } else {
-          // Handle new rental
-          const soldFaberplots = JSON.parse(localStorage.getItem('soldFaberplots') || '[]')
-          if (!soldFaberplots.includes(plotIdNum)) {
-            soldFaberplots.push(plotIdNum)
-            localStorage.setItem('soldFaberplots', JSON.stringify(soldFaberplots))
+          // Handle new rental - mark plot as sold in database
+          if (!PlotDatabase.isPlotSold(plotIdNum)) {
+            // This will be handled by the Stripe webhook, but for now we'll mark it here
+            // In production, this should be handled server-side after successful payment
+            PlotDatabase.markPlotAsSold(plotIdNum, 'temp-wallet', 'temp-email', 'monthly')
           }
           
           // Add the plot to user's Faberplots
@@ -282,7 +292,46 @@ export default function DashboardPage() {
     }
   }
 
-  // No redirect needed - using Stripe now
+  // Show loading state while wallet is connecting
+  if (walletLoading) {
+    return (
+      <div className="flex min-h-screen flex-col bg-black text-white">
+        <MetaverseNavbar />
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-amber-500 border-t-transparent"></div>
+            <p className="text-zinc-400">Connecting wallet...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Redirect if wallet is not connected
+  if (!isConnected) {
+    return (
+      <div className="flex min-h-screen flex-col bg-black text-white">
+        <MetaverseNavbar />
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="mb-4 h-12 w-12 rounded-full border-4 border-red-500 flex items-center justify-center">
+              <svg className="h-6 w-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">Wallet Not Connected</h2>
+            <p className="text-zinc-400 mb-4">Please connect your wallet to access the dashboard.</p>
+            <button 
+              onClick={() => router.push('/')}
+              className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-4 py-2 rounded"
+            >
+              Go to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-black text-white">

@@ -21,17 +21,24 @@ export default function ResetPage() {
     })
   }, [])
 
-  const handleReset = () => {
+  const handleReset = async () => {
     try {
-      // Clear all localStorage data
-      localStorage.removeItem('soldFaberplots')
-      localStorage.removeItem('userFaberplots')
-      
-      setResetStatus("✅ All data has been reset successfully!")
-      setCurrentData({
-        soldFaberplots: [],
-        userFaberplots: []
+      const response = await fetch('/api/reset-database', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
+      
+      if (response.ok) {
+        setResetStatus("✅ All data has been reset successfully!")
+        setCurrentData({
+          soldFaberplots: [],
+          userFaberplots: []
+        })
+      } else {
+        setResetStatus("❌ Failed to reset data")
+      }
     } catch (error) {
       setResetStatus("❌ Error resetting data: " + error)
     }

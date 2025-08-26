@@ -58,6 +58,11 @@ export default function MetaverseFooter() {
               </li>
               <li>
                 <Link href="/business-advantages" className="hover:text-amber-400">
+                  Roadmap
+                </Link>
+              </li>
+              <li>
+                <Link href="/business-advantages#business-benefits" className="hover:text-amber-400">
                   Business Benefits
                 </Link>
               </li>

@@ -8,10 +8,12 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { MapPin, Users, Calendar, DollarSign, CheckCircle, ArrowLeft, ExternalLink, CreditCard } from "lucide-react"
+import { MapPin, Users, Calendar, DollarSign, CheckCircle, ArrowLeft, ExternalLink, CreditCard, Wallet, AlertCircle } from "lucide-react"
 import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
 import { redirectToCheckout } from "@/lib/stripe-client"
+import { useWallet } from "@/hooks/use-wallet"
+import { PlotDatabase } from "@/lib/database"
 
 // Faberplot data with monthly rent pricing
 const faberplotData = Array.from({ length: 47 }, (_, i) => ({
@@ -64,11 +66,14 @@ export default function FaberplotPage() {
   const [isSold, setIsSold] = useState(false)
   const [userEmail, setUserEmail] = useState("")
   const [showCancelMessage, setShowCancelMessage] = useState(false)
+  const [showWalletModal, setShowWalletModal] = useState(false)
   
-  // Check if plot is sold
+  // Wallet connection
+  const { isConnected, address, isLoading: walletLoading } = useWallet()
+  
+  // Check if plot is sold using database
   useEffect(() => {
-    const soldFaberplots = JSON.parse(localStorage.getItem('soldFaberplots') || '[]')
-    setIsSold(soldFaberplots.includes(plotId))
+    setIsSold(PlotDatabase.isPlotSold(plotId))
   }, [plotId])
 
   // Check for cancel parameter
@@ -121,6 +126,49 @@ export default function FaberplotPage() {
          </div>
        )}
 
+       {/* Wallet Connection Modal */}
+       {showWalletModal && (
+         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur">
+           <div className="mx-4 w-full max-w-md rounded-xl border border-amber-700/30 bg-zinc-900 p-6 backdrop-blur">
+             <div className="mb-6 text-center">
+               <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-amber-500 flex items-center justify-center">
+                 <Wallet className="h-8 w-8 text-amber-400" />
+               </div>
+               <h2 className="mb-2 text-2xl font-bold text-white">Wallet Required</h2>
+               <p className="text-zinc-300 mb-4">You need to connect your wallet before renting a Faberplot.</p>
+               <div className="bg-amber-950/20 border border-amber-700/30 rounded-lg p-4 mb-4">
+                 <div className="flex items-center gap-2 mb-2">
+                   <AlertCircle className="h-4 w-4 text-amber-400" />
+                   <span className="text-sm font-semibold text-amber-400">Why Connect Wallet?</span>
+                 </div>
+                 <ul className="text-xs text-zinc-300 space-y-1">
+                   <li>• Secure digital identity verification</li>
+                   <li>• Access to your dashboard and plot management</li>
+                   <li>• Track your rental history and payments</li>
+                   <li>• Manage your virtual real estate portfolio</li>
+                 </ul>
+               </div>
+             </div>
+
+             <div className="flex gap-3">
+               <Button
+                 className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-bold"
+                 onClick={() => setShowWalletModal(false)}
+               >
+                 Connect Wallet
+               </Button>
+               <Button
+                 variant="outline"
+                 className="flex-1 border-amber-700/30 text-amber-400 hover:bg-amber-950/20"
+                 onClick={() => setShowWalletModal(false)}
+               >
+                 Cancel
+               </Button>
+             </div>
+           </div>
+         </div>
+       )}
+
        <MetaverseFooter />
      </div>
    )
@@ -149,6 +197,12 @@ export default function FaberplotPage() {
   const savings = basePrice - discountedPrice
 
   const handleCheckout = async () => {
+    // Check wallet connection first
+    if (!isConnected) {
+      setShowWalletModal(true)
+      return
+    }
+    
     if (isSold) {
       alert('This Faberplot has already been sold.')
       return
@@ -173,6 +227,7 @@ export default function FaberplotPage() {
         selectedTerm,
         monthlyRent: plot.monthlyRent,
         userEmail,
+        userAddress: address || '', // Pass wallet address
       })
     } catch (error) {
       console.error('Checkout error:', error)
@@ -408,13 +463,20 @@ export default function FaberplotPage() {
                    className={`w-full font-bold size="lg" ${
                      isSold 
                        ? "bg-red-500 hover:bg-red-600 text-white cursor-not-allowed" 
+                       : !isConnected
+                       ? "bg-gray-500 hover:bg-gray-600 text-white cursor-not-allowed"
                        : "bg-amber-500 hover:bg-amber-600 text-black"
                    }`}
                    onClick={handleCheckout}
-                   disabled={isProcessing || isSold}
+                   disabled={isProcessing || isSold || !isConnected}
                  >
                    {isSold ? (
                      "Sold Out"
+                   ) : !isConnected ? (
+                     <>
+                       <Wallet className="mr-2 h-4 w-4" />
+                       Connect Wallet to Rent
+                     </>
                    ) : isProcessing ? (
                      <>
                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
@@ -500,13 +562,20 @@ export default function FaberplotPage() {
                className={`font-bold ${
                  isSold 
                    ? "bg-red-500 hover:bg-red-600 text-white cursor-not-allowed" 
+                   : !isConnected
+                   ? "bg-gray-500 hover:bg-gray-600 text-white cursor-not-allowed"
                    : "bg-amber-500 hover:bg-amber-600 text-black"
                }`}
                onClick={handleCheckout}
-               disabled={isProcessing || isSold}
+               disabled={isProcessing || isSold || !isConnected}
              >
                {isSold ? (
                  `Faberplot #${plot.id} - Sold Out`
+               ) : !isConnected ? (
+                 <>
+                   <Wallet className="mr-2 h-4 w-4" />
+                   Connect Wallet to Rent
+                 </>
                ) : isProcessing ? (
                  <>
                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>

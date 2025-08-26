@@ -26,6 +26,7 @@ import {
 } from "lucide-react"
 import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
+import { useWallet } from "@/hooks/use-wallet"
 
 interface Plot {
   id: number
@@ -59,6 +60,7 @@ export default function ManagePlotPage() {
   const params = useParams()
   const router = useRouter()
   const plotId = parseInt(params.id as string)
+  const { isConnected, isLoading: walletLoading } = useWallet()
   
   const [plot, setPlot] = useState<Plot | null>(null)
   const [uploadedObjects, setUploadedObjects] = useState<UploadedObject[]>([])
@@ -74,8 +76,17 @@ export default function ManagePlotPage() {
     seconds: 0
   })
 
+  // Handle wallet disconnection - redirect to main page
+  useEffect(() => {
+    if (!walletLoading && !isConnected) {
+      router.push('/')
+    }
+  }, [isConnected, walletLoading, router])
+
   // Load plot data and verify ownership
   useEffect(() => {
+    if (!isConnected) return // Don't load data if not connected
+    
     const userFaberplots = JSON.parse(localStorage.getItem('userFaberplots') || '[]')
     const foundPlot = userFaberplots.find((p: Plot) => p.id === plotId)
     
@@ -197,6 +208,49 @@ export default function ManagePlotPage() {
     const storedObjects = JSON.parse(localStorage.getItem(`plot-${plotId}-objects`) || '[]')
     const updatedObjects = storedObjects.filter((obj: UploadedObject) => obj.id !== objectId)
     localStorage.setItem(`plot-${plotId}-objects`, JSON.stringify(updatedObjects))
+  }
+
+  // Show loading state while wallet is connecting
+  if (walletLoading) {
+    return (
+      <div className="flex min-h-screen flex-col bg-black text-white">
+        <MetaverseNavbar />
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-amber-500 border-t-transparent"></div>
+            <p className="text-zinc-400">Connecting wallet...</p>
+          </div>
+        </div>
+        <MetaverseFooter />
+      </div>
+    )
+  }
+
+  // Redirect if wallet is not connected
+  if (!isConnected) {
+    return (
+      <div className="flex min-h-screen flex-col bg-black text-white">
+        <MetaverseNavbar />
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="mb-4 h-12 w-12 rounded-full border-4 border-red-500 flex items-center justify-center">
+              <svg className="h-6 w-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">Wallet Not Connected</h2>
+            <p className="text-zinc-400 mb-4">Please connect your wallet to access plot management.</p>
+            <button 
+              onClick={() => router.push('/')}
+              className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-4 py-2 rounded"
+            >
+              Go to Home
+            </button>
+          </div>
+        </div>
+        <MetaverseFooter />
+      </div>
+    )
   }
 
   if (!plot) {
