@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { headers } from 'next/headers'
+import { PlotDatabase } from '@/lib/database'
 
 export async function POST(request: NextRequest) {
   const body = await request.text()
@@ -69,24 +70,23 @@ async function handleCheckoutCompleted(session: any) {
   console.log('Checkout completed:', session.id)
   
   // Extract metadata
-  const { plotId, plotName, selectedTerm, monthlyRent } = session.metadata
+  const { plotId, plotName, selectedTerm, monthlyRent, userAddress } = session.metadata
   
-  // Mark the plot as sold in localStorage (for now)
-  // In production, this would be stored in a database
   try {
-    // This is a server-side function, so we can't directly access localStorage
-    // In a real implementation, you would:
-    // 1. Store the rental in your database
-    // 2. Mark the plot as unavailable
-    // 3. Send confirmation email to the customer
-    // 4. Update user's rental history
+    // Mark the plot as sold in the database
+    if (plotId && userAddress) {
+      PlotDatabase.markPlotAsSold(
+        parseInt(plotId), 
+        userAddress, 
+        session.customer_email || 'unknown@email.com',
+        selectedTerm as 'monthly' | 'quarterly' | 'yearly'
+      )
+      console.log(`Plot ${plotId} (${plotName}) marked as sold to ${userAddress} for ${selectedTerm}`)
+    }
     
-    console.log(`Plot ${plotId} (${plotName}) rented for ${selectedTerm} at $${monthlyRent}/month`)
     console.log(`Customer: ${session.customer_email}`)
     console.log(`Subscription ID: ${session.subscription}`)
     
-    // For now, we'll just log the success
-    // The actual plot marking will happen when the user returns to the site
   } catch (error) {
     console.error('Error processing checkout completion:', error)
   }

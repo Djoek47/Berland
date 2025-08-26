@@ -90,16 +90,33 @@ export default function DashboardPage() {
         }
       ])
       
-      // Load Faberplots from localStorage
-      const storedFaberplots = localStorage.getItem('userFaberplots')
-      if (storedFaberplots) {
-        const parsedPlots = JSON.parse(storedFaberplots)
-        console.log('Loaded Faberplots from localStorage:', parsedPlots)
-        setFaberplots(parsedPlots)
-      } else {
-        console.log('No Faberplots found in localStorage')
-        setFaberplots([])
-      }
+      // Load Faberplots from server database
+      const userPlots = PlotDatabase.getUserPlots(address || '')
+      console.log('Loaded Faberplots from database:', userPlots)
+      setFaberplots(userPlots.map(plot => ({
+        id: plot.id,
+        name: `Faberplot #${plot.id}`,
+        description: `Faberplot #${plot.id} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
+        monthlyRent: 40 + Math.floor(Math.random() * 41), // Random price between $40-$80
+        image: (plot.id % 8 === 0) ? "/images/faberge-eggs/crystal-amber.jpeg" :
+               (plot.id % 8 === 1) ? "/images/faberge-eggs/amber-glow.png" :
+               (plot.id % 8 === 2) ? "/images/faberge-eggs/ruby-red.png" :
+               (plot.id % 8 === 3) ? "/images/faberge-eggs/emerald-green.png" :
+               (plot.id % 8 === 4) ? "/images/faberge-eggs/bronze-glow.png" :
+               (plot.id % 8 === 5) ? "/images/faberge-eggs/rose-quartz.jpeg" :
+               (plot.id % 8 === 6) ? "/images/faberge-eggs/sapphire-blue.png" :
+               "/images/faberge-eggs/fire-opal.png",
+        location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][plot.id % 5],
+        size: plot.id < 15 ? "Small (2,500 sq ft)" : plot.id < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
+        visitors: 1500 + (plot.id * 100),
+        features: plot.id < 15 ? ["Retail Ready", "Affordable", "High Foot Traffic", "Quick Setup", "24/7 Access"] :
+                  plot.id < 30 ? ["Corporate Ready", "Meeting Spaces", "Business Hub", "Professional Environment", "Networking Opportunities"] :
+                  ["Event Space", "Premium Location", "Creative Hub", "Exclusive Access", "Custom Branding"],
+        rentalStartDate: plot.soldAt || new Date().toISOString(),
+        rentalEndDate: plot.rentalEndDate || '',
+        selectedTerm: "monthly" as const,
+        totalPrice: 0
+      })))
       
       // Also check database status
       fetch('/api/database-status')
@@ -459,10 +476,6 @@ export default function DashboardPage() {
                         onClick={async () => {
                           console.log('Reset button clicked')
                           console.log('Current environment:', window.location.hostname)
-                          console.log('Current localStorage data:', {
-                            soldFaberplots: localStorage.getItem('soldFaberplots'),
-                            userFaberplots: localStorage.getItem('userFaberplots')
-                          })
                           
                           if (confirm('Are you sure you want to reset all plot data? This action cannot be undone.')) {
                             console.log('User confirmed reset')
