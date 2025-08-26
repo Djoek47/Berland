@@ -49,7 +49,7 @@ interface Faberplot {
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { isConnected, address, isLoading: walletLoading } = useWallet()
+  const { isConnected, address, isLoading: walletLoading, connectionStatus } = useWallet()
   const [activeTab, setActiveTab] = useState("overview")
   const [nfts, setNfts] = useState<NFT[]>([])
   const [faberplots, setFaberplots] = useState<Faberplot[]>([])
@@ -62,10 +62,31 @@ export default function DashboardPage() {
 
   // Handle wallet disconnection - redirect to main page
   useEffect(() => {
-    if (!walletLoading && !isConnected) {
+    console.log('Dashboard - Wallet state:', { isConnected, walletLoading, address })
+    
+    // Only redirect if we're sure the wallet is not connected (not just loading)
+    if (!walletLoading && !isConnected && connectionStatus === 'disconnected') {
+      console.log('Wallet not connected, redirecting to home...')
       router.push('/')
     }
-  }, [isConnected, walletLoading, router])
+  }, [isConnected, walletLoading, router, address, connectionStatus])
+
+  // Handle success redirect from Stripe
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const success = urlParams.get('success')
+    const sessionId = urlParams.get('session_id')
+    const plotId = urlParams.get('plot_id')
+    
+    if (success === 'true' && sessionId && plotId) {
+      console.log('Success redirect detected:', { sessionId, plotId })
+      setShowSuccessMessage(true)
+      setSuccessDetails({ sessionId, plotId })
+      
+      // Clean up URL
+      router.replace('/dashboard')
+    }
+  }, [router])
 
   // Load NFTs and Faberplots
   useEffect(() => {
@@ -325,7 +346,7 @@ export default function DashboardPage() {
   }
 
   // Show loading state while wallet is connecting
-  if (walletLoading) {
+  if (walletLoading || connectionStatus === 'unknown') {
     return (
       <div className="flex min-h-screen flex-col bg-black text-white">
         <MetaverseNavbar />
@@ -333,6 +354,7 @@ export default function DashboardPage() {
           <div className="text-center">
             <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-amber-500 border-t-transparent"></div>
             <p className="text-zinc-400">Connecting wallet...</p>
+            <p className="text-zinc-500 mt-2 text-sm">Please wait while we establish your wallet connection</p>
           </div>
         </div>
       </div>
