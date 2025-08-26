@@ -75,16 +75,35 @@ export default function DashboardPage() {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [successDetails, setSuccessDetails] = useState<SuccessDetails | null>(null)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
+  const [isWaitingForWallet, setIsWaitingForWallet] = useState(false)
 
   // Wallet connection
   const { isConnected, address, isLoading: walletLoading } = useWallet()
 
-  // Redirect if not connected
+  // Redirect if not connected - but be patient with wallet reconnection
   useEffect(() => {
-    if (!walletLoading && !isConnected) {
-      console.log('Dashboard: Not connected, redirecting to home')
-      router.push('/')
+    // Check if we have success parameters (indicating we just came from Stripe)
+    const urlParams = new URLSearchParams(window.location.search)
+    const hasSuccessParams = urlParams.get('success') === 'true'
+    
+    if (hasSuccessParams && !isConnected) {
+      console.log('Dashboard: Success redirect detected, waiting for wallet reconnection...')
+      setIsWaitingForWallet(true)
     }
+
+    // Don't redirect immediately, give wallet time to reconnect after Stripe redirect
+    const timer = setTimeout(() => {
+      if (!walletLoading && !isConnected) {
+        console.log('Dashboard: Not connected after timeout, redirecting to home')
+        setIsWaitingForWallet(false)
+        router.push('/')
+      } else if (isConnected) {
+        console.log('Dashboard: Wallet reconnected successfully')
+        setIsWaitingForWallet(false)
+      }
+    }, 5000) // Wait 5 seconds for wallet to reconnect
+
+    return () => clearTimeout(timer)
   }, [isConnected, walletLoading, router])
 
   // Load user data from server
@@ -308,14 +327,19 @@ export default function DashboardPage() {
   }
 
   // Loading state
-  if (walletLoading || isLoading) {
+  if (walletLoading || isLoading || isWaitingForWallet) {
     return (
       <div className="flex min-h-screen flex-col bg-black text-white">
         <MetaverseNavbar />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="mb-4 h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent mx-auto"></div>
-            <p className="text-zinc-400">Loading your dashboard...</p>
+            <p className="text-zinc-400">
+              {isWaitingForWallet ? 'Reconnecting wallet after payment...' : 'Loading your dashboard...'}
+            </p>
+            <p className="text-zinc-500 text-sm mt-2">
+              {isWaitingForWallet ? 'Please wait while we restore your connection' : 'Please wait...'}
+            </p>
           </div>
         </div>
         <MetaverseFooter />

@@ -48,9 +48,20 @@ export function useWallet() {
       }
     }
 
-    // Small delay to allow the page to fully load after redirect
-    const timer = setTimeout(handleWalletReconnection, 1000)
-    return () => clearTimeout(timer)
+    // Check if we're on a success redirect page
+    const urlParams = new URLSearchParams(window.location.search)
+    const hasSuccessParams = urlParams.get('success') === 'true'
+    
+    if (hasSuccessParams) {
+      console.log('Success redirect detected, attempting wallet reconnection...')
+      // Longer delay for production redirects
+      const timer = setTimeout(handleWalletReconnection, 2000)
+      return () => clearTimeout(timer)
+    } else {
+      // Normal delay for other cases
+      const timer = setTimeout(handleWalletReconnection, 1000)
+      return () => clearTimeout(timer)
+    }
   }, [address, connectionStatus])
 
   const connectWallet = async () => {
