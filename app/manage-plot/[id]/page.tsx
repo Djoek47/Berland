@@ -60,7 +60,7 @@ export default function ManagePlotPage() {
   const params = useParams()
   const router = useRouter()
   const plotId = parseInt(params.id as string)
-  const { isConnected, isLoading: walletLoading } = useWallet()
+  const { isConnected, address, isLoading: walletLoading } = useWallet()
   
   const [plot, setPlot] = useState<Plot | null>(null)
   const [uploadedObjects, setUploadedObjects] = useState<UploadedObject[]>([])
@@ -78,38 +78,88 @@ export default function ManagePlotPage() {
 
   // Handle wallet disconnection - redirect to main page
   useEffect(() => {
-    if (!walletLoading && !isConnected) {
-      router.push('/')
-    }
+    // Don't redirect immediately, give wallet time to reconnect
+    const timer = setTimeout(() => {
+      if (!walletLoading && !isConnected) {
+        console.log('Manage plot: Not connected after timeout, redirecting to home')
+        router.push('/')
+      }
+    }, 3000) // Wait 3 seconds for wallet to reconnect
+
+    return () => clearTimeout(timer)
   }, [isConnected, walletLoading, router])
 
   // Load plot data and verify ownership
   useEffect(() => {
-    if (!isConnected) return // Don't load data if not connected
-    
-    const userFaberplots = JSON.parse(localStorage.getItem('userFaberplots') || '[]')
-    const foundPlot = userFaberplots.find((p: Plot) => p.id === plotId)
-    
-    if (foundPlot) {
-      // Check if the plot is still active (not expired)
-      const endDate = new Date(foundPlot.rentalEndDate)
-      const now = new Date()
-      const isExpired = endDate.getTime() <= now.getTime()
+    const loadPlotData = async () => {
+      if (!isConnected) return // Don't load data if not connected
       
-      if (isExpired) {
-        // Plot has expired, redirect to dashboard
-        alert('This plot has expired. Please renew your rental to access the management page.')
+      try {
+        // Get user's plots from server
+        const response = await fetch(`/api/user-plots?address=${address}`)
+        if (response.ok) {
+          const userPlots = await response.json()
+          const foundPlot = userPlots.find((p: any) => p.id === plotId)
+          
+          if (foundPlot) {
+            // Check if the plot is still active (not expired)
+            const endDate = new Date(foundPlot.rentalEndDate)
+            const now = new Date()
+            const isExpired = endDate.getTime() <= now.getTime()
+            
+            if (isExpired) {
+              // Plot has expired, redirect to dashboard
+              alert('This plot has expired. Please renew your rental to access the management page.')
+              router.push('/dashboard')
+              return
+            }
+            
+            // Transform the plot data to match our interface
+            const plotData: Plot = {
+              id: foundPlot.id,
+              name: `Faberplot #${foundPlot.id}`,
+              description: `Faberplot #${foundPlot.id} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
+              monthlyRent: 40 + Math.floor(Math.random() * 41), // Random price between $40-$80
+              image: (foundPlot.id % 8 === 0) ? "/images/faberge-eggs/crystal-amber.jpeg" :
+                     (foundPlot.id % 8 === 1) ? "/images/faberge-eggs/amber-glow.png" :
+                     (foundPlot.id % 8 === 2) ? "/images/faberge-eggs/ruby-red.png" :
+                     (foundPlot.id % 8 === 3) ? "/images/faberge-eggs/emerald-green.png" :
+                     (foundPlot.id % 8 === 4) ? "/images/faberge-eggs/bronze-glow.png" :
+                     (foundPlot.id % 8 === 5) ? "/images/faberge-eggs/rose-quartz.jpeg" :
+                     (foundPlot.id % 8 === 6) ? "/images/faberge-eggs/sapphire-blue.png" :
+                     "/images/faberge-eggs/fire-opal.png",
+              location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][foundPlot.id % 5],
+              size: foundPlot.id < 15 ? "Small (2,500 sq ft)" : foundPlot.id < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
+              visitors: 1500 + (foundPlot.id * 100),
+              features: foundPlot.id < 15 ? ["Retail Ready", "Affordable", "High Foot Traffic", "Quick Setup", "24/7 Access"] :
+                        foundPlot.id < 30 ? ["Corporate Ready", "Meeting Spaces", "Business Hub", "Professional Environment", "Networking Opportunities"] :
+                        ["Event Space", "Premium Location", "Creative Hub", "Exclusive Access", "Custom Branding"],
+              rentalStartDate: foundPlot.soldAt || new Date().toISOString(),
+              rentalEndDate: foundPlot.rentalEndDate || '',
+              selectedTerm: "monthly" as const,
+              totalPrice: 0
+            }
+            
+            setPlot(plotData)
+          } else {
+            // User doesn't own this plot, redirect to dashboard
+            alert('You do not have access to this plot. Please rent it first.')
+            router.push('/dashboard')
+          }
+        } else {
+          console.error('Failed to load user plots')
+          alert('Failed to load plot data. Please try again.')
+          router.push('/dashboard')
+        }
+      } catch (error) {
+        console.error('Error loading plot data:', error)
+        alert('Error loading plot data. Please try again.')
         router.push('/dashboard')
-        return
       }
-      
-      setPlot(foundPlot)
-    } else {
-      // User doesn't own this plot, redirect to dashboard
-      alert('You do not have access to this plot. Please rent it first.')
-      router.push('/dashboard')
     }
-  }, [plotId, router])
+    
+    loadPlotData()
+  }, [plotId, router, isConnected, address])
 
   // Countdown to store launch (September 10th, 2025)
   useEffect(() => {
