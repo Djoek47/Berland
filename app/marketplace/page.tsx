@@ -32,11 +32,12 @@ interface LandPlot {
 }
 
 const landPlots: LandPlot[] = [
+  // Faberland Estates (25 NFTs - 2025)
   {
-    id: "crystal-amber",
-    name: "Crystal Amber Estate",
+    id: "estate-1",
+    name: "Faberland Estate #1",
     type: "faberland",
-    description: "A premium crystal estate with amber accents, located in the central district of Faberland.",
+    description: "The first of 25 exclusive Faberland Estates. A premium crystal estate with amber accents, located in the central district.",
     price: 2.5,
     image: "/images/faberge-eggs/crystal-amber.jpeg",
     color: "amber",
@@ -48,8 +49,8 @@ const landPlots: LandPlot[] = [
     features: ["Water View", "High Traffic", "Premium Location"],
   },
   {
-    id: "amber-glow",
-    name: "Amber Glow Manor",
+    id: "estate-2",
+    name: "Faberland Estate #2",
     type: "faberland",
     description: "A luxurious manor with a warm amber glow, perfect for hosting virtual events.",
     price: 3.2,
@@ -63,8 +64,8 @@ const landPlots: LandPlot[] = [
     features: ["Event Space", "High Traffic", "Premium Location"],
   },
   {
-    id: "ruby-red",
-    name: "Ruby Red Residence",
+    id: "estate-3",
+    name: "Faberland Estate #3",
     type: "faberland",
     description: "A striking ruby-colored estate in the exclusive northern district of Faberland.",
     price: 4.1,
@@ -78,8 +79,8 @@ const landPlots: LandPlot[] = [
     features: ["Mountain View", "Exclusive Area", "Premium Location"],
   },
   {
-    id: "emerald-green",
-    name: "Emerald Green Haven",
+    id: "estate-4",
+    name: "Faberland Estate #4",
     type: "faberland",
     description: "A verdant emerald estate surrounded by virtual gardens and water features.",
     price: 3.8,
@@ -93,14 +94,14 @@ const landPlots: LandPlot[] = [
     features: ["Garden View", "Water Features", "Premium Location"],
   },
   {
-    id: "bronze-glow",
-    name: "Bronze Glow Retreat",
+    id: "estate-5",
+    name: "Faberland Estate #5",
     type: "faberland",
     description: "A warm bronze estate with a central courtyard, located in the artistic quarter.",
     price: 2.9,
     image: "/images/faberge-eggs/bronze-glow.png",
     color: "bronze",
-    available: false,
+    available: true,
     opensea: "https://opensea.io/collection/faberland",
     location: "Arts District",
     size: "Medium (8,000 sq ft)",
@@ -108,8 +109,8 @@ const landPlots: LandPlot[] = [
     features: ["Art Gallery", "Central Courtyard", "Creative Hub"],
   },
   {
-    id: "rose-quartz",
-    name: "Rose Quartz Sanctuary",
+    id: "estate-6",
+    name: "Faberland Estate #6",
     type: "faberland",
     description: "A serene rose quartz estate with meditation spaces and relaxation zones.",
     price: 3.5,
@@ -123,22 +124,8 @@ const landPlots: LandPlot[] = [
     features: ["Meditation Space", "Relaxation Zones", "Wellness Hub"],
   },
   {
-    id: "copper-plot-1",
-    name: "Copper Plot Alpha",
-    type: "faberplot",
-    description: "A smaller copper-toned plot, perfect for a boutique virtual store or gallery.",
-    price: 0.8,
-    image: "/images/faberge-eggs/copper-solid.png",
-    color: "copper",
-    available: true,
-    location: "Market District",
-    size: "Small (2,500 sq ft)",
-    visitors: 1800,
-    features: ["Retail Ready", "Affordable", "High Foot Traffic"],
-  },
-  {
-    id: "sapphire-blue",
-    name: "Sapphire Blue Domain",
+    id: "estate-7",
+    name: "Faberland Estate #7",
     type: "faberland",
     description: "A majestic sapphire estate with waterfront views in the coastal district.",
     price: 4.5,
@@ -152,8 +139,8 @@ const landPlots: LandPlot[] = [
     features: ["Ocean View", "Private Beach", "Premium Location"],
   },
   {
-    id: "fire-opal",
-    name: "Fire Opal Residence",
+    id: "estate-8",
+    name: "Faberland Estate #8",
     type: "faberland",
     description: "A vibrant fire opal estate in the entertainment district, perfect for virtual events.",
     price: 3.9,
@@ -166,20 +153,47 @@ const landPlots: LandPlot[] = [
     visitors: 7100,
     features: ["Event Space", "Entertainment Hub", "Premium Location"],
   },
-  {
-    id: "obsidian-plot-1",
-    name: "Obsidian Plot Omega",
-    type: "faberplot",
-    description: "A sleek obsidian plot in the business district, ideal for a corporate presence.",
-    price: 1.2,
-    image: "/images/faberge-eggs/obsidian-black.png",
-    color: "obsidian",
+  // Add remaining estates 9-25 (placeholder data)
+  ...Array.from({ length: 17 }, (_, i) => ({
+    id: `estate-${i + 9}`,
+    name: `Faberland Estate #${i + 9}`,
+    type: "faberland" as const,
+    description: `Exclusive Faberland Estate #${i + 9} - Coming 2025.`,
+    price: 3.0 + (i * 0.1),
+    image: "/images/faberge-eggs/crystal-amber.jpeg",
+    color: "crystal",
     available: true,
-    location: "Business District",
-    size: "Medium (5,000 sq ft)",
-    visitors: 2900,
-    features: ["Corporate Ready", "Meeting Spaces", "Business Hub"],
-  },
+    opensea: "https://opensea.io/collection/faberland",
+    location: "Various Districts",
+    size: "Large (10,000-15,000 sq ft)",
+    visitors: 4000 + (i * 200),
+    features: ["Premium Location", "Exclusive Access", "NFT Ownership"],
+  })),
+  
+  // Faberplots (47 Properties - 1-47)
+  ...Array.from({ length: 47 }, (_, i) => ({
+    id: `faberplot-${i + 1}`,
+    name: `Faberplot #${i + 1}`,
+    type: "faberplot" as const,
+    description: `Faberplot #${i + 1} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
+    price: 0.5 + (i * 0.05),
+    image: i % 8 === 0 ? "/images/faberge-eggs/crystal-amber.jpeg" :
+           i % 8 === 1 ? "/images/faberge-eggs/amber-glow.png" :
+           i % 8 === 2 ? "/images/faberge-eggs/ruby-red.png" :
+           i % 8 === 3 ? "/images/faberge-eggs/emerald-green.png" :
+           i % 8 === 4 ? "/images/faberge-eggs/bronze-glow.png" :
+           i % 8 === 5 ? "/images/faberge-eggs/rose-quartz.jpeg" :
+           i % 8 === 6 ? "/images/faberge-eggs/sapphire-blue.png" :
+           "/images/faberge-eggs/fire-opal.png",
+    color: ["crystal", "amber", "ruby", "emerald", "bronze", "rose", "sapphire", "fire"][i % 8],
+    available: true,
+    location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][i % 5],
+    size: i < 15 ? "Small (2,500 sq ft)" : i < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
+    visitors: 1500 + (i * 100),
+    features: i < 15 ? ["Retail Ready", "Affordable", "High Foot Traffic"] :
+              i < 30 ? ["Corporate Ready", "Meeting Spaces", "Business Hub"] :
+              ["Event Space", "Premium Location", "Creative Hub"],
+  })),
 ]
 
 export default function MarketplacePage() {
@@ -203,7 +217,21 @@ export default function MarketplacePage() {
 
   // Apply filters
   useEffect(() => {
+    // Get sold Faberplots from localStorage
+    const soldFaberplots = JSON.parse(localStorage.getItem('soldFaberplots') || '[]')
+    
     let result = [...landPlots]
+    
+    // Mark sold Faberplots as unavailable
+    result = result.map(plot => {
+      if (plot.type === "faberplot") {
+        const plotNumber = parseInt(plot.id.replace('faberplot-', ''))
+        if (soldFaberplots.includes(plotNumber)) {
+          return { ...plot, available: false }
+        }
+      }
+      return plot
+    })
 
     // Filter by tab
     if (activeTab === "faberland") {
@@ -291,8 +319,7 @@ export default function MarketplacePage() {
           </Badge>
           <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">Faberland Marketplace</h1>
           <p className="mx-auto mb-8 max-w-2xl text-lg text-zinc-300 sm:text-xl">
-            Own a piece of the Faberland metaverse. Each plot is represented as a unique Fabergé egg, symbolizing the
-            precious nature of virtual real estate.
+            Own a piece of the Faberland metaverse. 25 exclusive Faberland Estates (NFTs) launching in 2025, plus 47 Faberplots available now. Each plot is represented as a unique Fabergé egg, symbolizing the precious nature of virtual real estate.
           </p>
         </div>
       </section>
@@ -307,11 +334,11 @@ export default function MarketplacePage() {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-purple-500"></div>
-                    <span className="text-sm">Faberland Estates (NFTs on OpenSea)</span>
+                    <span className="text-sm">Faberland Estates (25 NFTs on OpenSea - 2025)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-emerald-500"></div>
-                    <span className="text-sm">Faberplots (Exclusive to this marketplace)</span>
+                    <span className="text-sm">Faberplots (47 Properties - 1-47)</span>
                   </div>
                 </div>
               </div>
@@ -615,8 +642,7 @@ export default function MarketplacePage() {
         <div className="container px-4 text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Secure Your Place in Faberland</h2>
           <p className="mx-auto mb-8 max-w-2xl text-zinc-300">
-            Don't miss the opportunity to be part of the metaverse revolution. Whether you're an individual collector,
-            business owner, or investor, Faberland offers unique opportunities for digital property ownership.
+            Don't miss the opportunity to be part of the metaverse revolution. 47 Faberplots available now, with 25 exclusive Faberland Estates launching in 2025. Whether you're an individual collector, business owner, or investor, Faberland offers unique opportunities for digital property ownership.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-bold">
@@ -651,8 +677,14 @@ function LandCard({ plot }: LandCardProps) {
       } bg-zinc-900/50 backdrop-blur transition-all hover:border-amber-500/50`}
     >
       <div className="relative aspect-square">
-        <Image src={plot.image || "/placeholder.svg"} alt={plot.name} fill className="object-cover" />
-        {!plot.available && (
+        {plot.type === "faberplot" && plot.available ? (
+          <Link href={`/faberplot/${plot.id.replace('faberplot-', '')}`}>
+            <Image src={plot.image || "/placeholder.svg"} alt={plot.name} fill className="object-cover cursor-pointer" />
+          </Link>
+        ) : (
+          <Image src={plot.image || "/placeholder.svg"} alt={plot.name} fill className="object-cover" />
+        )}
+        {plot.type === "faberplot" && !plot.available && (
           <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
             <span className="text-xl font-bold text-white">SOLD OUT</span>
           </div>
@@ -688,8 +720,8 @@ function LandCard({ plot }: LandCardProps) {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {plot.features.map((feature) => (
-            <Badge key={feature} variant="outline" className="border-amber-700/30 text-amber-400">
+          {plot.features.map((feature, index) => (
+            <Badge key={`${plot.id}-feature-${index}`} variant="outline" className="border-amber-700/30 text-amber-400">
               {feature}
             </Badge>
           ))}
@@ -699,17 +731,34 @@ function LandCard({ plot }: LandCardProps) {
           <div>
             <p className="text-sm text-zinc-400">Price</p>
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-white">${(plot.price * 1000).toLocaleString()}</span>
-              {plot.type === "faberland" && <span className="text-sm text-white">≈ {plot.price} ETH</span>}
+              {plot.type === "faberplot" ? (
+                <>
+                  <span className="text-2xl font-bold text-white">${40 + Math.floor(Math.random() * 41)}</span>
+                  <span className="text-sm text-white">/month</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-2xl font-bold text-white">${(plot.price * 1000).toLocaleString()}</span>
+                  <span className="text-sm text-white">≈ {plot.price} ETH</span>
+                </>
+              )}
             </div>
           </div>
-          {plot.available ? (
-            <Button className="bg-amber-500 hover:bg-amber-600 text-black font-bold">
-              {plot.type === "faberland" ? "View Details" : "Purchase"}
-            </Button>
+          {plot.type === "faberplot" ? (
+            plot.available ? (
+              <Button className="bg-amber-500 hover:bg-amber-600 text-black font-bold" asChild>
+                <Link href={`/faberplot/${plot.id.replace('faberplot-', '')}`}>
+                  Rent Now
+                </Link>
+              </Button>
+            ) : (
+              <Button disabled className="bg-zinc-700 text-zinc-400 cursor-not-allowed">
+                Sold Out
+              </Button>
+            )
           ) : (
-            <Button disabled className="bg-zinc-700 text-zinc-400 cursor-not-allowed">
-              Sold Out
+            <Button className="bg-amber-500 hover:bg-amber-600 text-black font-bold">
+              View Details
             </Button>
           )}
         </div>

@@ -20,7 +20,7 @@ export default function MetaverseFooter() {
               of the internet.
             </p>
             <div className="flex gap-4">
-              <Link href="#" className="text-zinc-400 hover:text-amber-400">
+              <Link href="https://x.com/Faber4land" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-amber-400">
                 <Twitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
               </Link>
@@ -47,28 +47,23 @@ export default function MetaverseFooter() {
             <h3 className="text-lg font-semibold">Explore</h3>
             <ul className="space-y-2 text-sm text-zinc-300">
               <li>
-                <Link href="#" className="hover:text-amber-400">
+                <Link href="/discover" className="hover:text-amber-400">
                   Virtual Worlds
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-amber-400">
+                <Link href="/marketplace" className="hover:text-amber-400">
                   Marketplace
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-amber-400">
-                  Events
+                <Link href="/business-advantages" className="hover:text-amber-400">
+                  Business Benefits
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-amber-400">
-                  Creator Tools
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-amber-400">
-                  Community
+                <Link href="/screenshots" className="hover:text-amber-400">
+                  Screenshots
                 </Link>
               </li>
             </ul>
@@ -78,33 +73,23 @@ export default function MetaverseFooter() {
             <h3 className="text-lg font-semibold">Resources</h3>
             <ul className="space-y-2 text-sm text-zinc-300">
               <li>
-                <Link href="#" className="hover:text-amber-400">
-                  Documentation
+                <Link href="/installation-guide" className="hover:text-amber-400">
+                  Installation Guide
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-amber-400">
-                  Tutorials
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-amber-400">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-amber-400">
-                  Support
-                </Link>
-              </li>
-              <li>
-                <Link href="#about" className="hover:text-amber-400">
+                <Link href="/about" className="hover:text-amber-400">
                   About
                 </Link>
               </li>
               <li>
-                <Link href="#download" className="hover:text-amber-400">
-                  Download
+                <Link href="/terms" className="hover:text-amber-400">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/dashboard" className="hover:text-amber-400">
+                  Dashboard
                 </Link>
               </li>
             </ul>
