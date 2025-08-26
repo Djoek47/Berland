@@ -16,7 +16,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if plot is already sold (for new rentals)
-    if (!isRenewal && PlotDatabase.isPlotSold(plotId)) {
+    const isSold = PlotDatabase.isPlotSoldSync(plotId)
+    console.log(`Checkout: Plot ${plotId} sold status:`, isSold)
+    console.log(`Checkout: All sold plots:`, PlotDatabase.getSoldPlotsSync())
+    
+    if (!isRenewal && isSold) {
       return NextResponse.json(
         { error: 'Plot is already sold' },
         { status: 400 }
