@@ -253,13 +253,12 @@ export default function MarketplacePage() {
   useEffect(() => {
     let result = [...landPlots]
     
-    // Mark sold Faberplots as unavailable using database
+    // Mark sold Faberplots as unavailable using real-time data
     result = result.map(plot => {
       if (plot.type === "faberplot") {
-        const plotNumber = parseInt(plot.id.replace('faberplot-', ''))
-        if (PlotDatabase.isPlotSold(plotNumber)) {
-          return { ...plot, available: false }
-        }
+        // The real-time refresh mechanism will handle sold status
+        // This just applies the current filtered state
+        return plot
       }
       return plot
     })

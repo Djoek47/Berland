@@ -269,7 +269,7 @@ export default function DashboardPage() {
            }
         } else {
           // Handle new rental - mark plot as sold in database
-          if (!PlotDatabase.isPlotSold(plotIdNum)) {
+          if (!PlotDatabase.isPlotSoldSync(plotIdNum)) {
             // This will be handled by the Stripe webhook, but for now we'll mark it here
             // In production, this should be handled server-side after successful payment
             PlotDatabase.markPlotAsSold(plotIdNum, 'temp-wallet', 'temp-email', 'monthly')
