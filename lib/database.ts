@@ -62,6 +62,7 @@ export class PlotDatabase {
     }
 
     console.log(`Plot ${plotId} marked as sold to ${walletAddress}`)
+    console.log(`Database: Total sold plots: ${soldPlots.length}`)
   }
 
   // Extend plot rental

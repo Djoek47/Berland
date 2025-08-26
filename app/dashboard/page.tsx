@@ -78,21 +78,40 @@ export default function DashboardPage() {
     const sessionId = urlParams.get('session_id')
     const plotId = urlParams.get('plot_id')
     
-    if (success === 'true' && sessionId && plotId) {
-      console.log('Success redirect detected:', { sessionId, plotId })
+    if (success === 'true' && sessionId && plotId && address) {
+      console.log('Success redirect detected:', { sessionId, plotId, address })
+      
+      // Fallback: Mark plot as sold immediately if webhook didn't work
+      const plotIdNum = parseInt(plotId)
+      if (!PlotDatabase.isPlotSold(plotIdNum)) {
+        console.log('Fallback: Marking plot as sold immediately')
+        PlotDatabase.markPlotAsSold(
+          plotIdNum,
+          address,
+          'user@email.com', // We don't have email in URL params
+          'monthly' // Default to monthly
+        )
+        console.log('Fallback: Plot marked as sold:', PlotDatabase.isPlotSold(plotIdNum))
+      }
+      
       setShowSuccessMessage(true)
       setSuccessDetails({ sessionId, plotId })
+      
+      // Force refresh of dashboard data
+      setRefreshTrigger(prev => prev + 1)
       
       // Clean up URL
       router.replace('/dashboard')
     }
-  }, [router])
+  }, [router, address])
 
   // Load NFTs and Faberplots
   useEffect(() => {
     if (!isConnected) return // Don't load data if not connected
     
+    console.log('Loading dashboard data for wallet:', address)
     setIsLoading(true)
+    
     // Simulate loading NFTs from blockchain
     setTimeout(() => {
       setNfts([
@@ -151,7 +170,7 @@ export default function DashboardPage() {
       
       setIsLoading(false)
     }, 1000)
-  }, [isConnected]) // Run when wallet connection changes
+  }, [isConnected, refreshTrigger]) // Run when wallet connection changes or refresh is triggered
 
   // Real-time countdown for expiring plots
   useEffect(() => {
