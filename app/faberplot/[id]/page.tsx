@@ -100,79 +100,10 @@ export default function FaberplotPage() {
             </Button>
           </div>
         </div>
-               {/* Cancel Message Modal */}
-       {showCancelMessage && (
-         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur">
-           <div className="mx-4 w-full max-w-md rounded-xl border border-amber-700/30 bg-zinc-900 p-6 backdrop-blur">
-             <div className="mb-6 text-center">
-               <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-amber-500 flex items-center justify-center">
-                 <svg className="h-8 w-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                 </svg>
-               </div>
-               <h2 className="mb-2 text-2xl font-bold text-white">Payment Cancelled</h2>
-               <p className="text-zinc-300">Your payment was cancelled. You can try again anytime.</p>
-             </div>
-
-             <div className="flex gap-3">
-               <Button
-                 className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-bold"
-                 onClick={() => setShowCancelMessage(false)}
-               >
-                 Try Again
-               </Button>
-             </div>
-           </div>
-         </div>
-       )}
-
-       {/* Wallet Connection Modal */}
-       {showWalletModal && (
-         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur">
-           <div className="mx-4 w-full max-w-md rounded-xl border border-amber-700/30 bg-zinc-900 p-6 backdrop-blur">
-             <div className="mb-6 text-center">
-               <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-amber-500 flex items-center justify-center">
-                 <Wallet className="h-8 w-8 text-amber-400" />
-               </div>
-               <h2 className="mb-2 text-2xl font-bold text-white">Wallet Required</h2>
-               <p className="text-zinc-300 mb-4">You need to connect your wallet before renting a Faberplot.</p>
-               <div className="bg-amber-950/20 border border-amber-700/30 rounded-lg p-4 mb-4">
-                 <div className="flex items-center gap-2 mb-2">
-                   <AlertCircle className="h-4 w-4 text-amber-400" />
-                   <span className="text-sm font-semibold text-amber-400">Why Connect Wallet?</span>
-                 </div>
-                 <ul className="text-xs text-zinc-300 space-y-1">
-                   <li>• Secure digital identity verification</li>
-                   <li>• Access to your dashboard and plot management</li>
-                   <li>• Track your rental history and payments</li>
-                   <li>• Manage your virtual real estate portfolio</li>
-                 </ul>
-               </div>
-             </div>
-
-             <div className="flex gap-3">
-               <Button
-                 className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-bold"
-                 onClick={() => setShowWalletModal(false)}
-               >
-                 Connect Wallet
-               </Button>
-               <Button
-                 variant="outline"
-                 className="flex-1 border-amber-700/30 text-amber-400 hover:bg-amber-950/20"
-                 onClick={() => setShowWalletModal(false)}
-               >
-                 Cancel
-               </Button>
-             </div>
-           </div>
-         </div>
-       )}
-
-       <MetaverseFooter />
-     </div>
-   )
- }
+        <MetaverseFooter />
+      </div>
+    )
+  }
 
   const getDiscount = (term: "monthly" | "quarterly" | "yearly") => {
     switch (term) {
@@ -426,87 +357,87 @@ export default function FaberplotPage() {
               </Card>
             </div>
 
-                         {/* Email Input */}
-             <Card className="mt-8 border-amber-700/30 bg-zinc-900/50">
-               <CardHeader>
-                 <CardTitle className="text-white">Contact Information</CardTitle>
-               </CardHeader>
-               <CardContent>
-                 <div className="mb-4">
-                   <label htmlFor="email" className="block text-sm font-medium text-zinc-300 mb-2">
-                     Email Address
-                   </label>
-                   <input
-                     type="email"
-                     id="email"
-                     value={userEmail}
-                     onChange={(e) => setUserEmail(e.target.value)}
-                     placeholder="Enter your email address"
-                     className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                     required
-                   />
-                   <p className="text-xs text-zinc-400 mt-1">
-                     We'll send your rental confirmation to this email
-                   </p>
-                 </div>
-               </CardContent>
-             </Card>
+            {/* Email Input */}
+            <Card className="mt-8 border-amber-700/30 bg-zinc-900/50">
+              <CardHeader>
+                <CardTitle className="text-white">Contact Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-4">
+                  <label htmlFor="email" className="block text-sm font-medium text-zinc-300 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-md text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                    required
+                  />
+                  <p className="text-xs text-zinc-400 mt-1">
+                    We'll send your rental confirmation to this email
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
 
-             {/* Selected Plan Details */}
-             <Card className="mt-8 border-amber-700/30 bg-zinc-900/50">
-               <CardHeader>
-                 <CardTitle className="text-white">Selected Plan</CardTitle>
-               </CardHeader>
-               <CardContent>
-                 <div className="flex items-center justify-between mb-4">
-                   <div>
-                     <h4 className="font-semibold text-white capitalize">{selectedTerm} Plan</h4>
-                     <p className="text-zinc-400 text-sm">
-                       {selectedTerm === "monthly" ? "Month-to-month rental" :
-                        selectedTerm === "quarterly" ? "3-month commitment" :
-                        "12-month commitment"}
-                     </p>
-                   </div>
-                   <div className="text-right">
-                     <div className="text-2xl font-bold text-white">${discountedPrice.toFixed(0)}</div>
-                     {savings > 0 && (
-                       <p className="text-green-400 text-sm">Save ${savings.toFixed(0)}</p>
-                     )}
-                   </div>
-                 </div>
-                 
-                 <Button 
-                   className={`w-full font-bold size="lg" ${
-                     isSold 
-                       ? "bg-red-500 hover:bg-red-600 text-white cursor-not-allowed" 
-                       : !isConnected
-                       ? "bg-gray-500 hover:bg-gray-600 text-white cursor-not-allowed"
-                       : "bg-amber-500 hover:bg-amber-600 text-black"
-                   }`}
-                   onClick={handleCheckout}
-                   disabled={isProcessing || isSold || !isConnected}
-                 >
-                   {isSold ? (
-                     "Sold Out"
-                   ) : !isConnected ? (
-                     <>
-                       <Wallet className="mr-2 h-4 w-4" />
-                       Connect Wallet to Rent
-                     </>
-                   ) : isProcessing ? (
-                     <>
-                       <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                       Processing...
-                     </>
-                   ) : (
-                     <>
-                       <CreditCard className="mr-2 h-4 w-4" />
-                       Rent with Card
-                     </>
-                   )}
-                 </Button>
-               </CardContent>
-             </Card>
+            {/* Selected Plan Details */}
+            <Card className="mt-8 border-amber-700/30 bg-zinc-900/50">
+              <CardHeader>
+                <CardTitle className="text-white">Selected Plan</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h4 className="font-semibold text-white capitalize">{selectedTerm} Plan</h4>
+                    <p className="text-zinc-400 text-sm">
+                      {selectedTerm === "monthly" ? "Month-to-month rental" :
+                       selectedTerm === "quarterly" ? "3-month commitment" :
+                       "12-month commitment"}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-white">${discountedPrice.toFixed(0)}</div>
+                    {savings > 0 && (
+                      <p className="text-green-400 text-sm">Save ${savings.toFixed(0)}</p>
+                    )}
+                  </div>
+                </div>
+                
+                <Button 
+                  className={`w-full font-bold size="lg" ${
+                    isSold 
+                      ? "bg-red-500 hover:bg-red-600 text-white cursor-not-allowed" 
+                      : !isConnected
+                      ? "bg-gray-500 hover:bg-gray-600 text-white cursor-not-allowed"
+                      : "bg-amber-500 hover:bg-amber-600 text-black"
+                  }`}
+                  onClick={handleCheckout}
+                  disabled={isProcessing || isSold || !isConnected}
+                >
+                  {isSold ? (
+                    "Sold Out"
+                  ) : !isConnected ? (
+                    <>
+                      <Wallet className="mr-2 h-4 w-4" />
+                      Connect Wallet to Rent
+                    </>
+                  ) : isProcessing ? (
+                    <>
+                      <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Rent with Card
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -572,38 +503,38 @@ export default function FaberplotPage() {
             Join hundreds of entrepreneurs who have already established their presence in Faberland. 
             Start generating revenue from day one with our comprehensive virtual business platform.
           </p>
-                     <div className="flex flex-wrap justify-center gap-4">
-             <Button 
-               size="lg" 
-               className={`font-bold ${
-                 isSold 
-                   ? "bg-red-500 hover:bg-red-600 text-white cursor-not-allowed" 
-                   : !isConnected
-                   ? "bg-gray-500 hover:bg-gray-600 text-white cursor-not-allowed"
-                   : "bg-amber-500 hover:bg-amber-600 text-black"
-               }`}
-               onClick={handleCheckout}
-               disabled={isProcessing || isSold || !isConnected}
-             >
-               {isSold ? (
-                 `Faberplot #${plot.id} - Sold Out`
-               ) : !isConnected ? (
-                 <>
-                   <Wallet className="mr-2 h-4 w-4" />
-                   Connect Wallet to Rent
-                 </>
-               ) : isProcessing ? (
-                 <>
-                   <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                   Processing...
-                 </>
-               ) : (
-                 <>
-                   <CreditCard className="mr-2 h-4 w-4" />
-                   Rent Faberplot #{plot.id} with Card
-                 </>
-               )}
-             </Button>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button 
+              size="lg" 
+              className={`font-bold ${
+                isSold 
+                  ? "bg-red-500 hover:bg-red-600 text-white cursor-not-allowed" 
+                  : !isConnected
+                  ? "bg-gray-500 hover:bg-gray-600 text-white cursor-not-allowed"
+                  : "bg-amber-500 hover:bg-amber-600 text-black"
+              }`}
+              onClick={handleCheckout}
+              disabled={isProcessing || isSold || !isConnected}
+            >
+              {isSold ? (
+                `Faberplot #${plot.id} - Sold Out`
+              ) : !isConnected ? (
+                <>
+                  <Wallet className="mr-2 h-4 w-4" />
+                  Connect Wallet to Rent
+                </>
+              ) : isProcessing ? (
+                <>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Rent Faberplot #{plot.id} with Card
+                </>
+              )}
+            </Button>
             <Button
               size="lg"
               variant="outline"
@@ -615,6 +546,75 @@ export default function FaberplotPage() {
           </div>
         </div>
       </section>
+
+      {/* Cancel Message Modal */}
+      {showCancelMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur">
+          <div className="mx-4 w-full max-w-md rounded-xl border border-amber-700/30 bg-zinc-900 p-6 backdrop-blur">
+            <div className="mb-6 text-center">
+              <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-amber-500 flex items-center justify-center">
+                <svg className="h-8 w-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h2 className="mb-2 text-2xl font-bold text-white">Payment Cancelled</h2>
+              <p className="text-zinc-300">Your payment was cancelled. You can try again anytime.</p>
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-bold"
+                onClick={() => setShowCancelMessage(false)}
+              >
+                Try Again
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Wallet Connection Modal */}
+      {showWalletModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur">
+          <div className="mx-4 w-full max-w-md rounded-xl border border-amber-700/30 bg-zinc-900 p-6 backdrop-blur">
+            <div className="mb-6 text-center">
+              <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-amber-500 flex items-center justify-center">
+                <Wallet className="h-8 w-8 text-amber-400" />
+              </div>
+              <h2 className="mb-2 text-2xl font-bold text-white">Wallet Required</h2>
+              <p className="text-zinc-300 mb-4">You need to connect your wallet before renting a Faberplot.</p>
+              <div className="bg-amber-950/20 border border-amber-700/30 rounded-lg p-4 mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle className="h-4 w-4 text-amber-400" />
+                  <span className="text-sm font-semibold text-amber-400">Why Connect Wallet?</span>
+                </div>
+                <ul className="text-xs text-zinc-300 space-y-1">
+                  <li>• Secure digital identity verification</li>
+                  <li>• Access to your dashboard and plot management</li>
+                  <li>• Track your rental history and payments</li>
+                  <li>• Manage your virtual real estate portfolio</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-bold"
+                onClick={() => setShowWalletModal(false)}
+              >
+                Connect Wallet
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1 border-amber-700/30 text-amber-400 hover:bg-amber-950/20"
+                onClick={() => setShowWalletModal(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <MetaverseFooter />
     </div>
