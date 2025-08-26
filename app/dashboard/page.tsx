@@ -1,120 +1,141 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { MapPin, Gem, Clock, Tag, ExternalLink, Settings, Users, Home, DoorOpen } from "lucide-react"
-import { loadStripe } from '@stripe/stripe-js'
+import { Separator } from "@/components/ui/separator"
+import { 
+  MapPin, 
+  Users, 
+  Calendar, 
+  DollarSign, 
+  ExternalLink, 
+  CreditCard, 
+  Wallet, 
+  RefreshCw,
+  CheckCircle,
+  Clock,
+  AlertCircle
+} from "lucide-react"
 import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
-// Removed thirdweb import - using Stripe now
-import { useRouter } from "next/navigation"
-import { PlotDatabase } from "@/lib/database"
 import { useWallet } from "@/hooks/use-wallet"
+import { redirectToCheckout } from "@/lib/stripe-client"
 
-interface NFT {
-  id: string
-  name: string
-  type: "land" | "portal"
-  description: string
-  image: string
-  location: string
-  size: string
-  visitors: number
-  features: string[]
-  opensea?: string
-  rentalStatus?: "available" | "rented" | "none"
-  rentalEndDate?: string
-}
-
+// Types
 interface Faberplot {
   id: number
   name: string
   description: string
+  monthlyRent: number
   image: string
   location: string
   size: string
   visitors: number
   features: string[]
-  monthlyRent: number
   rentalStartDate: string
   rentalEndDate: string
-  selectedTerm: "monthly" | "quarterly" | "yearly"
+  selectedTerm: 'monthly' | 'quarterly' | 'yearly'
   totalPrice: number
+}
+
+interface NFT {
+  id: string
+  name: string
+  type: string
+  description: string
+  image: string
+  location: string
+  size: string
+  visitors: number
+  features: string[]
+  opensea: string
+  rentalStatus: string
+}
+
+interface SuccessDetails {
+  sessionId: string
+  plotId: number | null
+  message: string
 }
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { isConnected, address, isLoading: walletLoading, connectionStatus } = useWallet()
-  const [activeTab, setActiveTab] = useState("overview")
+  const [activeTab, setActiveTab] = useState("faberplots")
   const [nfts, setNfts] = useState<NFT[]>([])
   const [faberplots, setFaberplots] = useState<Faberplot[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
-  const [successDetails, setSuccessDetails] = useState<any>(null)
-  const [refreshTrigger, setRefreshTrigger] = useState(0)
-  const [currentTime, setCurrentTime] = useState(new Date())
   const [isRenewing, setIsRenewing] = useState<number | null>(null)
+  const [currentTime, setCurrentTime] = useState(new Date())
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const [successDetails, setSuccessDetails] = useState<SuccessDetails | null>(null)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
 
-  // Handle wallet disconnection - redirect to main page
+  // Wallet connection
+  const { isConnected, address, isLoading: walletLoading } = useWallet()
+
+  // Redirect if not connected
   useEffect(() => {
-    console.log('Dashboard - Wallet state:', { isConnected, walletLoading, address })
-    
-    // Only redirect if we're sure the wallet is not connected (not just loading)
-    if (!walletLoading && !isConnected && connectionStatus === 'disconnected') {
-      console.log('Wallet not connected, redirecting to home...')
+    if (!walletLoading && !isConnected) {
+      console.log('Dashboard: Not connected, redirecting to home')
       router.push('/')
     }
-  }, [isConnected, walletLoading, router, address, connectionStatus])
+  }, [isConnected, walletLoading, router])
 
-  // Handle success redirect from Stripe
+  // Load user data from server
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const success = urlParams.get('success')
-    const sessionId = urlParams.get('session_id')
-    const plotId = urlParams.get('plot_id')
-    
-    if (success === 'true' && sessionId && plotId && address) {
-      console.log('Success redirect detected:', { sessionId, plotId, address })
-      
-      // Fallback: Mark plot as sold immediately if webhook didn't work
-      const plotIdNum = parseInt(plotId)
-      if (!PlotDatabase.isPlotSold(plotIdNum)) {
-        console.log('Fallback: Marking plot as sold immediately')
-        PlotDatabase.markPlotAsSold(
-          plotIdNum,
-          address,
-          'user@email.com', // We don't have email in URL params
-          'monthly' // Default to monthly
-        )
-        console.log('Fallback: Plot marked as sold:', PlotDatabase.isPlotSold(plotIdNum))
+    const loadUserData = async () => {
+      if (!isConnected || !address) {
+        console.log('Dashboard: Not connected or no address, skipping data load')
+        setIsLoading(false)
+        return
       }
-      
-      setShowSuccessMessage(true)
-      setSuccessDetails({ sessionId, plotId })
-      
-      // Force refresh of dashboard data
-      setRefreshTrigger(prev => prev + 1)
-      
-      // Clean up URL
-      router.replace('/dashboard')
-    }
-  }, [router, address])
 
-  // Load NFTs and Faberplots
-  useEffect(() => {
-    const loadData = async () => {
-      if (!isConnected) return // Don't load data if not connected
-      
-      console.log('Loading dashboard data for wallet:', address)
+      console.log('Dashboard: Loading data for wallet:', address)
       setIsLoading(true)
-      
-            // Simulate loading NFTs from blockchain
-      setTimeout(async () => {
+
+      try {
+        // Load user's plots from server
+        const response = await fetch(`/api/user-plots?address=${address}`)
+        if (response.ok) {
+          const userPlots = await response.json()
+          console.log('Dashboard: Loaded user plots:', userPlots)
+
+          setFaberplots(userPlots.map((plot: any) => ({
+            id: plot.id,
+            name: `Faberplot #${plot.id}`,
+            description: `Faberplot #${plot.id} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
+            monthlyRent: 40 + Math.floor(Math.random() * 41), // Random price between $40-$80
+            image: (plot.id % 8 === 0) ? "/images/faberge-eggs/crystal-amber.jpeg" :
+                   (plot.id % 8 === 1) ? "/images/faberge-eggs/amber-glow.png" :
+                   (plot.id % 8 === 2) ? "/images/faberge-eggs/ruby-red.png" :
+                   (plot.id % 8 === 3) ? "/images/faberge-eggs/emerald-green.png" :
+                   (plot.id % 8 === 4) ? "/images/faberge-eggs/bronze-glow.png" :
+                   (plot.id % 8 === 5) ? "/images/faberge-eggs/rose-quartz.jpeg" :
+                   (plot.id % 8 === 6) ? "/images/faberge-eggs/sapphire-blue.png" :
+                   "/images/faberge-eggs/fire-opal.png",
+            location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][plot.id % 5],
+            size: plot.id < 15 ? "Small (2,500 sq ft)" : plot.id < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
+            visitors: 1500 + (plot.id * 100),
+            features: plot.id < 15 ? ["Retail Ready", "Affordable", "High Foot Traffic", "Quick Setup", "24/7 Access"] :
+                      plot.id < 30 ? ["Corporate Ready", "Meeting Spaces", "Business Hub", "Professional Environment", "Networking Opportunities"] :
+                      ["Event Space", "Premium Location", "Creative Hub", "Exclusive Access", "Custom Branding"],
+            rentalStartDate: plot.soldAt || new Date().toISOString(),
+            rentalEndDate: plot.rentalEndDate || '',
+            selectedTerm: "monthly" as const,
+            totalPrice: 0
+          })))
+        } else {
+          console.error('Dashboard: Failed to load user plots')
+          setFaberplots([])
+        }
+
+        // Load mock NFTs (placeholder for now)
         setNfts([
           {
             id: "crystal-amber",
@@ -130,51 +151,18 @@ export default function DashboardPage() {
             rentalStatus: "available"
           }
         ])
-        
-        // Load Faberplots from server database
-        const userPlots = await PlotDatabase.getUserPlots(address || '')
-        console.log('Loaded Faberplots from database:', userPlots)
-        setFaberplots(userPlots.map(plot => ({
-          id: plot.id,
-          name: `Faberplot #${plot.id}`,
-          description: `Faberplot #${plot.id} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
-          monthlyRent: 40 + Math.floor(Math.random() * 41), // Random price between $40-$80
-          image: (plot.id % 8 === 0) ? "/images/faberge-eggs/crystal-amber.jpeg" :
-                 (plot.id % 8 === 1) ? "/images/faberge-eggs/amber-glow.png" :
-                 (plot.id % 8 === 2) ? "/images/faberge-eggs/ruby-red.png" :
-                 (plot.id % 8 === 3) ? "/images/faberge-eggs/emerald-green.png" :
-                 (plot.id % 8 === 4) ? "/images/faberge-eggs/bronze-glow.png" :
-                 (plot.id % 8 === 5) ? "/images/faberge-eggs/rose-quartz.jpeg" :
-                 (plot.id % 8 === 6) ? "/images/faberge-eggs/sapphire-blue.png" :
-                 "/images/faberge-eggs/fire-opal.png",
-          location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][plot.id % 5],
-          size: plot.id < 15 ? "Small (2,500 sq ft)" : plot.id < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
-          visitors: 1500 + (plot.id * 100),
-          features: plot.id < 15 ? ["Retail Ready", "Affordable", "High Foot Traffic", "Quick Setup", "24/7 Access"] :
-                    plot.id < 30 ? ["Corporate Ready", "Meeting Spaces", "Business Hub", "Professional Environment", "Networking Opportunities"] :
-                    ["Event Space", "Premium Location", "Creative Hub", "Exclusive Access", "Custom Branding"],
-          rentalStartDate: plot.soldAt || new Date().toISOString(),
-          rentalEndDate: plot.rentalEndDate || '',
-          selectedTerm: "monthly" as const,
-          totalPrice: 0
-        })))
-        
-        // Also check database status
-        fetch('/api/database-status')
-          .then(response => response.json())
-          .then(data => {
-            console.log('Database status:', data)
-          })
-          .catch(error => {
-            console.error('Error fetching database status:', error)
-          })
-        
+
+      } catch (error) {
+        console.error('Dashboard: Error loading data:', error)
+        setFaberplots([])
+        setNfts([])
+      } finally {
         setIsLoading(false)
-      }, 1000)
+      }
     }
-    
-    loadData()
-  }, [isConnected, refreshTrigger]) // Run when wallet connection changes or refresh is triggered
+
+    loadUserData()
+  }, [isConnected, address, refreshTrigger])
 
   // Real-time countdown for expiring plots
   useEffect(() => {
@@ -185,152 +173,76 @@ export default function DashboardPage() {
     return () => clearInterval(interval)
   }, [])
 
-  // Handle expired plots - separate from rendering
+  // Handle success redirect from Stripe
   useEffect(() => {
-    if (!isConnected) return // Don't process if not connected
-    
-    // Check for expired plots using server database
-    const checkExpiredPlots = async () => {
-      try {
-        // Remove expired plots from server database
-        PlotDatabase.removeExpiredPlots()
-        
-        // Refresh user plots from server
-        const userPlots = await PlotDatabase.getUserPlots(address || '')
-        setFaberplots(userPlots.map(plot => ({
-          id: plot.id,
-          name: `Faberplot #${plot.id}`,
-          description: `Faberplot #${plot.id} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
-          monthlyRent: 40 + Math.floor(Math.random() * 41), // Random price between $40-$80
-          image: (plot.id % 8 === 0) ? "/images/faberge-eggs/crystal-amber.jpeg" :
-                 (plot.id % 8 === 1) ? "/images/faberge-eggs/amber-glow.png" :
-                 (plot.id % 8 === 2) ? "/images/faberge-eggs/ruby-red.png" :
-                 (plot.id % 8 === 3) ? "/images/faberge-eggs/emerald-green.png" :
-                 (plot.id % 8 === 4) ? "/images/faberge-eggs/bronze-glow.png" :
-                 (plot.id % 8 === 5) ? "/images/faberge-eggs/rose-quartz.jpeg" :
-                 (plot.id % 8 === 6) ? "/images/faberge-eggs/sapphire-blue.png" :
-                 "/images/faberge-eggs/fire-opal.png",
-          location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][plot.id % 5],
-          size: plot.id < 15 ? "Small (2,500 sq ft)" : plot.id < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
-          visitors: 1500 + (plot.id * 100),
-          features: plot.id < 15 ? ["Retail Ready", "Affordable", "High Foot Traffic", "Quick Setup", "24/7 Access"] :
-                    plot.id < 30 ? ["Corporate Ready", "Meeting Spaces", "Business Hub", "Professional Environment", "Networking Opportunities"] :
-                    ["Event Space", "Premium Location", "Creative Hub", "Exclusive Access", "Custom Branding"],
-          rentalStartDate: plot.soldAt || new Date().toISOString(),
-          rentalEndDate: plot.rentalEndDate || '',
-          selectedTerm: "monthly" as const,
-          totalPrice: 0
-        })))
-      } catch (error) {
-        console.error('Error checking expired plots:', error)
-      }
-    }
-    
-    checkExpiredPlots()
-  }, [currentTime, isConnected]) // Only run when currentTime changes or connection status changes
-
-  // No pending rental logic needed - using Stripe directly
-
-  // Handle URL parameters for rental flow
-  useEffect(() => {
-    console.log('Dashboard: Success redirect useEffect triggered')
-    console.log('Dashboard: isConnected:', isConnected)
-    console.log('Dashboard: address:', address)
-    
     const handleSuccessRedirect = async () => {
       if (!isConnected) {
         console.log('Dashboard: Not connected, skipping success redirect')
-        return // Don't process if not connected
+        return
       }
-    
-          const urlParams = new URLSearchParams(window.location.search)
+
+      const urlParams = new URLSearchParams(window.location.search)
       const success = urlParams.get('success')
       const sessionId = urlParams.get('session_id')
       const plotId = urlParams.get('plot_id')
       const isRenewal = urlParams.get('renewal') === 'true'
-      
-      console.log('Dashboard: URL params:', { success, sessionId, plotId, isRenewal })
+
+      console.log('Dashboard: Checking URL params:', { success, sessionId, plotId, isRenewal })
       console.log('Dashboard: Current URL:', window.location.href)
-      console.log('Dashboard: Search string:', window.location.search)
-      
-      if (success === 'true' && sessionId) {
-      // Stripe payment was successful
-      const plotIdNum = plotId ? parseInt(plotId) : null
-      
-      // Handle renewal or new rental
-      if (plotIdNum) {
-        if (isRenewal) {
-          // Handle renewal - extend the existing plot's rental period
-          // This will be handled by the Stripe webhook
-          console.log('Renewal successful for plot:', plotIdNum)
-        } else {
-          // Handle new rental - mark plot as sold in database
-          console.log('Dashboard: Processing new rental for plot:', plotIdNum)
-          console.log('Dashboard: Current wallet address:', address)
-          
-          if (!PlotDatabase.isPlotSoldSync(plotIdNum)) {
-            console.log('Dashboard: Plot not marked as sold, marking it now...')
-            // This will be handled by the Stripe webhook, but for now we'll mark it here
-            // In production, this should be handled server-side after successful payment
-            PlotDatabase.markPlotAsSold(plotIdNum, address || 'temp-wallet', 'temp-email', 'monthly')
-            
-            // Verify it was marked
-            const isSold = PlotDatabase.isPlotSoldSync(plotIdNum)
-            console.log('Dashboard: Plot marked as sold:', isSold)
-            
-            // Get current database state
-            const soldPlots = PlotDatabase.getSoldPlotsSync()
-            console.log('Dashboard: Total sold plots:', soldPlots.length)
-            console.log('Dashboard: Sold plots:', soldPlots.map(p => ({ id: p.id, soldTo: p.soldTo })))
-            
-            // Persist database to file
-            try {
-              const persistResponse = await fetch('/api/persist-database', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              })
-              
-              if (persistResponse.ok) {
-                console.log('Dashboard: Database persisted successfully')
-              } else {
-                console.error('Dashboard: Failed to persist database')
-              }
-            } catch (error) {
-              console.error('Dashboard: Error persisting database:', error)
-            }
+
+      if (success === 'true' && sessionId && plotId) {
+        console.log('Dashboard: Processing successful payment for plot:', plotId)
+        
+        // Mark plot as sold via API
+        try {
+          const markResponse = await fetch('/api/test-mark-sold', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              plotId: parseInt(plotId),
+              userAddress: address,
+              userEmail: 'user@email.com',
+              rentalTerm: 'monthly'
+            }),
+          })
+
+          if (markResponse.ok) {
+            const result = await markResponse.json()
+            console.log('Dashboard: Plot marked as sold:', result)
           } else {
-            console.log('Dashboard: Plot already marked as sold')
+            console.error('Dashboard: Failed to mark plot as sold')
           }
+        } catch (error) {
+          console.error('Dashboard: Error marking plot as sold:', error)
         }
+
+        setSuccessDetails({
+          sessionId,
+          plotId: parseInt(plotId),
+          message: isRenewal 
+            ? 'Renewal successful! Your Faberplot rental has been extended.'
+            : 'Payment successful! Your Faberplot rental has been activated.'
+        })
+        setShowSuccessMessage(true)
+
+        // Force refresh of dashboard data
+        setRefreshTrigger(prev => prev + 1)
+
+        // Clean up URL
+        router.replace('/dashboard')
       }
-      
-      setSuccessDetails({
-        sessionId,
-        plotId: plotIdNum,
-        message: isRenewal 
-          ? 'Renewal successful! Your Faberplot rental has been extended.'
-          : 'Payment successful! Your Faberplot rental has been activated.'
-      })
-      setShowSuccessMessage(true)
-      
-      // Force refresh of dashboard data
-      setRefreshTrigger(prev => prev + 1)
-      
-      // Clean up URL
-      router.replace('/dashboard')
     }
-    }
-    
+
     handleSuccessRedirect()
-  }, [router, isConnected, address]) // Depend on router, connection status, and wallet address
+  }, [isConnected, address, router])
 
   // Handle plot renewal
   const handleRenewPlot = async (plot: Faberplot) => {
     try {
       setIsRenewing(plot.id)
-      
+
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
@@ -341,7 +253,7 @@ export default function DashboardPage() {
           plotName: plot.name,
           plotImage: plot.image,
           monthlyRent: plot.monthlyRent,
-          isRenewal: true, // Flag to indicate this is a renewal
+          isRenewal: true,
           currentEndDate: plot.rentalEndDate
         }),
       })
@@ -350,63 +262,83 @@ export default function DashboardPage() {
         throw new Error('Failed to create checkout session')
       }
 
-      const { sessionId } = await response.json()
-      
-      // Redirect to Stripe Checkout
-      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
-      if (stripe) {
-        const { error } = await stripe.redirectToCheckout({ sessionId })
-        if (error) {
-          console.error('Stripe checkout error:', error)
-          alert('Payment failed. Please try again.')
-        }
-      }
+      const { url } = await response.json()
+      window.location.href = url
     } catch (error) {
-      console.error('Renewal error:', error)
-      alert('Failed to process renewal. Please try again.')
+      console.error('Error renewing plot:', error)
+      alert('Failed to renew plot. Please try again.')
     } finally {
       setIsRenewing(null)
     }
   }
 
-  // Show loading state while wallet is connecting
-  if (walletLoading || connectionStatus === 'unknown') {
+  // Calculate time remaining for a plot
+  const getTimeRemaining = (endDate: string) => {
+    const end = new Date(endDate)
+    const now = currentTime
+    const diff = end.getTime() - now.getTime()
+
+    if (diff <= 0) {
+      return { expired: true, days: 0, hours: 0, minutes: 0 }
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+    return { expired: false, days, hours, minutes }
+  }
+
+  // Reset database (for testing)
+  const handleResetDatabase = async () => {
+    try {
+      const response = await fetch('/api/reset-database', {
+        method: 'POST',
+      })
+      
+      if (response.ok) {
+        console.log('Database reset successfully')
+        setRefreshTrigger(prev => prev + 1)
+      } else {
+        console.error('Failed to reset database')
+      }
+    } catch (error) {
+      console.error('Error resetting database:', error)
+    }
+  }
+
+  // Loading state
+  if (walletLoading || isLoading) {
     return (
       <div className="flex min-h-screen flex-col bg-black text-white">
         <MetaverseNavbar />
-        <div className="flex items-center justify-center py-12">
+        <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-amber-500 border-t-transparent"></div>
-            <p className="text-zinc-400">Connecting wallet...</p>
-            <p className="text-zinc-500 mt-2 text-sm">Please wait while we establish your wallet connection</p>
+            <div className="mb-4 h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent mx-auto"></div>
+            <p className="text-zinc-400">Loading your dashboard...</p>
           </div>
         </div>
+        <MetaverseFooter />
       </div>
     )
   }
 
-  // Redirect if wallet is not connected
+  // Not connected state
   if (!isConnected) {
     return (
       <div className="flex min-h-screen flex-col bg-black text-white">
         <MetaverseNavbar />
-        <div className="flex items-center justify-center py-12">
+        <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="mb-4 h-12 w-12 rounded-full border-4 border-red-500 flex items-center justify-center">
-              <svg className="h-6 w-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-bold text-white mb-2">Wallet Not Connected</h2>
-            <p className="text-zinc-400 mb-4">Please connect your wallet to access the dashboard.</p>
-            <button 
-              onClick={() => router.push('/')}
-              className="bg-amber-500 hover:bg-amber-600 text-black font-bold px-4 py-2 rounded"
-            >
-              Go to Home
-            </button>
+            <Wallet className="h-16 w-16 text-amber-400 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold mb-4">Wallet Required</h1>
+            <p className="text-zinc-400 mb-6">Please connect your wallet to access your dashboard.</p>
+            <Button asChild>
+              <Link href="/">Go Home</Link>
+            </Button>
           </div>
         </div>
+        <MetaverseFooter />
       </div>
     )
   }
@@ -415,446 +347,305 @@ export default function DashboardPage() {
     <div className="flex min-h-screen flex-col bg-black text-white">
       <MetaverseNavbar />
 
-      {/* Dashboard Content */}
-      <section className="py-8">
-        <div className="container px-4">
-          <div className="mb-8">
-            <h1 className="mb-2 text-4xl font-bold tracking-tight">My Dashboard</h1>
-            <p className="text-zinc-300">Manage your virtual assets and properties</p>
+      {/* Hero Section */}
+      <section className="relative py-16 md:py-24">
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-amber-900/20 to-black"></div>
+        <div className="container relative z-10 px-4">
+          <div className="mb-8 text-center">
+            <Badge className="mb-4 bg-amber-500 hover:bg-amber-600" variant="secondary">
+              Personal Dashboard
+            </Badge>
+            <h1 className="mb-4 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+              Welcome to Your Faberland
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-zinc-300 sm:text-xl">
+              Manage your virtual real estate portfolio, track your investments, and explore new opportunities in the metaverse.
+            </p>
           </div>
 
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-amber-500 border-t-transparent"></div>
-                <p className="text-zinc-400">Loading your assets...</p>
+          {/* Wallet Info */}
+          <Card className="mb-8 border-amber-700/30 bg-zinc-900/50">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <Wallet className="h-6 w-6 text-amber-400" />
+                  <div>
+                    <p className="text-sm text-zinc-400">Connected Wallet</p>
+                    <p className="font-mono text-sm">{address?.slice(0, 6)}...{address?.slice(-4)}</p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-amber-700/30 text-amber-400 hover:bg-amber-950/20"
+                  onClick={() => setRefreshTrigger(prev => prev + 1)}
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Refresh
+                </Button>
               </div>
-            </div>
-          ) : (
-            <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
-                             <TabsList className="mb-8 bg-zinc-900">
-                 <TabsTrigger value="overview">Overview</TabsTrigger>
-                 <TabsTrigger value="land">Land</TabsTrigger>
-                 <TabsTrigger value="faberplots">Faberplots</TabsTrigger>
-                 <TabsTrigger value="rentals">Rentals</TabsTrigger>
-               </TabsList>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
 
-              <TabsContent value="overview" className="mt-0">
-                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-                  <Card className="border-amber-700/30 bg-zinc-900/50 backdrop-blur">
-                    <CardHeader>
-                      <div className="flex items-center gap-2">
-                        <Home className="h-5 w-5 text-amber-400" />
-                        <CardTitle className="text-white">Total Land</CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-3xl font-bold text-white">{nfts.filter(nft => nft.type === "land").length}</p>
-                      <p className="text-sm text-white">Virtual properties owned</p>
-                    </CardContent>
-                  </Card>
+      {/* Main Content */}
+      <section className="py-16">
+        <div className="container px-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 bg-zinc-900/50 border border-amber-700/30">
+              <TabsTrigger value="faberplots" className="data-[state=active]:bg-amber-500 data-[state=active]:text-black">
+                Faberplots ({faberplots.length})
+              </TabsTrigger>
+              <TabsTrigger value="nfts" className="data-[state=active]:bg-amber-500 data-[state=active]:text-black">
+                NFTs ({nfts.length})
+              </TabsTrigger>
+            </TabsList>
 
-                                     <Card className="border-amber-700/30 bg-zinc-900/50 backdrop-blur">
-                     <CardHeader>
-                       <div className="flex items-center gap-2">
-                         <DoorOpen className="h-5 w-5 text-amber-400" />
-                         <CardTitle className="text-white">Rented Faberplots</CardTitle>
-                       </div>
-                     </CardHeader>
-                     <CardContent>
-                       <p className="text-3xl font-bold text-white">{faberplots.length}</p>
-                       <p className="text-sm text-white">Active rentals</p>
-                     </CardContent>
-                   </Card>
-
-                  <Card className="border-amber-700/30 bg-zinc-900/50 backdrop-blur">
-                    <CardHeader>
-                      <div className="flex items-center gap-2">
-                        <Users className="h-5 w-5 text-amber-400" />
-                        <CardTitle className="text-white">Total Visitors</CardTitle>
-                      </div>
-                    </CardHeader>
-                                         <CardContent>
-                       <p className="text-3xl font-bold text-white">
-                         {(nfts.reduce((sum, nft) => sum + nft.visitors, 0) + 
-                           faberplots.reduce((sum, plot) => sum + plot.visitors, 0)).toLocaleString()}
-                       </p>
-                       <p className="text-sm text-white">Across all properties</p>
-                     </CardContent>
-                  </Card>
-
-                  <Card className="border-amber-700/30 bg-zinc-900/50 backdrop-blur">
-                    <CardHeader>
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-5 w-5 text-amber-400" />
-                        <CardTitle className="text-white">Active Rentals</CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-3xl font-bold text-white">{nfts.filter(nft => nft.rentalStatus === "rented").length}</p>
-                      <p className="text-sm text-white">Currently rented out</p>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <div className="mt-8">
-                  <h2 className="mb-4 text-2xl font-bold">Recent Activity</h2>
-                  <div className="rounded-xl border border-amber-700/30 bg-zinc-900/50 p-6 backdrop-blur">
-                    <p className="text-zinc-400">No recent activity to display</p>
+            {/* Faberplots Tab */}
+            <TabsContent value="faberplots" className="mt-8">
+              {faberplots.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-amber-500 flex items-center justify-center">
+                    <MapPin className="h-8 w-8 text-amber-400" />
                   </div>
+                  <h3 className="text-xl font-semibold mb-2">No Faberplots Yet</h3>
+                  <p className="text-zinc-400 mb-6">Start building your virtual real estate portfolio by renting your first Faberplot.</p>
+                  <Button asChild>
+                    <Link href="/marketplace">Browse Marketplace</Link>
+                  </Button>
                 </div>
-
-                {/* Database Reset Section */}
-                <div className="mt-8">
-                  <h2 className="mb-4 text-2xl font-bold">Developer Tools</h2>
-                  <div className="rounded-xl border border-red-700/30 bg-zinc-900/50 p-6 backdrop-blur">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold text-red-400 mb-2">Reset Database</h3>
-                        <p className="text-zinc-400 text-sm">Clear all plot data for testing purposes</p>
-                        <p className="text-xs text-zinc-500 mt-1">
-                          Environment: {typeof window !== 'undefined' ? window.location.hostname : 'Unknown'}
-                        </p>
-                      </div>
-                      <Button 
-                        variant="outline" 
-                        className="border-red-500 text-red-400 hover:bg-red-950/20"
-                        onClick={async () => {
-                          console.log('Reset button clicked')
-                          console.log('Current environment:', window.location.hostname)
-                          
-                          if (confirm('Are you sure you want to reset all plot data? This action cannot be undone.')) {
-                            console.log('User confirmed reset')
-                            try {
-                              console.log('Making API call to reset database...')
-                              const response = await fetch('/api/reset-database', {
-                                method: 'POST',
-                                headers: {
-                                  'Content-Type': 'application/json',
-                                },
-                              })
-                              
-                              console.log('Response status:', response.status)
-                              console.log('Response ok:', response.ok)
-                              
-                              if (response.ok) {
-                                const result = await response.json()
-                                console.log('Reset result:', result)
-                                alert('✅ Database reset successfully! All plots are now available.')
-                                window.location.reload()
-                              } else {
-                                const errorText = await response.text()
-                                console.error('Reset failed:', errorText)
-                                alert('❌ Failed to reset database: ' + errorText)
-                              }
-                            } catch (error) {
-                              console.error('Reset error:', error)
-                              alert('❌ Error resetting database: ' + error)
-                            }
-                          }
-                        }}
-                      >
-                        Reset All Data
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="land" className="mt-0">
+              ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {nfts.filter(nft => nft.type === "land").map((nft) => (
-                    <Card key={nft.id} className="border-amber-700/30 bg-zinc-900/50 backdrop-blur">
-                      <div className="relative aspect-square">
+                  {faberplots.map((plot) => {
+                    const timeRemaining = getTimeRemaining(plot.rentalEndDate)
+                    const isExpiringSoon = !timeRemaining.expired && timeRemaining.days <= 7
+
+                    return (
+                      <Card key={plot.id} className="border-amber-700/30 bg-zinc-900/50 overflow-hidden">
+                        <div className="relative aspect-video">
+                          <Image src={plot.image} alt={plot.name} fill className="object-cover" />
+                          <div className="absolute top-2 right-2">
+                            {timeRemaining.expired ? (
+                              <Badge className="bg-red-500/80 text-white">
+                                Expired
+                              </Badge>
+                            ) : isExpiringSoon ? (
+                              <Badge className="bg-orange-500/80 text-white">
+                                Expiring Soon
+                              </Badge>
+                            ) : (
+                              <Badge className="bg-green-500/80 text-white">
+                                Active
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        <CardHeader>
+                          <CardTitle className="text-white">{plot.name}</CardTitle>
+                          <CardDescription className="text-zinc-400">{plot.location}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          {/* Stats */}
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div className="flex items-center gap-2">
+                              <Users className="h-4 w-4 text-amber-400" />
+                              <span>{plot.visitors.toLocaleString()}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <DollarSign className="h-4 w-4 text-amber-400" />
+                              <span>${plot.monthlyRent}/mo</span>
+                            </div>
+                          </div>
+
+                          {/* Time Remaining */}
+                          {!timeRemaining.expired ? (
+                            <div className="bg-zinc-800/50 rounded-lg p-3">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Clock className="h-4 w-4 text-amber-400" />
+                                <span className="text-sm font-medium">Time Remaining</span>
+                              </div>
+                              <div className="text-sm text-zinc-300">
+                                {timeRemaining.days > 0 && `${timeRemaining.days}d `}
+                                {timeRemaining.hours > 0 && `${timeRemaining.hours}h `}
+                                {timeRemaining.minutes}m
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="bg-red-900/20 border border-red-700/30 rounded-lg p-3">
+                              <div className="flex items-center gap-2">
+                                <AlertCircle className="h-4 w-4 text-red-400" />
+                                <span className="text-sm text-red-400">Rental expired</span>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Actions */}
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              className="flex-1 bg-amber-500 hover:bg-amber-600 text-black"
+                              onClick={() => handleRenewPlot(plot)}
+                              disabled={isRenewing === plot.id}
+                            >
+                              {isRenewing === plot.id ? (
+                                <>
+                                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
+                                  Renewing...
+                                </>
+                              ) : (
+                                <>
+                                  <CreditCard className="mr-2 h-4 w-4" />
+                                  Renew
+                                </>
+                              )}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-amber-700/30 text-amber-400 hover:bg-amber-950/20"
+                              asChild
+                            >
+                              <Link href={`/manage-plot/${plot.id}`}>Manage</Link>
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )
+                  })}
+                </div>
+              )}
+            </TabsContent>
+
+            {/* NFTs Tab */}
+            <TabsContent value="nfts" className="mt-8">
+              {nfts.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-amber-500 flex items-center justify-center">
+                    <ExternalLink className="h-8 w-8 text-amber-400" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">No NFTs Yet</h3>
+                  <p className="text-zinc-400 mb-6">Your NFT collection will appear here once you acquire some.</p>
+                  <Button asChild>
+                    <Link href="/marketplace">Browse Marketplace</Link>
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {nfts.map((nft) => (
+                    <Card key={nft.id} className="border-amber-700/30 bg-zinc-900/50 overflow-hidden">
+                      <div className="relative aspect-video">
                         <Image src={nft.image} alt={nft.name} fill className="object-cover" />
                       </div>
                       <CardHeader>
                         <CardTitle className="text-white">{nft.name}</CardTitle>
-                        <CardDescription className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" /> {nft.location}
-                        </CardDescription>
+                        <CardDescription className="text-zinc-400">{nft.location}</CardDescription>
                       </CardHeader>
-                      <CardContent>
-                        <div className="mb-4">
-                          <p className="text-zinc-300">{nft.description}</p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 text-sm">
-                          <div className="rounded-md bg-zinc-800/50 p-2">
-                            <span className="text-white">Size</span>
-                            <p className="font-medium text-white">{nft.size}</p>
+                      <CardContent className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-amber-400" />
+                            <span>{nft.visitors.toLocaleString()}</span>
                           </div>
-                          <div className="rounded-md bg-zinc-800/50 p-2">
-                            <span className="text-white">Visitors</span>
-                            <p className="font-medium text-white">{nft.visitors.toLocaleString()}</p>
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-amber-400" />
+                            <span>{nft.size}</span>
                           </div>
                         </div>
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {nft.features.map((feature, index) => (
-                            <Badge key={`${nft.id}-feature-${index}`} variant="outline" className="border-amber-700/30 text-amber-400">
-                              {feature}
-                            </Badge>
-                          ))}
-                        </div>
-                        <div className="mt-4 flex items-center justify-between">
-                          <Button variant="outline" className="border-amber-500 text-amber-400 hover:bg-amber-950/20">
-                            <Settings className="mr-2 h-4 w-4" /> Manage
-                          </Button>
-                          {nft.opensea && (
-                            <a
-                              href={nft.opensea}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-2 text-sm text-purple-300 hover:text-purple-200"
-                            >
-                              <span>View on OpenSea</span>
-                              <ExternalLink className="h-4 w-4" />
-                            </a>
-                          )}
-                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="w-full border-amber-700/30 text-amber-400 hover:bg-amber-950/20"
+                          asChild
+                        >
+                          <Link href={nft.opensea} target="_blank">
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            View on OpenSea
+                          </Link>
+                        </Button>
                       </CardContent>
                     </Card>
                   ))}
                 </div>
-              </TabsContent>
-
-                             <TabsContent value="faberplots" className="mt-0">
-                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                   {faberplots.length === 0 ? (
-                     <div className="col-span-full text-center py-12">
-                       <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-amber-500/30 flex items-center justify-center">
-                         <DoorOpen className="h-8 w-8 text-amber-400" />
-                       </div>
-                       <h3 className="text-xl font-semibold mb-2">No Faberplots Rented</h3>
-                       <p className="text-zinc-400 mb-4">You haven't rented any Faberplots yet.</p>
-                       <Button asChild className="bg-amber-500 hover:bg-amber-600 text-black">
-                         <Link href="/marketplace">Browse Faberplots</Link>
-                       </Button>
-                     </div>
-                                       ) : (
-                      faberplots.map((plot) => {
-                        const endDate = new Date(plot.rentalEndDate)
-                        const now = currentTime // Use currentTime for real-time updates
-                        const timeLeft = endDate.getTime() - now.getTime()
-                        const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24))
-                        const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60))
-                        const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
-                        const secondsLeft = Math.floor((timeLeft % (1000 * 60)) / 1000)
-                        const isExpired = timeLeft <= 0
-                        const isExpiringSoon = timeLeft > 0 && timeLeft <= 24 * 60 * 60 * 1000 // Less than 24 hours
-                        
-                        return (
-                         <Card key={plot.id} className="border-amber-700/30 bg-zinc-900/50 backdrop-blur">
-                           <div className="relative aspect-square">
-                             <Image src={plot.image} alt={plot.name} fill className="object-cover" />
-                             {isExpired ? (
-                               <div className="absolute top-4 right-4">
-                                 <Badge className="bg-red-500/80 text-white">Expired</Badge>
-                               </div>
-                             ) : (
-                               <div className="absolute top-4 right-4">
-                                 <Badge className="bg-emerald-500/80 text-white">Active</Badge>
-                               </div>
-                             )}
-                           </div>
-                           <CardHeader>
-                             <CardTitle className="text-white">{plot.name}</CardTitle>
-                             <CardDescription className="flex items-center gap-1">
-                               <MapPin className="h-3 w-3" /> {plot.location}
-                             </CardDescription>
-                           </CardHeader>
-                           <CardContent>
-                             <div className="mb-4">
-                               <p className="text-zinc-300">{plot.description}</p>
-                             </div>
-                             
-                             {/* Rental Timer */}
-                             <div className="mb-4 p-3 rounded-lg bg-zinc-800/50 border border-amber-700/30">
-                               <div className="flex items-center justify-between mb-2">
-                                 <span className="text-sm text-zinc-400">Rental Period</span>
-                                 <span className="text-sm font-medium text-amber-400 capitalize">{plot.selectedTerm}</span>
-                               </div>
-                                                               {isExpired ? (
-                                  <div className="text-red-400 text-sm">Rental expired on {endDate.toLocaleDateString()}</div>
-                                ) : isExpiringSoon ? (
-                                  <div className="text-orange-400 text-sm font-mono">
-                                    {hoursLeft > 0 && `${hoursLeft}h `}
-                                    {minutesLeft > 0 && `${minutesLeft}m `}
-                                    {secondsLeft}s remaining
-                                  </div>
-                                ) : (
-                                  <div className="text-green-400 text-sm">
-                                    {daysLeft} days remaining (expires {endDate.toLocaleDateString()})
-                                  </div>
-                                )}
-                             </div>
-                             
-                             <div className="grid grid-cols-2 gap-2 text-sm mb-4">
-                               <div className="rounded-md bg-zinc-800/50 p-2">
-                                 <span className="text-zinc-400">Size</span>
-                                 <p className="font-medium text-white">{plot.size}</p>
-                               </div>
-                               <div className="rounded-md bg-zinc-800/50 p-2">
-                                 <span className="text-zinc-400">Monthly Rent</span>
-                                 <p className="font-medium text-white">${plot.monthlyRent}</p>
-                               </div>
-                               <div className="rounded-md bg-zinc-800/50 p-2">
-                                 <span className="text-zinc-400">Visitors</span>
-                                 <p className="font-medium text-white">{plot.visitors.toLocaleString()}</p>
-                               </div>
-                               <div className="rounded-md bg-zinc-800/50 p-2">
-                                 <span className="text-zinc-400">Total Paid</span>
-                                 <p className="font-medium text-white">${plot.totalPrice}</p>
-                               </div>
-                             </div>
-                             
-                             <div className="mb-4">
-                               <h4 className="text-sm font-medium text-zinc-300 mb-2">Features</h4>
-                               <div className="flex flex-wrap gap-2">
-                                 {plot.features.slice(0, 3).map((feature, index) => (
-                                   <Badge key={`${plot.id}-feature-${index}`} variant="outline" className="border-amber-700/30 text-amber-400 text-xs">
-                                     {feature}
-                                   </Badge>
-                                 ))}
-                                 {plot.features.length > 3 && (
-                                   <Badge key={`${plot.id}-more-features`} variant="outline" className="border-amber-700/30 text-amber-400 text-xs">
-                                     +{plot.features.length - 3} more
-                                   </Badge>
-                                 )}
-                               </div>
-                             </div>
-                             
-                             <div className="flex items-center justify-between">
-                               <Button 
-                                 variant="outline" 
-                                 className="border-amber-500 text-amber-400 hover:bg-amber-950/20"
-                                 onClick={() => router.push(`/manage-plot/${plot.id}`)}
-                               >
-                                 <Settings className="mr-2 h-4 w-4" /> Manage
-                               </Button>
-                                                               {!isExpired && (
-                                  <Button 
-                                    variant="outline" 
-                                    className="border-green-500 text-green-400 hover:bg-green-950/20"
-                                    onClick={() => handleRenewPlot(plot)}
-                                    disabled={isRenewing === plot.id}
-                                  >
-                                    {isRenewing === plot.id ? (
-                                      <>
-                                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-green-400 border-t-transparent"></div>
-                                        Processing...
-                                      </>
-                                    ) : (
-                                      'Renew'
-                                    )}
-                                  </Button>
-                                )}
-                             </div>
-                           </CardContent>
-                         </Card>
-                       )
-                     })
-                   )}
-                 </div>
-               </TabsContent>
-
-              <TabsContent value="rentals" className="mt-0">
-                <div className="grid gap-6 md:grid-cols-1">
-                  <div className="rounded-xl border border-amber-700/30 bg-zinc-900/50 p-6 backdrop-blur">
-                    <h3 className="mb-4 text-2xl font-semibold">Rental Properties</h3>
-                    <div>
-                      <h3 className="mb-2 text-lg font-semibold">Available for Rent</h3>
-                      <div className="space-y-4">
-                        {nfts.filter(nft => nft.rentalStatus === "available").map((nft) => (
-                          <div key={nft.id} className="rounded-lg bg-zinc-800/50 p-4">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="font-medium text-white">{nft.name}</p>
-                                <p className="text-sm text-white">{nft.type === "land" ? "Land" : "Portal"}</p>
-                              </div>
-                              <Button variant="outline" size="sm" className="border-amber-500 text-amber-400 hover:bg-amber-950/20">
-                                List for Rent
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="mt-8">
-                      <h3 className="mb-2 text-lg font-semibold">Currently Rented Out</h3>
-                      <div className="space-y-4">
-                        {nfts.filter(nft => nft.rentalStatus === "rented").map((nft) => (
-                          <div key={nft.id} className="rounded-lg bg-zinc-800/50 p-4">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="font-medium text-white">{nft.name}</p>
-                                <p className="text-sm text-white">{nft.type === "land" ? "Land" : "Portal"}</p>
-                              </div>
-                              <Button variant="outline" size="sm" className="border-red-500 text-red-400 hover:bg-red-950/20">
-                                End Rental
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-          )}
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
       </section>
 
-             {/* Rental Modal removed - using Stripe directly */}
+      {/* Developer Tools Section */}
+      <section className="py-16 bg-zinc-950">
+        <div className="container px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold mb-8 text-center">Developer Tools</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card className="border-amber-700/30 bg-zinc-900/50">
+                <CardHeader>
+                  <CardTitle className="text-white">Database Management</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    onClick={handleResetDatabase}
+                    variant="outline"
+                    className="w-full border-red-700/30 text-red-400 hover:bg-red-950/20"
+                  >
+                    Reset All Data
+                  </Button>
+                </CardContent>
+              </Card>
+              <Card className="border-amber-700/30 bg-zinc-900/50">
+                <CardHeader>
+                  <CardTitle className="text-white">System Status</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-zinc-400">Wallet Connected:</span>
+                      <span className={isConnected ? "text-green-400" : "text-red-400"}>
+                        {isConnected ? "Yes" : "No"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-zinc-400">Faberplots Owned:</span>
+                      <span className="text-white">{faberplots.length}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-zinc-400">NFTs Owned:</span>
+                      <span className="text-white">{nfts.length}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
 
-             {/* Success Message Modal */}
-       {showSuccessMessage && successDetails && (
-         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur">
-           <div className="mx-4 w-full max-w-md rounded-xl border border-green-700/30 bg-zinc-900 p-6 backdrop-blur">
-             <div className="mb-6 text-center">
-               <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-green-500 flex items-center justify-center">
-                 <svg className="h-8 w-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                 </svg>
-               </div>
-               <h2 className="mb-2 text-2xl font-bold text-white">Payment Successful!</h2>
-               <p className="text-zinc-300">{successDetails.message}</p>
-             </div>
+      {/* Success Message Modal */}
+      {showSuccessMessage && successDetails && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur">
+          <div className="mx-4 w-full max-w-md rounded-xl border border-amber-700/30 bg-zinc-900 p-6 backdrop-blur">
+            <div className="mb-6 text-center">
+              <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-amber-500 flex items-center justify-center">
+                <CheckCircle className="h-8 w-8 text-amber-400" />
+              </div>
+              <h2 className="mb-2 text-2xl font-bold text-white">Success!</h2>
+              <p className="text-zinc-300">{successDetails.message}</p>
+            </div>
 
-             <div className="mb-6 space-y-4">
-               <div className="rounded-lg border border-green-700/30 bg-green-900/20 p-4">
-                 <div className="flex items-center gap-2 mb-2">
-                   <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                   <span className="text-sm font-medium text-green-400">Payment Confirmed</span>
-                 </div>
-                 <p className="text-xs text-zinc-300">
-                   Session ID: {successDetails.sessionId}
-                 </p>
-                 {successDetails.plotId && (
-                   <p className="text-xs text-zinc-300">
-                     Faberplot #{successDetails.plotId}
-                   </p>
-                 )}
-               </div>
-             </div>
+            <div className="flex gap-3">
+              <Button
+                className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-bold"
+                onClick={() => setShowSuccessMessage(false)}
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
-             <div className="flex gap-3">
-                               <Button
-                  className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold"
-                                     onClick={() => {
-                     setShowSuccessMessage(false)
-                     setSuccessDetails(null)
-                     // No need to trigger refresh since we already updated the state
-                   }}
-                >
-                  Continue to Dashboard
-                </Button>
-             </div>
-           </div>
-         </div>
-       )}
-
-       <MetaverseFooter />
-     </div>
-   )
- } 
+      <MetaverseFooter />
+    </div>
+  )
+} 
