@@ -189,44 +189,44 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!isConnected) return // Don't process if not connected
     
-    // Only check for expired plots if we have plots
-    const userFaberplots = JSON.parse(localStorage.getItem('userFaberplots') || '[]')
-    if (userFaberplots.length === 0) return
-
-    const now = currentTime
-    let hasExpiredPlots = false
-    let updatedFaberplots = [...userFaberplots]
-
-    // Check if any plots are expired or expiring soon (within the next minute)
-    const hasExpiringPlots = userFaberplots.some((plot: any) => {
-      const endDate = new Date(plot.rentalEndDate)
-      const timeLeft = endDate.getTime() - now.getTime()
-      return timeLeft <= 60 * 1000 // Within 1 minute
-    })
-
-    // Only process if there are plots that could expire soon
-    if (hasExpiringPlots) {
-      userFaberplots.forEach((plot: any) => {
-        const endDate = new Date(plot.rentalEndDate)
-        const timeLeft = endDate.getTime() - now.getTime()
-        const isExpired = timeLeft <= 0
-
-        if (isExpired) {
-          // Remove from database to make it available again
-          PlotDatabase.removeExpiredPlots()
-
-          // Mark for removal from userFaberplots
-          hasExpiredPlots = true
-          updatedFaberplots = updatedFaberplots.filter((p: any) => p.id !== plot.id)
-        }
-      })
-
-      // Update state only if there were expired plots
-      if (hasExpiredPlots) {
-        localStorage.setItem('userFaberplots', JSON.stringify(updatedFaberplots))
-        setFaberplots(updatedFaberplots)
+    // Check for expired plots using server database
+    const checkExpiredPlots = async () => {
+      try {
+        // Remove expired plots from server database
+        PlotDatabase.removeExpiredPlots()
+        
+        // Refresh user plots from server
+        const userPlots = await PlotDatabase.getUserPlots(address || '')
+        setFaberplots(userPlots.map(plot => ({
+          id: plot.id,
+          name: `Faberplot #${plot.id}`,
+          description: `Faberplot #${plot.id} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
+          monthlyRent: 40 + Math.floor(Math.random() * 41), // Random price between $40-$80
+          image: (plot.id % 8 === 0) ? "/images/faberge-eggs/crystal-amber.jpeg" :
+                 (plot.id % 8 === 1) ? "/images/faberge-eggs/amber-glow.png" :
+                 (plot.id % 8 === 2) ? "/images/faberge-eggs/ruby-red.png" :
+                 (plot.id % 8 === 3) ? "/images/faberge-eggs/emerald-green.png" :
+                 (plot.id % 8 === 4) ? "/images/faberge-eggs/bronze-glow.png" :
+                 (plot.id % 8 === 5) ? "/images/faberge-eggs/rose-quartz.jpeg" :
+                 (plot.id % 8 === 6) ? "/images/faberge-eggs/sapphire-blue.png" :
+                 "/images/faberge-eggs/fire-opal.png",
+          location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][plot.id % 5],
+          size: plot.id < 15 ? "Small (2,500 sq ft)" : plot.id < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
+          visitors: 1500 + (plot.id * 100),
+          features: plot.id < 15 ? ["Retail Ready", "Affordable", "High Foot Traffic", "Quick Setup", "24/7 Access"] :
+                    plot.id < 30 ? ["Corporate Ready", "Meeting Spaces", "Business Hub", "Professional Environment", "Networking Opportunities"] :
+                    ["Event Space", "Premium Location", "Creative Hub", "Exclusive Access", "Custom Branding"],
+          rentalStartDate: plot.soldAt || new Date().toISOString(),
+          rentalEndDate: plot.rentalEndDate || '',
+          selectedTerm: "monthly" as const,
+          totalPrice: 0
+        })))
+      } catch (error) {
+        console.error('Error checking expired plots:', error)
       }
     }
+    
+    checkExpiredPlots()
   }, [currentTime, isConnected]) // Only run when currentTime changes or connection status changes
 
   // No pending rental logic needed - using Stripe directly
@@ -249,66 +249,15 @@ export default function DashboardPage() {
       if (plotIdNum) {
         if (isRenewal) {
           // Handle renewal - extend the existing plot's rental period
-          const userFaberplots = JSON.parse(localStorage.getItem('userFaberplots') || '[]')
-          const existingPlotIndex = userFaberplots.findIndex((plot: any) => plot.id === plotIdNum)
-          
-                     if (existingPlotIndex !== -1) {
-             const existingPlot = userFaberplots[existingPlotIndex]
-             const currentEndDate = new Date(existingPlot.rentalEndDate)
-             const newEndDate = new Date(currentEndDate.getTime() + 30 * 24 * 60 * 60 * 1000) // Add 30 days
-             
-             // Update the existing plot's end date
-             userFaberplots[existingPlotIndex] = {
-               ...existingPlot,
-               rentalEndDate: newEndDate.toISOString()
-             }
-             
-             localStorage.setItem('userFaberplots', JSON.stringify(userFaberplots))
-             setFaberplots(userFaberplots)
-             // Don't call setRefreshTrigger here to avoid infinite loop
-           }
+          // This will be handled by the Stripe webhook
+          console.log('Renewal successful for plot:', plotIdNum)
         } else {
           // Handle new rental - mark plot as sold in database
           if (!PlotDatabase.isPlotSoldSync(plotIdNum)) {
             // This will be handled by the Stripe webhook, but for now we'll mark it here
             // In production, this should be handled server-side after successful payment
-            PlotDatabase.markPlotAsSold(plotIdNum, 'temp-wallet', 'temp-email', 'monthly')
+            PlotDatabase.markPlotAsSold(plotIdNum, address || 'temp-wallet', 'temp-email', 'monthly')
           }
-          
-          // Add the plot to user's Faberplots
-          const newPlot = {
-            id: plotIdNum,
-            name: `Faberplot #${plotIdNum}`,
-            description: `A premium virtual plot in the heart of Faberland, perfect for building your digital empire.`,
-            image: plotIdNum % 8 === 0 ? "/images/faberge-eggs/crystal-amber.jpeg" :
-                   plotIdNum % 8 === 1 ? "/images/faberge-eggs/amber-glow.png" :
-                   plotIdNum % 8 === 2 ? "/images/faberge-eggs/ruby-red.png" :
-                   plotIdNum % 8 === 3 ? "/images/faberge-eggs/emerald-green.png" :
-                   plotIdNum % 8 === 4 ? "/images/faberge-eggs/bronze-glow.png" :
-                   plotIdNum % 8 === 5 ? "/images/faberge-eggs/rose-quartz.jpeg" :
-                   plotIdNum % 8 === 6 ? "/images/faberge-eggs/sapphire-blue.png" :
-                   "/images/faberge-eggs/fire-opal.png",
-            location: "Faberland District",
-            size: "Medium (5,000 sq ft)",
-            visitors: Math.floor(Math.random() * 1000) + 500,
-            features: ["Premium Location", "High Traffic", "Development Ready"],
-            monthlyRent: Math.floor(Math.random() * 40) + 40, // $40-$80
-            rentalStartDate: new Date().toISOString(),
-            rentalEndDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
-            selectedTerm: "monthly" as const,
-            totalPrice: Math.floor(Math.random() * 40) + 40
-          }
-          
-          // Add to user's Faberplots
-          const userFaberplots = JSON.parse(localStorage.getItem('userFaberplots') || '[]')
-          const existingPlotIndex = userFaberplots.findIndex((plot: any) => plot.id === plotIdNum)
-          
-                     if (existingPlotIndex === -1) {
-             userFaberplots.push(newPlot)
-             localStorage.setItem('userFaberplots', JSON.stringify(userFaberplots))
-             setFaberplots(userFaberplots) // Update the state immediately
-             // Don't call setRefreshTrigger here to avoid infinite loop
-           }
         }
       }
       
@@ -320,10 +269,14 @@ export default function DashboardPage() {
           : 'Payment successful! Your Faberplot rental has been activated.'
       })
       setShowSuccessMessage(true)
+      
+      // Force refresh of dashboard data
+      setRefreshTrigger(prev => prev + 1)
+      
       // Clean up URL
       router.replace('/dashboard')
     }
-     }, [router]) // Only depend on router
+  }, [router, isConnected, address]) // Depend on router, connection status, and wallet address
 
   // Handle plot renewal
   const handleRenewPlot = async (plot: Faberplot) => {
