@@ -93,8 +93,23 @@ export default function DashboardPage() {
       // Load Faberplots from localStorage
       const storedFaberplots = localStorage.getItem('userFaberplots')
       if (storedFaberplots) {
-        setFaberplots(JSON.parse(storedFaberplots))
+        const parsedPlots = JSON.parse(storedFaberplots)
+        console.log('Loaded Faberplots from localStorage:', parsedPlots)
+        setFaberplots(parsedPlots)
+      } else {
+        console.log('No Faberplots found in localStorage')
+        setFaberplots([])
       }
+      
+      // Also check database status
+      fetch('/api/database-status')
+        .then(response => response.json())
+        .then(data => {
+          console.log('Database status:', data)
+        })
+        .catch(error => {
+          console.error('Error fetching database status:', error)
+        })
       
       setIsLoading(false)
     }, 1000)
@@ -434,12 +449,21 @@ export default function DashboardPage() {
                       <div>
                         <h3 className="text-lg font-semibold text-red-400 mb-2">Reset Database</h3>
                         <p className="text-zinc-400 text-sm">Clear all plot data for testing purposes</p>
+                        <p className="text-xs text-zinc-500 mt-1">
+                          Environment: {typeof window !== 'undefined' ? window.location.hostname : 'Unknown'}
+                        </p>
                       </div>
                       <Button 
                         variant="outline" 
                         className="border-red-500 text-red-400 hover:bg-red-950/20"
                         onClick={async () => {
                           console.log('Reset button clicked')
+                          console.log('Current environment:', window.location.hostname)
+                          console.log('Current localStorage data:', {
+                            soldFaberplots: localStorage.getItem('soldFaberplots'),
+                            userFaberplots: localStorage.getItem('userFaberplots')
+                          })
+                          
                           if (confirm('Are you sure you want to reset all plot data? This action cannot be undone.')) {
                             console.log('User confirmed reset')
                             try {

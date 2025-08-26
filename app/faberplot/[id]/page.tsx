@@ -203,6 +203,13 @@ export default function FaberplotPage() {
       return
     }
     
+    // Double-check wallet connection before proceeding
+    if (!address) {
+      alert('Wallet connection lost. Please reconnect your wallet and try again.')
+      setShowWalletModal(true)
+      return
+    }
+    
     if (isSold) {
       alert('This Faberplot has already been sold.')
       return
@@ -221,17 +228,26 @@ export default function FaberplotPage() {
     setIsProcessing(true)
     
     try {
+      console.log('Starting checkout with wallet address:', address)
+      
       await redirectToCheckout({
         plotId: plot.id,
         plotName: plot.name,
         selectedTerm,
         monthlyRent: plot.monthlyRent,
         userEmail,
-        userAddress: address || '', // Pass wallet address
+        userAddress: address, // Pass wallet address
       })
     } catch (error) {
       console.error('Checkout error:', error)
-      alert('Failed to start checkout. Please try again.')
+      
+      // Check if wallet is still connected
+      if (!isConnected || !address) {
+        alert('Wallet connection was lost during checkout. Please reconnect your wallet and try again.')
+        setShowWalletModal(true)
+      } else {
+        alert('Failed to start checkout. Please try again.')
+      }
     } finally {
       setIsProcessing(false)
     }
