@@ -233,16 +233,27 @@ export default function DashboardPage() {
 
   // Handle URL parameters for rental flow
   useEffect(() => {
+    console.log('Dashboard: Success redirect useEffect triggered')
+    console.log('Dashboard: isConnected:', isConnected)
+    console.log('Dashboard: address:', address)
+    
     const handleSuccessRedirect = async () => {
-      if (!isConnected) return // Don't process if not connected
+      if (!isConnected) {
+        console.log('Dashboard: Not connected, skipping success redirect')
+        return // Don't process if not connected
+      }
     
-    const urlParams = new URLSearchParams(window.location.search)
-    const success = urlParams.get('success')
-    const sessionId = urlParams.get('session_id')
-    const plotId = urlParams.get('plot_id')
-    const isRenewal = urlParams.get('renewal') === 'true'
-    
-    if (success === 'true' && sessionId) {
+          const urlParams = new URLSearchParams(window.location.search)
+      const success = urlParams.get('success')
+      const sessionId = urlParams.get('session_id')
+      const plotId = urlParams.get('plot_id')
+      const isRenewal = urlParams.get('renewal') === 'true'
+      
+      console.log('Dashboard: URL params:', { success, sessionId, plotId, isRenewal })
+      console.log('Dashboard: Current URL:', window.location.href)
+      console.log('Dashboard: Search string:', window.location.search)
+      
+      if (success === 'true' && sessionId) {
       // Stripe payment was successful
       const plotIdNum = plotId ? parseInt(plotId) : null
       
