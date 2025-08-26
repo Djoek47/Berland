@@ -233,7 +233,8 @@ export default function DashboardPage() {
 
   // Handle URL parameters for rental flow
   useEffect(() => {
-    if (!isConnected) return // Don't process if not connected
+    const handleSuccessRedirect = async () => {
+      if (!isConnected) return // Don't process if not connected
     
     const urlParams = new URLSearchParams(window.location.search)
     const success = urlParams.get('success')
@@ -253,10 +254,43 @@ export default function DashboardPage() {
           console.log('Renewal successful for plot:', plotIdNum)
         } else {
           // Handle new rental - mark plot as sold in database
+          console.log('Dashboard: Processing new rental for plot:', plotIdNum)
+          console.log('Dashboard: Current wallet address:', address)
+          
           if (!PlotDatabase.isPlotSoldSync(plotIdNum)) {
+            console.log('Dashboard: Plot not marked as sold, marking it now...')
             // This will be handled by the Stripe webhook, but for now we'll mark it here
             // In production, this should be handled server-side after successful payment
             PlotDatabase.markPlotAsSold(plotIdNum, address || 'temp-wallet', 'temp-email', 'monthly')
+            
+            // Verify it was marked
+            const isSold = PlotDatabase.isPlotSoldSync(plotIdNum)
+            console.log('Dashboard: Plot marked as sold:', isSold)
+            
+            // Get current database state
+            const soldPlots = PlotDatabase.getSoldPlotsSync()
+            console.log('Dashboard: Total sold plots:', soldPlots.length)
+            console.log('Dashboard: Sold plots:', soldPlots.map(p => ({ id: p.id, soldTo: p.soldTo })))
+            
+            // Persist database to file
+            try {
+              const persistResponse = await fetch('/api/persist-database', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              })
+              
+              if (persistResponse.ok) {
+                console.log('Dashboard: Database persisted successfully')
+              } else {
+                console.error('Dashboard: Failed to persist database')
+              }
+            } catch (error) {
+              console.error('Dashboard: Error persisting database:', error)
+            }
+          } else {
+            console.log('Dashboard: Plot already marked as sold')
           }
         }
       }
@@ -276,6 +310,9 @@ export default function DashboardPage() {
       // Clean up URL
       router.replace('/dashboard')
     }
+    }
+    
+    handleSuccessRedirect()
   }, [router, isConnected, address]) // Depend on router, connection status, and wallet address
 
   // Handle plot renewal
