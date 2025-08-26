@@ -13,7 +13,7 @@ export interface PlotStatus {
 // In-memory storage (replace with real database)
 let soldPlots: PlotStatus[] = []
 
-// Load data from localStorage on initialization
+// Load data from localStorage on initialization (client-side only)
 if (typeof window !== 'undefined') {
   try {
     const stored = localStorage.getItem('soldFaberplots')
@@ -34,16 +34,28 @@ if (typeof window !== 'undefined') {
 export class PlotDatabase {
   // Get all sold plots
   static getSoldPlots(): PlotStatus[] {
+    // For server-side, return empty array since we can't access localStorage
+    if (typeof window === 'undefined') {
+      return []
+    }
     return soldPlots
   }
 
   // Check if a plot is sold
   static isPlotSold(plotId: number): boolean {
+    // For server-side, always return false since we can't access localStorage
+    if (typeof window === 'undefined') {
+      return false
+    }
     return soldPlots.some(plot => plot.id === plotId && plot.isSold)
   }
 
   // Get plot status
   static getPlotStatus(plotId: number): PlotStatus | null {
+    // For server-side, return null since we can't access localStorage
+    if (typeof window === 'undefined') {
+      return null
+    }
     return soldPlots.find(plot => plot.id === plotId) || null
   }
 

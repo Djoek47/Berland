@@ -425,6 +425,57 @@ export default function DashboardPage() {
                     <p className="text-zinc-400">No recent activity to display</p>
                   </div>
                 </div>
+
+                {/* Database Reset Section */}
+                <div className="mt-8">
+                  <h2 className="mb-4 text-2xl font-bold">Developer Tools</h2>
+                  <div className="rounded-xl border border-red-700/30 bg-zinc-900/50 p-6 backdrop-blur">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold text-red-400 mb-2">Reset Database</h3>
+                        <p className="text-zinc-400 text-sm">Clear all plot data for testing purposes</p>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        className="border-red-500 text-red-400 hover:bg-red-950/20"
+                        onClick={async () => {
+                          console.log('Reset button clicked')
+                          if (confirm('Are you sure you want to reset all plot data? This action cannot be undone.')) {
+                            console.log('User confirmed reset')
+                            try {
+                              console.log('Making API call to reset database...')
+                              const response = await fetch('/api/reset-database', {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                              })
+                              
+                              console.log('Response status:', response.status)
+                              console.log('Response ok:', response.ok)
+                              
+                              if (response.ok) {
+                                const result = await response.json()
+                                console.log('Reset result:', result)
+                                alert('✅ Database reset successfully! All plots are now available.')
+                                window.location.reload()
+                              } else {
+                                const errorText = await response.text()
+                                console.error('Reset failed:', errorText)
+                                alert('❌ Failed to reset database: ' + errorText)
+                              }
+                            } catch (error) {
+                              console.error('Reset error:', error)
+                              alert('❌ Error resetting database: ' + error)
+                            }
+                          }
+                        }}
+                      >
+                        Reset All Data
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               </TabsContent>
 
               <TabsContent value="land" className="mt-0">
