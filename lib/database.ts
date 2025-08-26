@@ -12,6 +12,30 @@ export interface PlotStatus {
 
 // Server-side storage (global variable - will be reset on server restart)
 let soldPlots: PlotStatus[] = []
+let isInitialized = false
+
+// Initialize database from file
+function initializeDatabase() {
+  if (isInitialized) return
+  
+  try {
+    const fs = require('fs')
+    const path = require('path')
+    const dataPath = path.join(process.cwd(), 'data', 'plots.json')
+    
+    if (fs.existsSync(dataPath)) {
+      const data = fs.readFileSync(dataPath, 'utf8')
+      soldPlots = JSON.parse(data)
+      console.log(`Database: Initialized with ${soldPlots.length} plots from file`)
+    } else {
+      console.log('Database: No existing data file found, starting with empty database')
+    }
+  } catch (error) {
+    console.error('Database: Error initializing from file:', error)
+  }
+  
+  isInitialized = true
+}
 
 export class PlotDatabase {
   // Get all sold plots - always fetch from server
@@ -52,6 +76,7 @@ export class PlotDatabase {
 
   // Mark plot as sold - server-side only
   static markPlotAsSold(plotId: number, walletAddress: string, userEmail: string, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): void {
+    initializeDatabase()
     const existingIndex = soldPlots.findIndex(plot => plot.id === plotId)
     
     const rentalEndDate = new Date()
@@ -88,6 +113,7 @@ export class PlotDatabase {
 
   // Extend plot rental - server-side only
   static extendPlotRental(plotId: number, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): void {
+    initializeDatabase()
     const plotIndex = soldPlots.findIndex(plot => plot.id === plotId)
     if (plotIndex >= 0) {
       const plot = soldPlots[plotIndex]
@@ -115,6 +141,7 @@ export class PlotDatabase {
 
   // Remove expired plots - server-side only
   static removeExpiredPlots(): number[] {
+    initializeDatabase()
     const now = new Date()
     const expiredPlotIds: number[] = []
     
@@ -132,6 +159,7 @@ export class PlotDatabase {
 
   // Reset all data (for testing) - server-side only
   static resetAllData(): void {
+    initializeDatabase()
     soldPlots = []
     console.log('All plot data reset')
   }
@@ -149,14 +177,17 @@ export class PlotDatabase {
 
   // Synchronous versions for server-side use only
   static getSoldPlotsSync(): PlotStatus[] {
+    initializeDatabase()
     return soldPlots
   }
 
   static isPlotSoldSync(plotId: number): boolean {
+    initializeDatabase()
     return soldPlots.some(plot => plot.id === plotId && plot.isSold)
   }
 
   static getUserPlotsSync(walletAddress: string): PlotStatus[] {
+    initializeDatabase()
     return soldPlots.filter(plot => plot.soldTo === walletAddress)
   }
 }
