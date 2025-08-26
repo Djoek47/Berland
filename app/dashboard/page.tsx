@@ -113,64 +113,67 @@ export default function DashboardPage() {
       console.log('Loading dashboard data for wallet:', address)
       setIsLoading(true)
       
-      // Simulate loading NFTs from blockchain
+            // Simulate loading NFTs from blockchain
       setTimeout(async () => {
-      setNfts([
-        {
-          id: "crystal-amber",
-          name: "Crystal Amber Estate",
-          type: "land",
-          description: "A premium crystal estate with amber accents, located in the central district of Faberland.",
-          image: "/images/faberge-eggs/crystal-amber.jpeg",
-          location: "Central District",
-          size: "Large (10,000 sq ft)",
-          visitors: 5200,
-          features: ["Water View", "High Traffic", "Premium Location"],
-          opensea: "https://opensea.io/collection/faberland",
-          rentalStatus: "available"
-        }
-      ])
-      
-      // Load Faberplots from server database
-      const userPlots = await PlotDatabase.getUserPlots(address || '')
-      console.log('Loaded Faberplots from database:', userPlots)
-      setFaberplots(userPlots.map(plot => ({
-        id: plot.id,
-        name: `Faberplot #${plot.id}`,
-        description: `Faberplot #${plot.id} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
-        monthlyRent: 40 + Math.floor(Math.random() * 41), // Random price between $40-$80
-        image: (plot.id % 8 === 0) ? "/images/faberge-eggs/crystal-amber.jpeg" :
-               (plot.id % 8 === 1) ? "/images/faberge-eggs/amber-glow.png" :
-               (plot.id % 8 === 2) ? "/images/faberge-eggs/ruby-red.png" :
-               (plot.id % 8 === 3) ? "/images/faberge-eggs/emerald-green.png" :
-               (plot.id % 8 === 4) ? "/images/faberge-eggs/bronze-glow.png" :
-               (plot.id % 8 === 5) ? "/images/faberge-eggs/rose-quartz.jpeg" :
-               (plot.id % 8 === 6) ? "/images/faberge-eggs/sapphire-blue.png" :
-               "/images/faberge-eggs/fire-opal.png",
-        location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][plot.id % 5],
-        size: plot.id < 15 ? "Small (2,500 sq ft)" : plot.id < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
-        visitors: 1500 + (plot.id * 100),
-        features: plot.id < 15 ? ["Retail Ready", "Affordable", "High Foot Traffic", "Quick Setup", "24/7 Access"] :
-                  plot.id < 30 ? ["Corporate Ready", "Meeting Spaces", "Business Hub", "Professional Environment", "Networking Opportunities"] :
-                  ["Event Space", "Premium Location", "Creative Hub", "Exclusive Access", "Custom Branding"],
-        rentalStartDate: plot.soldAt || new Date().toISOString(),
-        rentalEndDate: plot.rentalEndDate || '',
-        selectedTerm: "monthly" as const,
-        totalPrice: 0
-      })))
-      
-      // Also check database status
-      fetch('/api/database-status')
-        .then(response => response.json())
-        .then(data => {
-          console.log('Database status:', data)
-        })
-        .catch(error => {
-          console.error('Error fetching database status:', error)
-        })
-      
-      setIsLoading(false)
-    }, 1000)
+        setNfts([
+          {
+            id: "crystal-amber",
+            name: "Crystal Amber Estate",
+            type: "land",
+            description: "A premium crystal estate with amber accents, located in the central district of Faberland.",
+            image: "/images/faberge-eggs/crystal-amber.jpeg",
+            location: "Central District",
+            size: "Large (10,000 sq ft)",
+            visitors: 5200,
+            features: ["Water View", "High Traffic", "Premium Location"],
+            opensea: "https://opensea.io/collection/faberland",
+            rentalStatus: "available"
+          }
+        ])
+        
+        // Load Faberplots from server database
+        const userPlots = await PlotDatabase.getUserPlots(address || '')
+        console.log('Loaded Faberplots from database:', userPlots)
+        setFaberplots(userPlots.map(plot => ({
+          id: plot.id,
+          name: `Faberplot #${plot.id}`,
+          description: `Faberplot #${plot.id} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
+          monthlyRent: 40 + Math.floor(Math.random() * 41), // Random price between $40-$80
+          image: (plot.id % 8 === 0) ? "/images/faberge-eggs/crystal-amber.jpeg" :
+                 (plot.id % 8 === 1) ? "/images/faberge-eggs/amber-glow.png" :
+                 (plot.id % 8 === 2) ? "/images/faberge-eggs/ruby-red.png" :
+                 (plot.id % 8 === 3) ? "/images/faberge-eggs/emerald-green.png" :
+                 (plot.id % 8 === 4) ? "/images/faberge-eggs/bronze-glow.png" :
+                 (plot.id % 8 === 5) ? "/images/faberge-eggs/rose-quartz.jpeg" :
+                 (plot.id % 8 === 6) ? "/images/faberge-eggs/sapphire-blue.png" :
+                 "/images/faberge-eggs/fire-opal.png",
+          location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][plot.id % 5],
+          size: plot.id < 15 ? "Small (2,500 sq ft)" : plot.id < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
+          visitors: 1500 + (plot.id * 100),
+          features: plot.id < 15 ? ["Retail Ready", "Affordable", "High Foot Traffic", "Quick Setup", "24/7 Access"] :
+                    plot.id < 30 ? ["Corporate Ready", "Meeting Spaces", "Business Hub", "Professional Environment", "Networking Opportunities"] :
+                    ["Event Space", "Premium Location", "Creative Hub", "Exclusive Access", "Custom Branding"],
+          rentalStartDate: plot.soldAt || new Date().toISOString(),
+          rentalEndDate: plot.rentalEndDate || '',
+          selectedTerm: "monthly" as const,
+          totalPrice: 0
+        })))
+        
+        // Also check database status
+        fetch('/api/database-status')
+          .then(response => response.json())
+          .then(data => {
+            console.log('Database status:', data)
+          })
+          .catch(error => {
+            console.error('Error fetching database status:', error)
+          })
+        
+        setIsLoading(false)
+      }, 1000)
+    }
+    
+    loadData()
   }, [isConnected, refreshTrigger]) // Run when wallet connection changes or refresh is triggered
 
   // Real-time countdown for expiring plots
