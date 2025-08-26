@@ -40,7 +40,7 @@ function saveDataToFile(data: any) {
 
 export async function POST(request: NextRequest) {
   try {
-    const soldPlots = PlotDatabase.getSoldPlots()
+    const soldPlots = PlotDatabase.getSoldPlotsSync()
     const success = saveDataToFile(soldPlots)
     
     if (success) {
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const soldPlots = PlotDatabase.getSoldPlots()
+    const soldPlots = PlotDatabase.getSoldPlotsSync()
     return NextResponse.json({ 
       success: true, 
       soldPlots,

@@ -216,7 +216,40 @@ export default function MarketplacePage() {
   const sizes = Array.from(new Set(landPlots.map((plot) => plot.size)))
   const features = Array.from(new Set(landPlots.flatMap((plot) => plot.features)))
 
-  // Apply filters
+  // Real-time database refresh
+  useEffect(() => {
+    const refreshDatabase = async () => {
+      try {
+        const response = await fetch('/api/database-status')
+        if (response.ok) {
+          const data = await response.json()
+          console.log('Marketplace: Database refreshed, sold plots:', data.soldPlots?.length || 0)
+          
+          // Update the filtered plots to reflect new sold status
+          setFilteredPlots(prev => prev.map(plot => {
+            if (plot.type === "faberplot") {
+              const plotNumber = parseInt(plot.id.replace('faberplot-', ''))
+              const isSold = data.soldPlots?.some((soldPlot: any) => soldPlot.id === plotNumber) || false
+              return { ...plot, available: !isSold }
+            }
+            return plot
+          }))
+        }
+      } catch (error) {
+        console.error('Error refreshing database:', error)
+      }
+    }
+
+    // Refresh immediately
+    refreshDatabase()
+
+    // Refresh every 5 seconds
+    const interval = setInterval(refreshDatabase, 5000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  // Filter plots based on search, filters, and availability
   useEffect(() => {
     let result = [...landPlots]
     

@@ -107,13 +107,14 @@ export default function DashboardPage() {
 
   // Load NFTs and Faberplots
   useEffect(() => {
-    if (!isConnected) return // Don't load data if not connected
-    
-    console.log('Loading dashboard data for wallet:', address)
-    setIsLoading(true)
-    
-    // Simulate loading NFTs from blockchain
-    setTimeout(() => {
+    const loadData = async () => {
+      if (!isConnected) return // Don't load data if not connected
+      
+      console.log('Loading dashboard data for wallet:', address)
+      setIsLoading(true)
+      
+      // Simulate loading NFTs from blockchain
+      setTimeout(async () => {
       setNfts([
         {
           id: "crystal-amber",
@@ -131,7 +132,7 @@ export default function DashboardPage() {
       ])
       
       // Load Faberplots from server database
-      const userPlots = PlotDatabase.getUserPlots(address || '')
+      const userPlots = await PlotDatabase.getUserPlots(address || '')
       console.log('Loaded Faberplots from database:', userPlots)
       setFaberplots(userPlots.map(plot => ({
         id: plot.id,

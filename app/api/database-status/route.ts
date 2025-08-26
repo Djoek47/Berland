@@ -3,7 +3,7 @@ import { PlotDatabase } from '@/lib/database'
 
 export async function GET(request: NextRequest) {
   try {
-    const soldPlots = PlotDatabase.getSoldPlots()
+    const soldPlots = PlotDatabase.getSoldPlotsSync()
     
     return NextResponse.json({ 
       success: true, 

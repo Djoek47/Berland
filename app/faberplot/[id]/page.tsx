@@ -73,7 +73,11 @@ export default function FaberplotPage() {
   
   // Check if plot is sold using database
   useEffect(() => {
-    setIsSold(PlotDatabase.isPlotSold(plotId))
+    const checkSoldStatus = async () => {
+      const sold = await PlotDatabase.isPlotSold(plotId)
+      setIsSold(sold)
+    }
+    checkSoldStatus()
   }, [plotId])
 
   // Check for cancel parameter

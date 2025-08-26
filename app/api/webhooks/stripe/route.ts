@@ -98,11 +98,11 @@ async function handleCheckoutCompleted(session: any) {
     )
     
     // Verify the plot was marked as sold
-    const isSold = PlotDatabase.isPlotSold(parseInt(plotId))
+    const isSold = PlotDatabase.isPlotSoldSync(parseInt(plotId))
     console.log(`Webhook: Plot ${plotId} sold status after marking:`, isSold)
     
     // Get current database state
-    const soldPlots = PlotDatabase.getSoldPlots()
+    const soldPlots = PlotDatabase.getSoldPlotsSync()
     console.log(`Webhook: Total sold plots in database:`, soldPlots.length)
     console.log(`Webhook: Sold plots:`, soldPlots.map(p => ({ id: p.id, soldTo: p.soldTo })))
     

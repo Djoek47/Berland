@@ -1,5 +1,5 @@
-// Simple server-side database for plot management
-// This eliminates localStorage issues and provides consistent data across all clients
+// Centralized database for plot management
+// This ensures all clients see the same data by always fetching from server
 
 export interface PlotStatus {
   id: number
@@ -14,22 +14,43 @@ export interface PlotStatus {
 let soldPlots: PlotStatus[] = []
 
 export class PlotDatabase {
-  // Get all sold plots
-  static getSoldPlots(): PlotStatus[] {
-    return soldPlots
+  // Get all sold plots - always fetch from server
+  static async getSoldPlots(): Promise<PlotStatus[]> {
+    try {
+      const response = await fetch('/api/database-status')
+      if (response.ok) {
+        const data = await response.json()
+        return data.soldPlots || []
+      }
+    } catch (error) {
+      console.error('Error fetching sold plots:', error)
+    }
+    return soldPlots // Fallback to local data
   }
 
-  // Check if a plot is sold
-  static isPlotSold(plotId: number): boolean {
-    return soldPlots.some(plot => plot.id === plotId && plot.isSold)
+  // Check if a plot is sold - always check server
+  static async isPlotSold(plotId: number): Promise<boolean> {
+    try {
+      const soldPlots = await this.getSoldPlots()
+      return soldPlots.some(plot => plot.id === plotId && plot.isSold)
+    } catch (error) {
+      console.error('Error checking plot sold status:', error)
+      return false
+    }
   }
 
-  // Get plot status
-  static getPlotStatus(plotId: number): PlotStatus | null {
-    return soldPlots.find(plot => plot.id === plotId) || null
+  // Get plot status - always fetch from server
+  static async getPlotStatus(plotId: number): Promise<PlotStatus | null> {
+    try {
+      const soldPlots = await this.getSoldPlots()
+      return soldPlots.find(plot => plot.id === plotId) || null
+    } catch (error) {
+      console.error('Error getting plot status:', error)
+      return null
+    }
   }
 
-  // Mark plot as sold
+  // Mark plot as sold - server-side only
   static markPlotAsSold(plotId: number, walletAddress: string, userEmail: string, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): void {
     const existingIndex = soldPlots.findIndex(plot => plot.id === plotId)
     
@@ -65,7 +86,7 @@ export class PlotDatabase {
     console.log(`Database: Total sold plots: ${soldPlots.length}`)
   }
 
-  // Extend plot rental
+  // Extend plot rental - server-side only
   static extendPlotRental(plotId: number, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): void {
     const plotIndex = soldPlots.findIndex(plot => plot.id === plotId)
     if (plotIndex >= 0) {
@@ -92,7 +113,7 @@ export class PlotDatabase {
     }
   }
 
-  // Remove expired plots
+  // Remove expired plots - server-side only
   static removeExpiredPlots(): number[] {
     const now = new Date()
     const expiredPlotIds: number[] = []
@@ -109,14 +130,33 @@ export class PlotDatabase {
     return expiredPlotIds
   }
 
-  // Reset all data (for testing)
+  // Reset all data (for testing) - server-side only
   static resetAllData(): void {
     soldPlots = []
     console.log('All plot data reset')
   }
 
-  // Get user's plots
-  static getUserPlots(walletAddress: string): PlotStatus[] {
+  // Get user's plots - always fetch from server
+  static async getUserPlots(walletAddress: string): Promise<PlotStatus[]> {
+    try {
+      const soldPlots = await this.getSoldPlots()
+      return soldPlots.filter(plot => plot.soldTo === walletAddress)
+    } catch (error) {
+      console.error('Error getting user plots:', error)
+      return []
+    }
+  }
+
+  // Synchronous versions for server-side use only
+  static getSoldPlotsSync(): PlotStatus[] {
+    return soldPlots
+  }
+
+  static isPlotSoldSync(plotId: number): boolean {
+    return soldPlots.some(plot => plot.id === plotId && plot.isSold)
+  }
+
+  static getUserPlotsSync(walletAddress: string): PlotStatus[] {
     return soldPlots.filter(plot => plot.soldTo === walletAddress)
   }
 }
