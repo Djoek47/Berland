@@ -263,7 +263,7 @@ function ScreenshotCard({ screenshot }: ScreenshotCardProps) {
 }
 
 // Import icons
-function VrHeadset(props) {
+function VrHeadset(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -285,7 +285,7 @@ function VrHeadset(props) {
   )
 }
 
-function Users(props) {
+function Users(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -307,7 +307,7 @@ function Users(props) {
   )
 }
 
-function Globe(props) {
+function Globe(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -328,7 +328,7 @@ function Globe(props) {
   )
 }
 
-function Gamepad2(props) {
+function Gamepad2(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
