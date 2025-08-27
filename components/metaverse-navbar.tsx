@@ -32,14 +32,14 @@ const ClientConnectWallet = () => {
         modalTitleIconUrl="/images/faberland-emblem.png"
         modalTitle="Connect Wallet"
         style={{
-          backgroundColor: "#f59e0b",
-          color: "#000000",
-          fontWeight: "bold",
+          backgroundColor: "#22C55E",
+          color: "#ffffff",
+          fontWeight: "600",
         }}
       />
       {isConnected && (
         <Link href="/dashboard">
-          <Button className="bg-amber-500 hover:bg-amber-600 text-black font-bold">
+          <Button className="bg-apple-green hover:bg-apple-teal text-white font-semibold shadow-apple">
             Dashboard
           </Button>
         </Link>
@@ -58,7 +58,7 @@ export default function MetaverseNavbar() {
   }, [address])
 
   return (
-    <header className="sticky top-0 z-50 border-b border-amber-700/20 bg-black/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-apple-green/20 glass-apple-dark">
       <div className="container flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <Image src="/images/faberland-emblem.png" alt="Faberland" width={40} height={40} />
@@ -66,22 +66,22 @@ export default function MetaverseNavbar() {
         </Link>
 
         <nav className="hidden md:flex md:items-center md:gap-6">
-          <Link href="/" className="text-sm text-white transition-colors hover:text-amber-400">
+          <Link href="/" className="text-sm text-white transition-colors hover:text-apple-green">
             Home
           </Link>
-          <Link href="/marketplace" className="text-sm text-white transition-colors hover:text-amber-400">
+          <Link href="/marketplace" className="text-sm text-white transition-colors hover:text-apple-green">
             Marketplace
           </Link>
-          <Link href="/discover" className="text-sm text-white transition-colors hover:text-amber-400">
+          <Link href="/discover" className="text-sm text-white transition-colors hover:text-apple-green">
             Discover
           </Link>
-          <Link href="/business-advantages" className="text-sm text-white transition-colors hover:text-amber-400">
+          <Link href="/business-advantages" className="text-sm text-white transition-colors hover:text-apple-green">
             Roadmap
           </Link>
-          <Link href="/about" className="text-sm text-white transition-colors hover:text-amber-400">
+          <Link href="/about" className="text-sm text-white transition-colors hover:text-apple-green">
             About
           </Link>
-          <Link href="/installation-guide" className="text-sm text-white transition-colors hover:text-amber-400">
+          <Link href="/installation-guide" className="text-sm text-white transition-colors hover:text-apple-green">
             Installation
           </Link>
         </nav>

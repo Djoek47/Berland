@@ -337,18 +337,18 @@ export default function MarketplacePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white">
+    <div className="flex min-h-screen flex-col gradient-apple-dark text-white">
       <MetaverseNavbar />
 
       {/* Hero Section */}
       <section className="relative py-16 md:py-24">
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-amber-900/20 to-black"></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-apple-green/20 to-black"></div>
         <div className="container relative z-10 px-4 text-center">
-          <Badge className="mb-4 bg-amber-500 hover:bg-amber-600" variant="secondary">
+          <Badge className="mb-4 bg-apple-green hover:bg-apple-teal shadow-apple" variant="secondary">
             Virtual Real Estate
           </Badge>
           <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">Faberland Marketplace</h1>
-          <p className="mx-auto mb-8 max-w-2xl text-lg text-zinc-300 sm:text-xl">
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-white sm:text-xl">
             Own a piece of the Faberland metaverse. 25 exclusive Faberland Estates (NFTs) launching in 2025, plus 47 Faberplots available now. Each plot is represented as a unique Fabergé egg, symbolizing the precious nature of virtual real estate.
           </p>
         </div>
@@ -357,7 +357,7 @@ export default function MarketplacePage() {
       {/* Info Banner */}
       <section className="py-4">
         <div className="container px-4">
-          <div className="rounded-xl border border-amber-700/30 bg-zinc-900/50 p-6 backdrop-blur">
+          <div className="rounded-xl border border-apple-green/30 glass-apple-dark p-6 shadow-apple">
             <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
               <div>
                 <h2 className="text-2xl font-semibold mb-2">Land Types</h2>
@@ -389,17 +389,17 @@ export default function MarketplacePage() {
         <div className="container px-4">
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
             <div className="relative flex-grow">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
               <Input
                 placeholder="Search by name, description, or location..."
-                className="pl-10 border-amber-700/30 bg-zinc-900/50"
+                className="pl-10 border-apple-green/30 glass-apple-dark"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <Button
               variant="outline"
-              className="border-amber-700/30 text-amber-400 hover:bg-amber-950/20"
+              className="border-apple-green text-white hover:bg-apple-green/10 glass-apple"
               onClick={() => setShowFilters(!showFilters)}
             >
               <Filter className="mr-2 h-4 w-4" />
@@ -408,10 +408,10 @@ export default function MarketplacePage() {
           </div>
 
           {showFilters && (
-            <div className="mt-4 rounded-xl border border-amber-700/30 bg-zinc-900/50 p-6 backdrop-blur">
+            <div className="mt-4 rounded-xl border border-apple-green/30 glass-apple-dark p-6 shadow-apple">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">Filters</h3>
-                <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white" onClick={resetFilters}>
+                <Button variant="ghost" size="sm" className="text-white hover:text-apple-green" onClick={resetFilters}>
                   <X className="mr-2 h-4 w-4" />
                   Reset All
                 </Button>
@@ -424,8 +424,8 @@ export default function MarketplacePage() {
                   <div className="space-y-4">
                     <Slider min={0} max={5} step={0.1} value={priceRange} onValueChange={setPriceRange} />
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-zinc-400">{priceRange[0]} ETH</span>
-                      <span className="text-sm text-zinc-400">{priceRange[1]} ETH</span>
+                      <span className="text-sm text-white">{priceRange[0]} ETH</span>
+                      <span className="text-sm text-white">{priceRange[1]} ETH</span>
                     </div>
                   </div>
                 </div>
@@ -441,7 +441,7 @@ export default function MarketplacePage() {
                           checked={selectedLocations.includes(location)}
                           onCheckedChange={() => toggleLocation(location)}
                         />
-                        <Label htmlFor={`location-${location}`} className="ml-2 text-sm text-zinc-300 cursor-pointer">
+                        <Label htmlFor={`location-${location}`} className="ml-2 text-sm text-white cursor-pointer">
                           {location}
                         </Label>
                       </div>
@@ -460,7 +460,7 @@ export default function MarketplacePage() {
                           checked={selectedSizes.includes(size)}
                           onCheckedChange={() => toggleSize(size)}
                         />
-                        <Label htmlFor={`size-${size}`} className="ml-2 text-sm text-zinc-300 cursor-pointer">
+                        <Label htmlFor={`size-${size}`} className="ml-2 text-sm text-white cursor-pointer">
                           {size}
                         </Label>
                       </div>
@@ -479,7 +479,7 @@ export default function MarketplacePage() {
                           checked={selectedFeatures.includes(feature)}
                           onCheckedChange={() => toggleFeature(feature)}
                         />
-                        <Label htmlFor={`feature-${feature}`} className="ml-2 text-sm text-zinc-300 cursor-pointer">
+                        <Label htmlFor={`feature-${feature}`} className="ml-2 text-sm text-white cursor-pointer">
                           {feature}
                         </Label>
                       </div>
@@ -494,7 +494,7 @@ export default function MarketplacePage() {
                   checked={showAvailableOnly}
                   onCheckedChange={(checked) => setShowAvailableOnly(!!checked)}
                 />
-                <Label htmlFor="available-only" className="ml-2 text-sm text-zinc-300 cursor-pointer">
+                <Label htmlFor="available-only" className="ml-2 text-sm text-white cursor-pointer">
                   Show available properties only
                 </Label>
               </div>
@@ -508,7 +508,7 @@ export default function MarketplacePage() {
         <div className="container px-4">
           <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
             <div className="mb-8 flex justify-center">
-              <TabsList className="bg-zinc-900">
+              <TabsList className="bg-zinc-900/50 border border-apple-green/30">
                 <TabsTrigger value="all">All Properties</TabsTrigger>
                 <TabsTrigger value="faberland">Faberland Estates</TabsTrigger>
                 <TabsTrigger value="faberplot">Faberplots</TabsTrigger>
@@ -525,10 +525,10 @@ export default function MarketplacePage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-xl text-zinc-400">No properties match your search criteria.</p>
+                  <p className="text-xl text-white">No properties match your search criteria.</p>
                   <Button
                     variant="outline"
-                    className="mt-4 border-amber-700/30 text-amber-400 hover:bg-amber-950/20"
+                    className="mt-4 border-apple-green text-white hover:bg-apple-green/10 glass-apple"
                     onClick={resetFilters}
                   >
                     Reset Filters
@@ -546,7 +546,7 @@ export default function MarketplacePage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-xl text-zinc-400">No Faberland estates match your search criteria.</p>
+                  <p className="text-xl text-white">No Faberland estates match your search criteria.</p>
                   <Button
                     variant="outline"
                     className="mt-4 border-amber-700/30 text-amber-400 hover:bg-amber-950/20"
@@ -567,7 +567,7 @@ export default function MarketplacePage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-xl text-zinc-400">No Faberplots match your search criteria.</p>
+                  <p className="text-xl text-white">No Faberplots match your search criteria.</p>
                   <Button
                     variant="outline"
                     className="mt-4 border-amber-700/30 text-amber-400 hover:bg-amber-950/20"
@@ -588,7 +588,7 @@ export default function MarketplacePage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-xl text-zinc-400">No featured properties match your search criteria.</p>
+                  <p className="text-xl text-white">No featured properties match your search criteria.</p>
                   <Button
                     variant="outline"
                     className="mt-4 border-amber-700/30 text-amber-400 hover:bg-amber-950/20"
@@ -608,56 +608,56 @@ export default function MarketplacePage() {
         <div className="container px-4">
           <h2 className="mb-8 text-center text-3xl font-bold">Benefits of Owning Virtual Land</h2>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="border-amber-700/30 bg-black/40 backdrop-blur">
+            <Card className="border-apple-green/30 glass-apple-dark shadow-apple">
               <CardHeader>
-                <Gem className="h-10 w-10 text-amber-400" />
+                <Gem className="h-10 w-10 text-apple-green" />
                 <CardTitle>Digital Asset Ownership</CardTitle>
                 <CardDescription>Secure ownership with blockchain technology</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-zinc-300">
+                <p className="text-white">
                   Faberland Estates are minted as NFTs, providing verifiable ownership that can be traded on secondary
                   markets like OpenSea.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-amber-700/30 bg-black/40 backdrop-blur">
+            <Card className="border-apple-green/30 glass-apple-dark shadow-apple">
               <CardHeader>
-                <Tag className="h-10 w-10 text-amber-400" />
+                <Tag className="h-10 w-10 text-apple-green" />
                 <CardTitle>High Traffic Potential</CardTitle>
                 <CardDescription>Access to a growing user base</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-zinc-300">
+                <p className="text-white">
                   Prime locations in Faberland attract thousands of daily visitors, creating opportunities for
                   visibility, engagement, and monetization.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-amber-700/30 bg-black/40 backdrop-blur">
+            <Card className="border-apple-green/30 glass-apple-dark shadow-apple">
               <CardHeader>
-                <Tag className="h-10 w-10 text-amber-400" />
+                <Tag className="h-10 w-10 text-apple-green" />
                 <CardTitle>Value Appreciation</CardTitle>
                 <CardDescription>Investment with growth potential</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-zinc-300">
+                <p className="text-white">
                   As the Faberland community grows and the metaverse expands, early property investments have the
                   potential to increase in value.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="border-amber-700/30 bg-black/40 backdrop-blur">
+            <Card className="border-apple-green/30 glass-apple-dark shadow-apple">
               <CardHeader>
-                <Clock className="h-10 w-10 text-amber-400" />
+                <Clock className="h-10 w-10 text-apple-green" />
                 <CardTitle>Passive Income</CardTitle>
                 <CardDescription>Monetize your virtual property</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-zinc-300">
+                <p className="text-white">
                   Generate revenue by renting your space, hosting events, displaying advertisements, or creating
                   pay-to-access experiences.
                 </p>
@@ -671,19 +671,19 @@ export default function MarketplacePage() {
       <section className="py-16 bg-gradient-to-b from-black to-amber-950/20">
         <div className="container px-4 text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Secure Your Place in Faberland</h2>
-          <p className="mx-auto mb-8 max-w-2xl text-zinc-300">
+          <p className="mx-auto mb-8 max-w-2xl text-white">
             Don't miss the opportunity to be part of the metaverse revolution. 47 Faberplots available now, with 25 exclusive Faberland Estates launching in 2025. Whether you're an individual collector, business owner, or investor, Faberland offers unique opportunities for digital property ownership.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-bold">
+            <Button size="lg" className="bg-apple-green hover:bg-apple-teal text-black font-bold shadow-apple">
               Contact Sales Team
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-amber-500 text-amber-400 hover:bg-amber-950/20"
-              asChild
-            >
+                          <Button
+                size="lg"
+                variant="outline"
+                className="border-apple-green text-white hover:bg-apple-green/10 glass-apple"
+                asChild
+              >
               <Link href="/business-advantages">Learn About Business Benefits</Link>
             </Button>
           </div>
@@ -703,8 +703,10 @@ function LandCard({ plot }: LandCardProps) {
   return (
     <Card
       className={`overflow-hidden border ${
-        plot.type === "faberland" ? "border-purple-500/30" : "border-emerald-500/30"
-      } bg-zinc-900/50 backdrop-blur transition-all hover:border-amber-500/50`}
+        plot.type === "faberland" ? "border-purple-500/30" : "border-apple-green/30"
+      } glass-apple-dark shadow-apple transition-all ${
+        plot.type === "faberland" ? "hover:border-purple-500/50" : "hover:border-apple-green/50"
+      }`}
     >
       <div className="relative aspect-square">
         {plot.type === "faberplot" && plot.available ? (
@@ -721,7 +723,7 @@ function LandCard({ plot }: LandCardProps) {
         )}
         <div
           className={`absolute top-4 right-4 rounded-full px-2 py-1 text-xs font-medium ${
-            plot.type === "faberland" ? "bg-purple-500/80 text-white" : "bg-emerald-500/80 text-white"
+            plot.type === "faberland" ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white" : "bg-apple-green/80 text-white"
           }`}
         >
           {plot.type === "faberland" ? "Faberland Estate" : "Faberplot"}
@@ -736,22 +738,26 @@ function LandCard({ plot }: LandCardProps) {
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <p className="text-zinc-300">{plot.description}</p>
+        <p className="text-white">{plot.description}</p>
 
         <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="rounded-md bg-zinc-800/50 p-2">
-            <span className="text-zinc-400">Size</span>
+          <div className="rounded-md bg-black/20 p-2">
+            <span className="text-white">Size</span>
             <p className="font-medium text-white">{plot.size}</p>
           </div>
-          <div className="rounded-md bg-zinc-800/50 p-2">
-            <span className="text-zinc-400">Monthly Visitors</span>
+          <div className="rounded-md bg-black/20 p-2">
+            <span className="text-white">Monthly Visitors</span>
             <p className="font-medium text-white">{plot.visitors.toLocaleString()}</p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
           {plot.features.map((feature, index) => (
-            <Badge key={`${plot.id}-feature-${index}`} variant="outline" className="border-amber-700/30 text-amber-400">
+            <Badge 
+              key={`${plot.id}-feature-${index}`} 
+              variant="outline" 
+              className={plot.type === "faberland" ? "border-purple-500 text-white" : "border-apple-green text-white"}
+            >
               {feature}
             </Badge>
           ))}
@@ -759,7 +765,7 @@ function LandCard({ plot }: LandCardProps) {
 
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-zinc-400">Price</p>
+            <p className="text-sm text-white">Price</p>
             <div className="flex items-baseline gap-1">
               {plot.type === "faberplot" ? (
                 <>
@@ -776,18 +782,18 @@ function LandCard({ plot }: LandCardProps) {
           </div>
           {plot.type === "faberplot" ? (
             plot.available ? (
-              <Button className="bg-amber-500 hover:bg-amber-600 text-black font-bold" asChild>
+              <Button className="bg-apple-green hover:bg-apple-teal text-black font-bold shadow-apple" asChild>
                 <Link href={`/faberplot/${plot.id.replace('faberplot-', '')}`}>
                   Rent Now
                 </Link>
               </Button>
             ) : (
-              <Button disabled className="bg-zinc-700 text-zinc-400 cursor-not-allowed">
+              <Button disabled className="bg-black/30 text-white cursor-not-allowed">
                 Sold Out
               </Button>
             )
           ) : (
-            <Button className="bg-amber-500 hover:bg-amber-600 text-black font-bold">
+            <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold shadow-apple">
               View Details
             </Button>
           )}
@@ -799,7 +805,7 @@ function LandCard({ plot }: LandCardProps) {
               href={plot.opensea}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-md border border-purple-500/50 bg-purple-500/10 py-2 text-sm text-purple-300 transition-colors hover:bg-purple-500/20"
+              className="flex w-full items-center justify-center gap-2 rounded-md border border-purple-500/50 bg-gradient-to-r from-blue-500/10 to-purple-600/10 py-2 text-sm text-white transition-colors hover:from-blue-500/20 hover:to-purple-600/20"
             >
               <span>View on OpenSea</span>
               <ExternalLink className="h-4 w-4" />

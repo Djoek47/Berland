@@ -60,7 +60,7 @@ export default function DownloadButton({ variant = "default", size = "default" }
         <Button
           variant={variant}
           size={size}
-          className={variant === "default" ? "bg-amber-500 hover:bg-amber-600 text-black font-bold" : ""}
+          className={variant === "default" ? "bg-yellow-500 hover:bg-yellow-600 text-black font-bold shadow-lg" : ""}
         >
           <Download className="mr-2 h-4 w-4" />
           {buttonText}
@@ -73,8 +73,8 @@ export default function DownloadButton({ variant = "default", size = "default" }
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          <div className="rounded-md bg-amber-500/10 p-4">
-            <h3 className="mb-2 font-medium text-amber-500">System Requirements</h3>
+          <div className="rounded-md bg-apple-green/10 p-4">
+            <h3 className="mb-2 font-medium text-apple-green">System Requirements</h3>
             <ul className="ml-4 list-disc text-sm text-zinc-300">
               <li>Windows 10 or higher</li>
               <li>Compatible VR headset (Oculus, Vive, Index)</li>

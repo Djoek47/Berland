@@ -215,31 +215,31 @@ export default function RoadmapAndBusinessPage() {
   const selectedPhaseData = roadmapPhases.find(phase => phase.id === selectedPhase)
 
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white">
+    <div className="flex min-h-screen flex-col bg-gradient-to-br from-purple-950 via-black to-purple-900 text-white">
       <MetaverseNavbar />
 
       {/* Hero Section */}
       <section className="relative py-16 md:py-24">
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-amber-900/20 to-black"></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-purple-900/20 to-black"></div>
         <div className="container relative z-10 px-4 text-center">
-          <Badge className="mb-4 bg-amber-500 hover:bg-amber-600" variant="secondary">
+          <Badge className="mb-4 bg-purple-500 hover:bg-purple-600 shadow-lg" variant="secondary">
             Roadmap & Business Solutions
           </Badge>
           <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
             The Future of Business in the Metaverse
           </h1>
-          <p className="mx-auto mb-8 max-w-2xl text-lg text-zinc-300 sm:text-xl">
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-white sm:text-xl">
             From virtual real estate to infinite possibilities - discover how Faberland is revolutionizing business 
             operations and creating new opportunities in the digital economy.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-bold" asChild>
+            <Button size="lg" className="bg-purple-500 hover:bg-purple-600 text-white font-bold shadow-lg" asChild>
               <a href="#roadmap">View Roadmap</a>
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="border-amber-500 text-amber-400 hover:bg-amber-950/20"
+              className="border-purple-500 text-purple-400 hover:bg-purple-950/20"
               asChild
             >
               <a href="#business-benefits">Business Benefits</a>
@@ -249,7 +249,7 @@ export default function RoadmapAndBusinessPage() {
       </section>
 
       {/* Roadmap Section */}
-      <section id="roadmap" className="py-16 bg-gradient-to-br from-slate-900 via-amber-900/30 to-slate-900">
+      <section id="roadmap" className="py-16 bg-gradient-to-br from-slate-900 via-purple-900/30 to-slate-900">
         <div className="container mx-auto px-4">
           {/* Roadmap Hero */}
           <div className="text-center mb-12">

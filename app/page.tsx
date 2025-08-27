@@ -14,7 +14,7 @@ import React from "react"
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white">
+    <div className="flex min-h-screen flex-col gradient-apple-dark text-white">
       <MetaverseNavbar />
 
       {/* Hero Section */}
@@ -23,7 +23,7 @@ export default function Home() {
           <HeroAnimation />
         </div>
         <div className="container relative z-10 px-4 text-center">
-          <Badge className="mb-4 bg-amber-500 hover:bg-amber-600" variant="secondary">
+          <Badge className="mb-4 bg-apple-green hover:bg-apple-teal shadow-apple" variant="secondary">
             Welcome to the future
           </Badge>
           <div className="mx-auto mb-6 flex flex-col items-center justify-center">
@@ -35,7 +35,7 @@ export default function Home() {
             explore in ways never before possible.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-bold" asChild>
+            <Button size="lg" className="bg-apple-green hover:bg-apple-teal text-white font-semibold shadow-apple" asChild>
               <Link href="/discover">
                 Get Started
               </Link>
@@ -43,7 +43,7 @@ export default function Home() {
             <Button
               size="lg"
               variant="outline"
-              className="border-amber-500 text-amber-400 hover:bg-amber-950/20"
+              className="border-apple-green text-apple-green hover:bg-apple-green/10 glass-apple"
               asChild
             >
               <Link href="/marketplace">Explore Faberplots</Link>
@@ -62,7 +62,7 @@ export default function Home() {
         <div className="container px-4">
           <div className="mb-12 text-center">
             <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-              <span className="bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-apple-green to-apple-teal bg-clip-text text-transparent">
                 Explore Virtual Worlds
               </span>
             </h2>
@@ -70,13 +70,13 @@ export default function Home() {
               Interact with our 3D environment to get a taste of the metaverse experience
             </p>
           </div>
-          <div className="mx-auto aspect-video max-w-5xl rounded-xl border border-amber-700/50 bg-zinc-900/50 p-1 backdrop-blur">
-            <div className="h-full w-full rounded-lg bg-zinc-900">
+          <div className="mx-auto aspect-video max-w-5xl rounded-xl border border-apple-green/30 glass-apple-dark p-1 shadow-apple-dark">
+            <div className="h-full w-full rounded-lg bg-black/50">
               <ThreeDScene />
             </div>
           </div>
           <div className="mt-8 text-center">
-            <Button className="bg-amber-500 hover:bg-amber-600 text-black font-bold" asChild>
+            <Button className="bg-apple-green hover:bg-apple-teal text-white font-semibold shadow-apple" asChild>
               <Link href="/screenshots">
                 <Expand className="mr-2 h-4 w-4" /> View VR Demo Screenshots
               </Link>
@@ -90,11 +90,11 @@ export default function Home() {
         <div className="container px-4">
           <div className="mb-12 text-center">
             <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-              <span className="bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-apple-green to-apple-teal bg-clip-text text-transparent">
                 Metaverse Features
               </span>
             </h2>
-            <p className="mx-auto max-w-2xl text-zinc-300">
+            <p className="mx-auto max-w-2xl text-white">
               Discover the endless possibilities in our digital universe
             </p>
           </div>
@@ -134,66 +134,66 @@ export default function Home() {
       </section>
 
       {/* Marketplace Teaser */}
-      <section className="py-16 md:py-24 bg-zinc-950">
+      <section className="py-16 md:py-24 bg-black/50">
         <div className="container px-4">
           <div className="mb-12 text-center">
             <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-              <span className="bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-apple-green to-apple-teal bg-clip-text text-transparent">
                 Faberplots Marketplace
               </span>
             </h2>
-            <p className="mx-auto max-w-2xl text-zinc-300">
+            <p className="mx-auto max-w-2xl text-white">
               Stake your claim in the metaverse with virtual land, plots, and store spaces
             </p>
           </div>
 
           <div className="grid gap-8 md:grid-cols-3">
-            <Card className="border-amber-700/30 bg-zinc-900/50 backdrop-blur transition-all hover:border-amber-500/50 hover:bg-zinc-900/80">
+            <Card className="border-apple-green/30 glass-apple-dark shadow-apple transition-all hover:border-apple-green/50">
               <CardHeader>
                 <CardTitle className="text-xl text-white">Buy Virtual Land</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-base text-zinc-300">
+                <CardDescription className="text-base text-white">
                   Purchase Faberland property and build your own virtual estate with complete ownership rights.
                 </CardDescription>
                 <div className="mt-4 aspect-video rounded-md bg-zinc-800"></div>
               </CardContent>
               <div className="p-4 pt-0">
-                <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold" asChild>
+                <Button className="w-full bg-apple-green hover:bg-apple-teal text-black font-bold shadow-apple" asChild>
                   <Link href="/marketplace">Browse Land</Link>
                 </Button>
               </div>
             </Card>
 
-            <Card className="border-amber-700/30 bg-zinc-900/50 backdrop-blur transition-all hover:border-amber-500/50 hover:bg-zinc-900/80">
+            <Card className="border-apple-green/30 glass-apple-dark shadow-apple transition-all hover:border-apple-green/50">
               <CardHeader>
                 <CardTitle className="text-xl text-white">Rent Faberplots</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-base text-zinc-300">
+                <CardDescription className="text-base text-white">
                   Lease plots and store spaces for your business or creative projects without long-term commitment.
                 </CardDescription>
                 <div className="mt-4 aspect-video rounded-md bg-zinc-800"></div>
               </CardContent>
               <div className="p-4 pt-0">
-                <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold" asChild>
+                <Button className="w-full bg-apple-green hover:bg-apple-teal text-black font-bold shadow-apple" asChild>
                   <Link href="/marketplace?tab=rent">Find Rentals</Link>
                 </Button>
               </div>
             </Card>
 
-            <Card className="border-amber-700/30 bg-zinc-900/50 backdrop-blur transition-all hover:border-amber-500/50 hover:bg-zinc-900/80">
+            <Card className="border-apple-green/30 glass-apple-dark shadow-apple transition-all hover:border-apple-green/50">
               <CardHeader>
                 <CardTitle className="text-xl text-white">Premium Locations</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-base text-zinc-300">
+                <CardDescription className="text-base text-white">
                   Discover featured properties in high-traffic areas with special amenities and visibility.
                 </CardDescription>
                 <div className="mt-4 aspect-video rounded-md bg-zinc-800"></div>
               </CardContent>
               <div className="p-4 pt-0">
-                <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold" asChild>
+                <Button className="w-full bg-apple-green hover:bg-apple-teal text-black font-bold shadow-apple" asChild>
                   <Link href="/marketplace?tab=featured">View Featured</Link>
                 </Button>
               </div>
@@ -201,7 +201,7 @@ export default function Home() {
           </div>
 
           <div className="mt-12 text-center">
-            <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-bold" asChild>
+            <Button size="lg" className="bg-apple-green hover:bg-apple-teal text-black font-bold shadow-apple" asChild>
               <Link href="/marketplace">Explore All Faberplots</Link>
             </Button>
           </div>
@@ -455,7 +455,10 @@ export default function Home() {
               <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-black font-bold" asChild>
                 <Link href="/marketplace">Explore Faberplots</Link>
               </Button>
-              <DownloadButton size="lg" variant="outline" />
+              <Button size="lg" variant="outline" className="border-apple-green text-apple-green hover:bg-apple-green/10 glass-apple">
+                <Download className="mr-2 h-4 w-4" />
+                Download VR Demo
+              </Button>
             </div>
           </div>
         </div>

@@ -2,16 +2,29 @@
 
 import { useEffect, useRef } from "react"
 import * as THREE from "three"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { OrbitControls } from "three/addons/controls/OrbitControls.js"
+
+// Singleton to prevent multiple instances
+let sceneInstance: THREE.Scene | null = null
+let rendererInstance: THREE.WebGLRenderer | null = null
+let isInitialized = false
 
 export default function ThreeDScene() {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!containerRef.current) return
+    if (!containerRef.current || isInitialized) return
+
+    // Prevent multiple instances
+    if (containerRef.current.children.length > 0) {
+      return
+    }
+
+    isInitialized = true
 
     // Scene setup
     const scene = new THREE.Scene()
+    sceneInstance = scene
 
     // Camera setup
     const camera = new THREE.PerspectiveCamera(
@@ -26,6 +39,7 @@ export default function ThreeDScene() {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
     renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight)
     renderer.setClearColor(0x000000, 0)
+    rendererInstance = renderer
     containerRef.current.appendChild(renderer.domElement)
 
     // Controls
@@ -58,8 +72,6 @@ export default function ThreeDScene() {
 
     // Load textures
     const textureLoader = new THREE.TextureLoader()
-
-    // Make sure images are loaded with crossOrigin set to anonymous
     textureLoader.crossOrigin = "anonymous"
 
     const emblemTexture = textureLoader.load("/images/faberland-emblem.png")
@@ -67,7 +79,7 @@ export default function ThreeDScene() {
     const visserTexture = textureLoader.load("/images/visser-studios-logo.png")
 
     // Create a metaverse-like landscape
-    // Central emblem (representing Faberland)
+    // Central emblem (representing Faberland) - STATIC
     const emblemGeometry = new THREE.PlaneGeometry(2, 2)
     const emblemMaterial = new THREE.MeshBasicMaterial({
       map: emblemTexture,
@@ -77,7 +89,7 @@ export default function ThreeDScene() {
     const emblem = new THREE.Mesh(emblemGeometry, emblemMaterial)
     scene.add(emblem)
 
-    // Add Faberland text logo
+    // Add Faberland text logo - STATIC
     const logoGeometry = new THREE.PlaneGeometry(3, 0.75)
     const logoMaterial = new THREE.MeshBasicMaterial({
       map: logoTexture,
@@ -88,7 +100,7 @@ export default function ThreeDScene() {
     logo.position.set(0, -1.5, 0)
     scene.add(logo)
 
-    // Create floating platforms around the emblem
+    // Create floating platforms around the emblem - STATIC
     const platforms: THREE.Mesh[] = []
     const platformCount = 7
 
@@ -117,7 +129,7 @@ export default function ThreeDScene() {
       platforms.push(platform)
     }
 
-    // Add connecting beams between platforms and central emblem
+    // Add connecting beams between platforms and central emblem - STATIC
     const beams: THREE.Line[] = []
 
     for (let i = 0; i < platformCount; i++) {
@@ -140,7 +152,7 @@ export default function ThreeDScene() {
       beams.push(beam)
     }
 
-    // Add a small Visser Studios logo in the corner
+    // Add a small Visser Studios logo in the corner - STATIC
     const visserGeometry = new THREE.PlaneGeometry(0.5, 0.5)
     const visserMaterial = new THREE.MeshBasicMaterial({
       map: visserTexture,
@@ -152,7 +164,7 @@ export default function ThreeDScene() {
     visserLogo.position.set(-4, -2, -2)
     scene.add(visserLogo)
 
-    // Add particles for a space-like effect
+    // Add particles for a space-like effect - STATIC
     const particlesGeometry = new THREE.BufferGeometry()
     const particleCount = 1000
 
@@ -184,43 +196,11 @@ export default function ThreeDScene() {
 
     window.addEventListener("resize", handleResize)
 
-    // Animation loop
+    // Animation loop - STATIC (no animations)
     const animate = () => {
       requestAnimationFrame(animate)
-
-      // Rotate the emblem
-      emblem.rotation.y += 0.005
-
-      // Animate the logo
-      logo.position.y = -1.5 + Math.sin(Date.now() * 0.001) * 0.1
-
-      // Animate platforms
-      platforms.forEach((platform, i) => {
-        const angle = (i / platformCount) * Math.PI * 2
-        const radius = 3 + Math.sin(Date.now() * 0.001 + i) * 0.2
-
-        platform.position.x = Math.cos(angle + Date.now() * 0.0005) * radius
-        platform.position.z = Math.sin(angle + Date.now() * 0.0005) * radius
-        platform.position.y = Math.sin(Date.now() * 0.001 + i * 0.5) * 0.5
-
-        platform.rotation.y += 0.01
-      })
-
-      // Update beams to connect to moving platforms
-      beams.forEach((beam, i) => {
-        const points = []
-        points.push(new THREE.Vector3(0, 0, 0))
-        points.push(platforms[i].position.clone())
-
-        beam.geometry.setFromPoints(points)
-      })
-
-      // Slowly rotate particles
-      particlesMesh.rotation.y += 0.0003
-
-      // Subtle animation for Visser logo
-      visserLogo.rotation.y = Math.sin(Date.now() * 0.001) * 0.2
-
+      
+      // No animations - everything stays static
       controls.update()
       renderer.render(scene, camera)
     }
@@ -229,10 +209,26 @@ export default function ThreeDScene() {
 
     // Cleanup
     return () => {
-      if (containerRef.current) {
-        containerRef.current.removeChild(renderer.domElement)
+      if (containerRef.current && rendererInstance) {
+        try {
+          containerRef.current.removeChild(rendererInstance.domElement)
+        } catch (e) {
+          // Element might already be removed
+        }
       }
       window.removeEventListener("resize", handleResize)
+      
+      // Dispose of resources
+      if (rendererInstance) {
+        rendererInstance.dispose()
+      }
+      if (sceneInstance) {
+        sceneInstance.clear()
+      }
+      
+      sceneInstance = null
+      rendererInstance = null
+      isInitialized = false
     }
   }, [])
 

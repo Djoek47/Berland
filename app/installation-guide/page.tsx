@@ -24,20 +24,20 @@ import DownloadButton from "@/components/download-button"
 
 export default function InstallationGuidePage() {
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white">
+    <div className="flex min-h-screen flex-col bg-gradient-to-br from-blue-950 via-black to-blue-900 text-white">
       <MetaverseNavbar />
 
       {/* Hero Section */}
       <section className="relative py-16 md:py-24">
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-amber-900/20 to-black"></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-blue-900/20 to-black"></div>
         <div className="container relative z-10 px-4 text-center">
-          <Badge className="mb-4 bg-amber-500 hover:bg-amber-600" variant="secondary">
+          <Badge className="mb-4 bg-blue-500 hover:bg-blue-600 shadow-lg" variant="secondary">
             Setup Guide
           </Badge>
           <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
             Faberland VR Installation Guide
           </h1>
-          <p className="mx-auto mb-8 max-w-2xl text-lg text-zinc-300 sm:text-xl">
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-white sm:text-xl">
             Follow our step-by-step instructions to get your Faberland VR demo up and running in minutes.
           </p>
           <div className="flex flex-wrap justify-center gap-4">

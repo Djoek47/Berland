@@ -16,18 +16,18 @@ export default function AboutPage() {
   const [termsOpen, setTermsOpen] = useState(false)
 
   return (
-    <div className="flex min-h-screen flex-col bg-black text-white">
+    <div className="flex min-h-screen flex-col bg-gradient-to-br from-red-950 via-black to-red-900 text-white">
       <MetaverseNavbar />
 
       {/* Hero Section */}
       <section className="relative py-16 md:py-24">
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-amber-900/20 to-black"></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-red-900/20 to-black"></div>
         <div className="container relative z-10 px-4 text-center">
-          <Badge className="mb-4 bg-amber-500 hover:bg-amber-600" variant="secondary">
+          <Badge className="mb-4 bg-red-500 hover:bg-red-600 shadow-lg" variant="secondary">
             Our Story
           </Badge>
           <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">About Faberland</h1>
-          <p className="mx-auto mb-8 max-w-2xl text-lg text-zinc-300 sm:text-xl">
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-white sm:text-xl">
             Learn about our vision, the team behind Faberland, and our mission to create the ultimate metaverse
             experience.
           </p>
