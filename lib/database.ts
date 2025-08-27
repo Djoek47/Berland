@@ -16,26 +16,29 @@ const isProduction = process.env.NODE_ENV === 'production'
 
 // Initialize Redis client (only in production)
 let kv: any = null
-if (isProduction) {
-  try {
-    // Use Redis directly with REDIS_URL
-    const { createClient } = require('redis')
-    kv = createClient({
-      url: process.env.REDIS_URL
-    })
-    
-    // Connect to Redis
-    kv.connect().then(() => {
+let redisClient: any = null
+
+// Initialize Redis connection
+async function initializeRedis() {
+  if (isProduction && !redisClient) {
+    try {
+      // Use dynamic import to avoid build issues
+      const { createClient } = await import('redis')
+      redisClient = createClient({
+        url: process.env.REDIS_URL
+      })
+      
+      // Connect to Redis
+      await redisClient.connect()
       console.log('Database: Redis client connected successfully')
-    }).catch((err: any) => {
-      console.error('Database: Redis connection failed:', err)
-    })
-    
-    console.log('Database: Redis client initialized successfully')
-    console.log('Database: REDIS_URL available:', !!process.env.REDIS_URL)
-  } catch (error) {
-    console.error('Failed to initialize Redis client:', error)
-    console.error('Database: REDIS_URL available:', !!process.env.REDIS_URL)
+      
+      kv = redisClient
+      console.log('Database: Redis client initialized successfully')
+      console.log('Database: REDIS_URL available:', !!process.env.REDIS_URL)
+    } catch (error) {
+      console.error('Failed to initialize Redis client:', error)
+      console.error('Database: REDIS_URL available:', !!process.env.REDIS_URL)
+    }
   }
 }
 
@@ -48,17 +51,25 @@ async function initializeDatabase() {
   if (isInitialized) return
   
   try {
-    if (isProduction && kv) {
-      // In production, load from Redis
-      console.log('Database: Attempting to load from Redis...')
-      const redisData = await kv.get('faberland_plots')
-      console.log('Database: Redis data retrieved:', redisData)
+    if (isProduction) {
+      // Initialize Redis first
+      await initializeRedis()
       
-      if (redisData) {
-        soldPlots = Array.isArray(JSON.parse(redisData)) ? JSON.parse(redisData) : []
-        console.log(`Database: Initialized with ${soldPlots.length} plots from Redis`)
+      if (kv) {
+        // In production, load from Redis
+        console.log('Database: Attempting to load from Redis...')
+        const redisData = await kv.get('faberland_plots')
+        console.log('Database: Redis data retrieved:', redisData)
+        
+        if (redisData) {
+          soldPlots = Array.isArray(JSON.parse(redisData)) ? JSON.parse(redisData) : []
+          console.log(`Database: Initialized with ${soldPlots.length} plots from Redis`)
+        } else {
+          console.log('Database: No existing Redis data found, starting with empty database')
+          soldPlots = []
+        }
       } else {
-        console.log('Database: No existing Redis data found, starting with empty database')
+        console.log('Database: Redis not available, starting with empty database')
         soldPlots = []
       }
     } else {
