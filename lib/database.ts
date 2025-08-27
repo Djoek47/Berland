@@ -143,40 +143,35 @@ async function persistData() {
 }
 
 export class PlotDatabase {
-  // Get all sold plots - always fetch from server
+  // Get all sold plots - server-side only (no fetch needed)
   static async getSoldPlots(): Promise<PlotStatus[]> {
-    try {
-      const response = await fetch('/api/database-status')
-      if (response.ok) {
-        const data = await response.json()
-        return data.soldPlots || []
-      }
-    } catch (error) {
-      console.error('Error fetching sold plots:', error)
+    // Initialize if not already done
+    if (!isInitialized) {
+      await initializeDatabase()
     }
-    return soldPlots // Fallback to local data
+    
+    // Return the in-memory data directly
+    return soldPlots
   }
 
-  // Check if a plot is sold - always check server
+  // Check if a plot is sold - server-side only
   static async isPlotSold(plotId: number): Promise<boolean> {
-    try {
-      const soldPlots = await this.getSoldPlots()
-      return soldPlots.some(plot => plot.id === plotId && plot.isSold)
-    } catch (error) {
-      console.error('Error checking plot sold status:', error)
-      return false
+    // Initialize if not already done
+    if (!isInitialized) {
+      await initializeDatabase()
     }
+    
+    return soldPlots.some(plot => plot.id === plotId && plot.isSold)
   }
 
-  // Get plot status - always fetch from server
+  // Get plot status - server-side only
   static async getPlotStatus(plotId: number): Promise<PlotStatus | null> {
-    try {
-      const soldPlots = await this.getSoldPlots()
-      return soldPlots.find(plot => plot.id === plotId) || null
-    } catch (error) {
-      console.error('Error getting plot status:', error)
-      return null
+    // Initialize if not already done
+    if (!isInitialized) {
+      await initializeDatabase()
     }
+    
+    return soldPlots.find(plot => plot.id === plotId) || null
   }
 
   // Mark plot as sold - server-side only
@@ -368,15 +363,14 @@ export class PlotDatabase {
     await persistData()
   }
 
-  // Get user's plots - always fetch from server
+  // Get user's plots - server-side only
   static async getUserPlots(walletAddress: string): Promise<PlotStatus[]> {
-    try {
-      const soldPlots = await this.getSoldPlots()
-      return soldPlots.filter(plot => plot.soldTo === walletAddress)
-    } catch (error) {
-      console.error('Error getting user plots:', error)
-      return []
+    // Initialize if not already done
+    if (!isInitialized) {
+      await initializeDatabase()
     }
+    
+    return soldPlots.filter(plot => plot.soldTo === walletAddress)
   }
 
   // Synchronous versions for server-side use only (for backward compatibility)
