@@ -20,8 +20,11 @@ if (isProduction) {
   try {
     // Use REDIS_URL environment variable
     kv = require('@vercel/kv').kv
+    console.log('Database: Vercel KV client initialized successfully')
+    console.log('Database: REDIS_URL available:', !!process.env.REDIS_URL)
   } catch (error) {
     console.error('Failed to initialize Vercel KV:', error)
+    console.error('Database: REDIS_URL available:', !!process.env.REDIS_URL)
   }
 }
 
@@ -36,7 +39,10 @@ async function initializeDatabase() {
   try {
     if (isProduction && kv) {
       // In production, load from Vercel KV
+      console.log('Database: Attempting to load from Vercel KV...')
       const kvData = await kv.get('faberland_plots')
+      console.log('Database: KV data retrieved:', kvData)
+      
       if (kvData) {
         soldPlots = Array.isArray(kvData) ? kvData : []
         console.log(`Database: Initialized with ${soldPlots.length} plots from Vercel KV`)
@@ -73,7 +79,10 @@ async function reloadFromStorage() {
   try {
     if (isProduction && kv) {
       // In production, reload from Vercel KV
+      console.log('Database: Reloading from Vercel KV...')
       const kvData = await kv.get('faberland_plots')
+      console.log('Database: Reloaded KV data:', kvData)
+      
       if (kvData) {
         soldPlots = Array.isArray(kvData) ? kvData : []
         console.log(`Database: Reloaded ${soldPlots.length} plots from Vercel KV`)
@@ -105,8 +114,15 @@ async function persistData() {
   try {
     if (isProduction && kv) {
       // In production, save to Vercel KV
+      console.log('Database: Persisting to Vercel KV...')
+      console.log('Database: Data to persist:', soldPlots)
+      
       await kv.set('faberland_plots', soldPlots)
       console.log(`Database: Persisted ${soldPlots.length} plots to Vercel KV`)
+      
+      // Verify the data was saved
+      const verifyData = await kv.get('faberland_plots')
+      console.log('Database: Verification - data in KV after save:', verifyData)
     } else {
       // In development, save to file
       const fs = require('fs')
@@ -165,15 +181,21 @@ export class PlotDatabase {
 
   // Mark plot as sold - server-side only
   static async markPlotAsSold(plotId: number, walletAddress: string, userEmail: string, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): Promise<void> {
+    console.log('Database: markPlotAsSold called with:', { plotId, walletAddress, userEmail, rentalTerm })
+    
     // Initialize if not already done
     if (!isInitialized) {
+      console.log('Database: Initializing database...')
       await initializeDatabase()
     }
     
     // Reload from storage to get latest data
+    console.log('Database: Reloading from storage...')
     await reloadFromStorage()
     
     const existingIndex = soldPlots.findIndex(plot => plot.id === plotId)
+    console.log('Database: Existing plot index:', existingIndex)
+    console.log('Database: Current soldPlots:', soldPlots)
     
     const rentalEndDate = new Date()
     switch (rentalTerm) {
@@ -211,6 +233,7 @@ export class PlotDatabase {
     console.log(`Database: All plots:`, soldPlots.map(p => ({ id: p.id, soldTo: p.soldTo })))
     
     // Persist data
+    console.log('Database: Persisting data...')
     await persistData()
   }
 
