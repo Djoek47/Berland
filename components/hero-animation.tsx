@@ -31,6 +31,7 @@ export default function HeroAnimation() {
       color: string
 
       constructor() {
+        if (!canvas) return
         this.x = Math.random() * canvas.width
         this.y = Math.random() * canvas.height
         this.size = Math.random() * 3 + 1
@@ -43,6 +44,7 @@ export default function HeroAnimation() {
       }
 
       update() {
+        if (!canvas) return
         this.x += this.speedX
         this.y += this.speedY
 
@@ -99,7 +101,7 @@ export default function HeroAnimation() {
 
     // Animation loop
     function animate() {
-      if (!ctx) return
+      if (!ctx || !canvas) return
 
       // Create a semi-transparent background to create trail effect
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)"
