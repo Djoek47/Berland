@@ -18,6 +18,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 let kv: any = null
 if (isProduction) {
   try {
+    // Use REDIS_URL environment variable
     kv = require('@vercel/kv').kv
   } catch (error) {
     console.error('Failed to initialize Vercel KV:', error)
