@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": 2,
+    "isSold": true,
+    "soldTo": "0xa79Ad9a1270158bC99E1BC21B2b214E0C3436106",
+    "soldAt": "2025-08-27T03:00:26.524Z",
+    "rentalEndDate": "2025-11-25T04:00:26.524Z",
+    "rentalTerm": "quarterly",
+    "userEmail": "user@email.com"
+  },
+  {
+    "id": 6,
+    "isSold": true,
+    "soldTo": "0xa79Ad9a1270158bC99E1BC21B2b214E0C3436106",
+    "soldAt": "2025-08-27T03:01:04.256Z",
+    "rentalEndDate": "2026-08-27T03:01:04.256Z",
+    "rentalTerm": "yearly",
+    "userEmail": "user@email.com"
+  }
+]

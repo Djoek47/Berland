@@ -15,24 +15,40 @@ export interface PlotStatus {
 let soldPlots: PlotStatus[] = []
 let isInitialized = false
 
-// Initialize database from file
+// Check if we're in production (Vercel)
+const isProduction = process.env.NODE_ENV === 'production'
+
+// TEMPORARY: In-memory storage for production testing
+// TODO: Replace with proper database (Vercel KV, Postgres, etc.)
+let productionMemoryStorage: PlotStatus[] = []
+
+// Initialize database from file (development) or memory (production)
 function initializeDatabase() {
+  if (isInitialized) return
+  
   try {
-    const fs = require('fs')
-    const path = require('path')
-    const dataPath = path.join(process.cwd(), 'data', 'plots.json')
-    
-    if (fs.existsSync(dataPath)) {
-      const data = fs.readFileSync(dataPath, 'utf8')
-      const parsedData = JSON.parse(data)
-      soldPlots = Array.isArray(parsedData) ? parsedData : []
-      console.log(`Database: Initialized with ${soldPlots.length} plots from file`)
+    if (isProduction) {
+      // In production, use in-memory storage (temporary solution)
+      soldPlots = [...productionMemoryStorage]
+      console.log(`Database: Initialized with ${soldPlots.length} plots from memory (production mode)`)
     } else {
-      console.log('Database: No existing data file found, starting with empty database')
-      soldPlots = []
+      // In development, load from file
+      const fs = require('fs')
+      const path = require('path')
+      const dataPath = path.join(process.cwd(), 'data', 'plots.json')
+      
+      if (fs.existsSync(dataPath)) {
+        const data = fs.readFileSync(dataPath, 'utf8')
+        const parsedData = JSON.parse(data)
+        soldPlots = Array.isArray(parsedData) ? parsedData : []
+        console.log(`Database: Initialized with ${soldPlots.length} plots from file`)
+      } else {
+        console.log('Database: No existing data file found, starting with empty database')
+        soldPlots = []
+      }
     }
   } catch (error) {
-    console.error('Database: Error initializing from file:', error)
+    console.error('Database: Error initializing:', error)
     soldPlots = []
   }
   
@@ -43,6 +59,34 @@ function initializeDatabase() {
 function forceReinitialize() {
   isInitialized = false
   initializeDatabase()
+}
+
+// Persist data to storage (file in dev, memory in prod)
+function persistData() {
+  try {
+    if (isProduction) {
+      // In production, update in-memory storage (temporary solution)
+      productionMemoryStorage = [...soldPlots]
+      console.log(`Database: Updated memory storage with ${soldPlots.length} plots (production mode)`)
+      console.log('Database: WARNING - This is temporary in-memory storage. Data will be lost on server restart.')
+      console.log('Database: TODO - Implement proper database (Vercel KV, Postgres, etc.)')
+    } else {
+      // In development, save to file
+      const fs = require('fs')
+      const path = require('path')
+      const dataPath = path.join(process.cwd(), 'data', 'plots.json')
+      const dataDir = path.dirname(dataPath)
+      
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true })
+      }
+      
+      fs.writeFileSync(dataPath, JSON.stringify(soldPlots, null, 2))
+      console.log(`Database: Persisted ${soldPlots.length} plots to file`)
+    }
+  } catch (error) {
+    console.error('Database: Error persisting data:', error)
+  }
 }
 
 export class PlotDatabase {
@@ -120,22 +164,8 @@ export class PlotDatabase {
     console.log(`Plot ${plotId} marked as sold to ${walletAddress}`)
     console.log(`Database: Total sold plots: ${soldPlots.length}`)
     
-    // Persist to file immediately
-    try {
-      const fs = require('fs')
-      const path = require('path')
-      const dataPath = path.join(process.cwd(), 'data', 'plots.json')
-      const dataDir = path.dirname(dataPath)
-      
-      if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true })
-      }
-      
-      fs.writeFileSync(dataPath, JSON.stringify(soldPlots, null, 2))
-      console.log(`Database: Persisted ${soldPlots.length} plots to file`)
-    } catch (error) {
-      console.error('Database: Error persisting to file:', error)
-    }
+    // Persist data
+    persistData()
   }
 
   // Extend plot rental - server-side only
@@ -165,22 +195,8 @@ export class PlotDatabase {
       
       console.log(`Plot ${plotId} rental extended to ${newEndDate.toISOString()}`)
       
-      // Persist to file immediately
-      try {
-        const fs = require('fs')
-        const path = require('path')
-        const dataPath = path.join(process.cwd(), 'data', 'plots.json')
-        const dataDir = path.dirname(dataPath)
-        
-        if (!fs.existsSync(dataDir)) {
-          fs.mkdirSync(dataDir, { recursive: true })
-        }
-        
-        fs.writeFileSync(dataPath, JSON.stringify(soldPlots, null, 2))
-        console.log(`Database: Persisted ${soldPlots.length} plots to file after extension`)
-      } catch (error) {
-        console.error('Database: Error persisting to file:', error)
-      }
+      // Persist data
+      persistData()
     }
   }
 
@@ -203,38 +219,25 @@ export class PlotDatabase {
     return expiredPlotIds
   }
 
-  // Persist database to file - server-side only
+  // Persist database to storage - server-side only
   static persistToFile(): boolean {
     try {
-      const fs = require('fs')
-      const path = require('path')
-      const dataPath = path.join(process.cwd(), 'data', 'plots.json')
-      const dataDir = path.dirname(dataPath)
-      
-      if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true })
-      }
-      
-      // Ensure we have the latest data before persisting
-      forceReinitialize()
-      
-      fs.writeFileSync(dataPath, JSON.stringify(soldPlots, null, 2))
-      console.log(`Database: Persisted ${soldPlots.length} plots to file`)
+      persistData()
       return true
     } catch (error) {
-      console.error('Database: Error persisting to file:', error)
+      console.error('Database: Error persisting data:', error)
       return false
     }
   }
 
-  // Reload database from file - server-side only
+  // Reload database from storage - server-side only
   static reloadFromFile(): boolean {
     try {
       forceReinitialize()
-      console.log(`Database: Reloaded ${soldPlots.length} plots from file`)
+      console.log(`Database: Reloaded ${soldPlots.length} plots from storage`)
       return true
     } catch (error) {
-      console.error('Database: Error reloading from file:', error)
+      console.error('Database: Error reloading from storage:', error)
       return false
     }
   }
@@ -261,7 +264,7 @@ export class PlotDatabase {
     
     if (fixed) {
       console.log('Database: Fixed plots with missing soldTo field')
-      this.persistToFile()
+      persistData()
     }
   }
 
@@ -271,22 +274,8 @@ export class PlotDatabase {
     soldPlots = []
     console.log('All plot data reset')
     
-    // Persist empty state to file directly
-    try {
-      const fs = require('fs')
-      const path = require('path')
-      const dataPath = path.join(process.cwd(), 'data', 'plots.json')
-      const dataDir = path.dirname(dataPath)
-      
-      if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true })
-      }
-      
-      fs.writeFileSync(dataPath, JSON.stringify([], null, 2))
-      console.log('Database: Persisted empty database to file')
-    } catch (error) {
-      console.error('Database: Error persisting empty database:', error)
-    }
+    // Persist empty state
+    persistData()
   }
 
   // Get user's plots - always fetch from server
