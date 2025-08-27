@@ -68,10 +68,36 @@ async function initializeDatabase() {
   isInitialized = true
 }
 
-// Force re-initialization (for when we need to reload from storage)
-async function forceReinitialize() {
-  isInitialized = false
-  await initializeDatabase()
+// Reload database from storage (only when needed)
+async function reloadFromStorage() {
+  try {
+    if (isProduction && kv) {
+      // In production, reload from Vercel KV
+      const kvData = await kv.get('faberland_plots')
+      if (kvData) {
+        soldPlots = Array.isArray(kvData) ? kvData : []
+        console.log(`Database: Reloaded ${soldPlots.length} plots from Vercel KV`)
+      } else {
+        console.log('Database: No KV data found during reload')
+      }
+    } else {
+      // In development, reload from file
+      const fs = require('fs')
+      const path = require('path')
+      const dataPath = path.join(process.cwd(), 'data', 'plots.json')
+      
+      if (fs.existsSync(dataPath)) {
+        const data = fs.readFileSync(dataPath, 'utf8')
+        const parsedData = JSON.parse(data)
+        soldPlots = Array.isArray(parsedData) ? parsedData : []
+        console.log(`Database: Reloaded ${soldPlots.length} plots from file`)
+      } else {
+        console.log('Database: No file data found during reload')
+      }
+    }
+  } catch (error) {
+    console.error('Database: Error reloading from storage:', error)
+  }
 }
 
 // Persist data to storage (file in dev, KV in prod)
@@ -139,8 +165,14 @@ export class PlotDatabase {
 
   // Mark plot as sold - server-side only
   static async markPlotAsSold(plotId: number, walletAddress: string, userEmail: string, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): Promise<void> {
-    // Force re-initialization to ensure we have the latest data
-    await forceReinitialize()
+    // Initialize if not already done
+    if (!isInitialized) {
+      await initializeDatabase()
+    }
+    
+    // Reload from storage to get latest data
+    await reloadFromStorage()
+    
     const existingIndex = soldPlots.findIndex(plot => plot.id === plotId)
     
     const rentalEndDate = new Date()
@@ -168,12 +200,15 @@ export class PlotDatabase {
 
     if (existingIndex >= 0) {
       soldPlots[existingIndex] = plotStatus
+      console.log(`Database: Updated existing plot ${plotId}`)
     } else {
       soldPlots.push(plotStatus)
+      console.log(`Database: Added new plot ${plotId}`)
     }
 
     console.log(`Plot ${plotId} marked as sold to ${walletAddress}`)
     console.log(`Database: Total sold plots: ${soldPlots.length}`)
+    console.log(`Database: All plots:`, soldPlots.map(p => ({ id: p.id, soldTo: p.soldTo })))
     
     // Persist data
     await persistData()
@@ -181,8 +216,14 @@ export class PlotDatabase {
 
   // Extend plot rental - server-side only
   static async extendPlotRental(plotId: number, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): Promise<void> {
-    // Force re-initialization to ensure we have the latest data
-    await forceReinitialize()
+    // Initialize if not already done
+    if (!isInitialized) {
+      await initializeDatabase()
+    }
+    
+    // Reload from storage to get latest data
+    await reloadFromStorage()
+    
     const plotIndex = soldPlots.findIndex(plot => plot.id === plotId)
     if (plotIndex >= 0) {
       const plot = soldPlots[plotIndex]
@@ -213,8 +254,14 @@ export class PlotDatabase {
 
   // Remove expired plots - server-side only
   static async removeExpiredPlots(): Promise<number[]> {
-    // Force re-initialization to ensure we have the latest data
-    await forceReinitialize()
+    // Initialize if not already done
+    if (!isInitialized) {
+      await initializeDatabase()
+    }
+    
+    // Reload from storage to get latest data
+    await reloadFromStorage()
+    
     const now = new Date()
     const expiredPlotIds: number[] = []
     
@@ -246,7 +293,7 @@ export class PlotDatabase {
   // Reload database from storage - server-side only
   static async reloadFromFile(): Promise<boolean> {
     try {
-      await forceReinitialize()
+      await reloadFromStorage()
       console.log(`Database: Reloaded ${soldPlots.length} plots from storage`)
       return true
     } catch (error) {
@@ -257,7 +304,14 @@ export class PlotDatabase {
 
   // Fix any plots missing soldTo field - server-side only
   static async fixMissingSoldTo(): Promise<void> {
-    await forceReinitialize()
+    // Initialize if not already done
+    if (!isInitialized) {
+      await initializeDatabase()
+    }
+    
+    // Reload from storage to get latest data
+    await reloadFromStorage()
+    
     let fixed = false
     
     soldPlots.forEach(plot => {
