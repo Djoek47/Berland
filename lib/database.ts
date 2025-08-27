@@ -1,4 +1,4 @@
-// Centralized database for plot management using Vercel KV (Redis)
+// Centralized database for plot management using Redis
 // This ensures all clients see the same data by always fetching from server
 
 export interface PlotStatus {
@@ -14,19 +14,28 @@ export interface PlotStatus {
 // Check if we're in production (Vercel)
 const isProduction = process.env.NODE_ENV === 'production'
 
-// Initialize Vercel KV client (only in production)
+// Initialize Redis client (only in production)
 let kv: any = null
 if (isProduction) {
   try {
-    // Use Vercel KV environment variables (not REDIS_URL)
-    kv = require('@vercel/kv').kv
-    console.log('Database: Vercel KV client initialized successfully')
-    console.log('Database: KV_REST_API_URL available:', !!process.env.KV_REST_API_URL)
-    console.log('Database: KV_REST_API_TOKEN available:', !!process.env.KV_REST_API_TOKEN)
+    // Use Redis directly with REDIS_URL
+    const { createClient } = require('redis')
+    kv = createClient({
+      url: process.env.REDIS_URL
+    })
+    
+    // Connect to Redis
+    kv.connect().then(() => {
+      console.log('Database: Redis client connected successfully')
+    }).catch((err: any) => {
+      console.error('Database: Redis connection failed:', err)
+    })
+    
+    console.log('Database: Redis client initialized successfully')
+    console.log('Database: REDIS_URL available:', !!process.env.REDIS_URL)
   } catch (error) {
-    console.error('Failed to initialize Vercel KV:', error)
-    console.error('Database: KV_REST_API_URL available:', !!process.env.KV_REST_API_URL)
-    console.error('Database: KV_REST_API_TOKEN available:', !!process.env.KV_REST_API_TOKEN)
+    console.error('Failed to initialize Redis client:', error)
+    console.error('Database: REDIS_URL available:', !!process.env.REDIS_URL)
   }
 }
 
@@ -34,22 +43,22 @@ if (isProduction) {
 let soldPlots: PlotStatus[] = []
 let isInitialized = false
 
-// Initialize database from file (development) or KV (production)
+// Initialize database from file (development) or Redis (production)
 async function initializeDatabase() {
   if (isInitialized) return
   
   try {
     if (isProduction && kv) {
-      // In production, load from Vercel KV
-      console.log('Database: Attempting to load from Vercel KV...')
-      const kvData = await kv.get('faberland_plots')
-      console.log('Database: KV data retrieved:', kvData)
+      // In production, load from Redis
+      console.log('Database: Attempting to load from Redis...')
+      const redisData = await kv.get('faberland_plots')
+      console.log('Database: Redis data retrieved:', redisData)
       
-      if (kvData) {
-        soldPlots = Array.isArray(kvData) ? kvData : []
-        console.log(`Database: Initialized with ${soldPlots.length} plots from Vercel KV`)
+      if (redisData) {
+        soldPlots = Array.isArray(JSON.parse(redisData)) ? JSON.parse(redisData) : []
+        console.log(`Database: Initialized with ${soldPlots.length} plots from Redis`)
       } else {
-        console.log('Database: No existing KV data found, starting with empty database')
+        console.log('Database: No existing Redis data found, starting with empty database')
         soldPlots = []
       }
     } else {
@@ -80,16 +89,16 @@ async function initializeDatabase() {
 async function reloadFromStorage() {
   try {
     if (isProduction && kv) {
-      // In production, reload from Vercel KV
-      console.log('Database: Reloading from Vercel KV...')
-      const kvData = await kv.get('faberland_plots')
-      console.log('Database: Reloaded KV data:', kvData)
+      // In production, reload from Redis
+      console.log('Database: Reloading from Redis...')
+      const redisData = await kv.get('faberland_plots')
+      console.log('Database: Reloaded Redis data:', redisData)
       
-      if (kvData) {
-        soldPlots = Array.isArray(kvData) ? kvData : []
-        console.log(`Database: Reloaded ${soldPlots.length} plots from Vercel KV`)
+      if (redisData) {
+        soldPlots = Array.isArray(JSON.parse(redisData)) ? JSON.parse(redisData) : []
+        console.log(`Database: Reloaded ${soldPlots.length} plots from Redis`)
       } else {
-        console.log('Database: No KV data found during reload')
+        console.log('Database: No Redis data found during reload')
       }
     } else {
       // In development, reload from file
@@ -111,20 +120,20 @@ async function reloadFromStorage() {
   }
 }
 
-// Persist data to storage (file in dev, KV in prod)
+// Persist data to storage (file in dev, Redis in prod)
 async function persistData() {
   try {
     if (isProduction && kv) {
-      // In production, save to Vercel KV
-      console.log('Database: Persisting to Vercel KV...')
+      // In production, save to Redis
+      console.log('Database: Persisting to Redis...')
       console.log('Database: Data to persist:', soldPlots)
       
-      await kv.set('faberland_plots', soldPlots)
-      console.log(`Database: Persisted ${soldPlots.length} plots to Vercel KV`)
+      await kv.set('faberland_plots', JSON.stringify(soldPlots))
+      console.log(`Database: Persisted ${soldPlots.length} plots to Redis`)
       
       // Verify the data was saved
       const verifyData = await kv.get('faberland_plots')
-      console.log('Database: Verification - data in KV after save:', verifyData)
+      console.log('Database: Verification - data in Redis after save:', verifyData)
     } else {
       // In development, save to file
       const fs = require('fs')
