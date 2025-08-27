@@ -79,7 +79,7 @@ async function handleCheckoutCompleted(session: any) {
   console.log('Webhook: Session metadata:', session.metadata)
   
   // Extract metadata
-  const { plotId, plotName, selectedTerm, monthlyRent, userAddress } = session.metadata
+  const { plotId, plotName, selectedTerm, monthlyRent, userAddress, isRenewal } = session.metadata
   
   if (!plotId || !userAddress) {
     console.error('Webhook Error: Missing required metadata', { plotId, userAddress, metadata: session.metadata })
@@ -87,15 +87,25 @@ async function handleCheckoutCompleted(session: any) {
   }
   
   try {
-    // Mark the plot as sold in the database
-    console.log(`Webhook: Marking plot ${plotId} as sold to ${userAddress} for ${selectedTerm}`)
-    
-    PlotDatabase.markPlotAsSold(
-      parseInt(plotId), 
-      userAddress, 
-      session.customer_email || 'unknown@email.com',
-      selectedTerm as 'monthly' | 'quarterly' | 'yearly'
-    )
+    if (isRenewal === 'true') {
+      // Handle renewal - extend existing rental
+      console.log(`Webhook: Extending plot ${plotId} rental for ${userAddress} for ${selectedTerm}`)
+      
+      PlotDatabase.extendPlotRental(
+        parseInt(plotId),
+        selectedTerm as 'monthly' | 'quarterly' | 'yearly'
+      )
+    } else {
+      // Handle new rental - mark as sold
+      console.log(`Webhook: Marking plot ${plotId} as sold to ${userAddress} for ${selectedTerm}`)
+      
+      PlotDatabase.markPlotAsSold(
+        parseInt(plotId), 
+        userAddress, 
+        session.customer_email || 'unknown@email.com',
+        selectedTerm as 'monthly' | 'quarterly' | 'yearly'
+      )
+    }
     
     // Verify the plot was marked as sold
     const isSold = PlotDatabase.isPlotSoldSync(parseInt(plotId))

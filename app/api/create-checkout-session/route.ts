@@ -51,6 +51,9 @@ export async function POST(request: NextRequest) {
                      plotId % 8 === 6 ? "/images/faberge-eggs/sapphire-blue.png" :
                      "/images/faberge-eggs/fire-opal.png")
 
+    console.log('Checkout: Creating session with term:', term)
+    console.log('Checkout: Session metadata will include:', { plotId, plotName, selectedTerm: term, userAddress })
+    
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

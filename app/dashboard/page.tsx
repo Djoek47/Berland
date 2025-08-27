@@ -146,7 +146,7 @@ export default function DashboardPage() {
                       ["Event Space", "Premium Location", "Creative Hub", "Exclusive Access", "Custom Branding"],
             rentalStartDate: plot.soldAt || new Date().toISOString(),
             rentalEndDate: plot.rentalEndDate || '',
-            selectedTerm: "monthly" as const,
+            selectedTerm: plot.rentalTerm || "monthly" as const,
             totalPrice: 0
           })))
         } else {
@@ -212,37 +212,16 @@ export default function DashboardPage() {
       if (success === 'true' && sessionId && plotId) {
         console.log('Dashboard: Processing successful payment for plot:', plotId)
         
-        // Mark plot as sold via API
-        try {
-          const markResponse = await fetch('/api/test-mark-sold', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              plotId: parseInt(plotId),
-              userAddress: address,
-              userEmail: 'user@email.com',
-              rentalTerm: 'monthly'
-            }),
-          })
-
-          if (markResponse.ok) {
-            const result = await markResponse.json()
-            console.log('Dashboard: Plot marked as sold:', result)
-          } else {
-            console.error('Dashboard: Failed to mark plot as sold')
-          }
-        } catch (error) {
-          console.error('Dashboard: Error marking plot as sold:', error)
-        }
+        // Note: The webhook should have already processed this payment
+        // This is just a fallback in case the webhook failed
+        console.log('Dashboard: Payment success detected, webhook should have processed the rental')
 
         setSuccessDetails({
           sessionId,
           plotId: parseInt(plotId),
           message: isRenewal 
             ? 'Renewal successful! Your Faberplot rental has been extended.'
-            : 'Payment successful! Your Faberplot rental has been activated.'
+            : 'Payment successful! Your Faberplot rental has been activated and will be available in your dashboard.'
         })
         setShowSuccessMessage(true)
 
@@ -272,6 +251,7 @@ export default function DashboardPage() {
           plotName: plot.name,
           plotImage: plot.image,
           monthlyRent: plot.monthlyRent,
+          selectedTerm: plot.selectedTerm,
           isRenewal: true,
           currentEndDate: plot.rentalEndDate
         }),
@@ -306,6 +286,16 @@ export default function DashboardPage() {
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
 
     return { expired: false, days, hours, minutes }
+  }
+
+  // Get rental period display text
+  const getRentalPeriodText = (term: string) => {
+    switch (term) {
+      case 'monthly': return 'Monthly Rental'
+      case 'quarterly': return 'Quarterly Rental (3 months)'
+      case 'yearly': return 'Yearly Rental (12 months)'
+      default: return 'Monthly Rental'
+    }
   }
 
   // Reset database (for testing)
@@ -482,19 +472,22 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
-                          {/* Time Remaining */}
+                          {/* Rental Period and Time Remaining */}
                           {!timeRemaining.expired ? (
                             <div className="bg-black/20 rounded-lg p-3">
                               <div className="flex items-center gap-2 mb-2">
                                 <Clock className="h-4 w-4 text-apple-green" />
                                 <span className="text-sm font-medium text-white">Time Remaining</span>
-                          </div>
+                                <Badge className="ml-auto bg-apple-green/20 text-apple-green border-apple-green/30">
+                                  {getRentalPeriodText(plot.selectedTerm)}
+                                </Badge>
+                              </div>
                               <div className="text-sm text-white">
                                 {timeRemaining.days > 0 && `${timeRemaining.days}d `}
                                 {timeRemaining.hours > 0 && `${timeRemaining.hours}h `}
                                 {timeRemaining.minutes}m
-                          </div>
-                        </div>
+                              </div>
+                            </div>
                           ) : (
                             <div className="bg-red-900/20 border border-red-700/30 rounded-lg p-3">
                               <div className="flex items-center gap-2">

@@ -8,6 +8,7 @@ export interface PlotStatus {
   soldAt?: string // ISO date string
   rentalEndDate?: string // ISO date string
   userEmail?: string
+  rentalTerm?: 'monthly' | 'quarterly' | 'yearly' // Add rental period information
 }
 
 // Server-side storage (global variable - will be reset on server restart)
@@ -98,6 +99,7 @@ export class PlotDatabase {
       soldTo: walletAddress,
       soldAt: new Date().toISOString(),
       rentalEndDate: rentalEndDate.toISOString(),
+      rentalTerm: rentalTerm, // Store the rental period
       userEmail
     }
 
