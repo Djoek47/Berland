@@ -205,16 +205,38 @@ export default function DashboardPage() {
       const sessionId = urlParams.get('session_id')
       const plotId = urlParams.get('plot_id')
       const isRenewal = urlParams.get('renewal') === 'true'
+      const term = urlParams.get('term') || 'monthly'
 
-      console.log('Dashboard: Checking URL params:', { success, sessionId, plotId, isRenewal })
+      console.log('Dashboard: Checking URL params:', { success, sessionId, plotId, isRenewal, term })
       console.log('Dashboard: Current URL:', window.location.href)
 
       if (success === 'true' && sessionId && plotId) {
         console.log('Dashboard: Processing successful payment for plot:', plotId)
         
-        // Note: The webhook should have already processed this payment
-        // This is just a fallback in case the webhook failed
-        console.log('Dashboard: Payment success detected, webhook should have processed the rental')
+        // Process the rental immediately since webhooks don't work on localhost
+        try {
+          const response = await fetch('/api/process-rental', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              plotId: parseInt(plotId),
+              userAddress: address,
+              userEmail: 'user@email.com',
+              rentalTerm: term as 'monthly' | 'quarterly' | 'yearly'
+            }),
+          })
+
+          if (response.ok) {
+            const result = await response.json()
+            console.log('Dashboard: Rental processed successfully:', result)
+          } else {
+            console.error('Dashboard: Failed to process rental')
+          }
+        } catch (error) {
+          console.error('Dashboard: Error processing rental:', error)
+        }
 
         setSuccessDetails({
           sessionId,

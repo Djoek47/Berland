@@ -75,15 +75,12 @@ export async function POST(request: NextRequest) {
               },
             },
             unit_amount: amount,
-            recurring: term === 'monthly' ? { interval: 'month' } :
-                      term === 'quarterly' ? { interval: 'month', interval_count: 3 } :
-                      { interval: 'year' },
           },
           quantity: 1,
         },
       ],
-      mode: 'subscription',
-      success_url: `${request.nextUrl.origin}/dashboard?success=true&session_id={CHECKOUT_SESSION_ID}&plot_id=${plotId}&renewal=${isRenewal ? 'true' : 'false'}`,
+      mode: 'payment', // Changed from subscription to payment for immediate processing
+      success_url: `${request.nextUrl.origin}/dashboard?success=true&session_id={CHECKOUT_SESSION_ID}&plot_id=${plotId}&renewal=${isRenewal ? 'true' : 'false'}&term=${term}`,
       cancel_url: isRenewal ? `${request.nextUrl.origin}/dashboard?canceled=true` : `${request.nextUrl.origin}/faberplot/${plotId}?canceled=true`,
       customer_email: userEmail,
       // Add custom text and styling
@@ -94,25 +91,15 @@ export async function POST(request: NextRequest) {
             : `Complete your ${term} rental for ${plotName}. You'll be charged ${term === 'monthly' ? 'monthly' : term === 'quarterly' ? 'every 3 months' : 'annually'}.`,
         },
       },
-      metadata: {
-        plotId: plotId.toString(),
-        plotName,
-        selectedTerm: term,
-        monthlyRent: monthlyRent.toString(),
-        userAddress: userAddress || '',
-        isRenewal: isRenewal ? 'true' : 'false',
-        currentEndDate: currentEndDate || '',
-      },
-      subscription_data: {
-        metadata: {
-          plotId: plotId.toString(),
-          plotName,
-          selectedTerm: term,
-          monthlyRent: monthlyRent.toString(),
-          isRenewal: isRenewal ? 'true' : 'false',
-          currentEndDate: currentEndDate || '',
-        },
-      },
+             metadata: {
+         plotId: plotId.toString(),
+         plotName,
+         selectedTerm: term,
+         monthlyRent: monthlyRent.toString(),
+         userAddress: userAddress || '',
+         isRenewal: isRenewal ? 'true' : 'false',
+         currentEndDate: currentEndDate || '',
+       },
     })
 
     return NextResponse.json({ sessionId: session.id, url: session.url })

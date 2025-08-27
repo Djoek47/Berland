@@ -87,25 +87,15 @@ async function handleCheckoutCompleted(session: any) {
   }
   
   try {
-    if (isRenewal === 'true') {
-      // Handle renewal - extend existing rental
-      console.log(`Webhook: Extending plot ${plotId} rental for ${userAddress} for ${selectedTerm}`)
-      
-      PlotDatabase.extendPlotRental(
-        parseInt(plotId),
-        selectedTerm as 'monthly' | 'quarterly' | 'yearly'
-      )
-    } else {
-      // Handle new rental - mark as sold
-      console.log(`Webhook: Marking plot ${plotId} as sold to ${userAddress} for ${selectedTerm}`)
-      
-      PlotDatabase.markPlotAsSold(
-        parseInt(plotId), 
-        userAddress, 
-        session.customer_email || 'unknown@email.com',
-        selectedTerm as 'monthly' | 'quarterly' | 'yearly'
-      )
-    }
+    // Mark the plot as sold in the database
+    console.log(`Webhook: Marking plot ${plotId} as sold to ${userAddress} for ${selectedTerm}`)
+    
+    PlotDatabase.markPlotAsSold(
+      parseInt(plotId), 
+      userAddress, 
+      session.customer_email || 'unknown@email.com',
+      selectedTerm as 'monthly' | 'quarterly' | 'yearly'
+    )
     
     // Verify the plot was marked as sold
     const isSold = PlotDatabase.isPlotSoldSync(parseInt(plotId))
@@ -118,7 +108,7 @@ async function handleCheckoutCompleted(session: any) {
     
     // Persist database to file
     try {
-      const persistResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/persist-database`, {
+      const persistResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/api/persist-database`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
