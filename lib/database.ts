@@ -267,13 +267,26 @@ export class PlotDatabase {
 
   // Reset all data (for testing) - server-side only
   static resetAllData(): void {
-    // Force re-initialization to ensure we have the latest data
-    forceReinitialize()
+    // Clear the in-memory data first
     soldPlots = []
     console.log('All plot data reset')
     
-    // Persist empty state to file
-    this.persistToFile()
+    // Persist empty state to file directly
+    try {
+      const fs = require('fs')
+      const path = require('path')
+      const dataPath = path.join(process.cwd(), 'data', 'plots.json')
+      const dataDir = path.dirname(dataPath)
+      
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true })
+      }
+      
+      fs.writeFileSync(dataPath, JSON.stringify([], null, 2))
+      console.log('Database: Persisted empty database to file')
+    } catch (error) {
+      console.error('Database: Error persisting empty database:', error)
+    }
   }
 
   // Get user's plots - always fetch from server

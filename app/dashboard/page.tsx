@@ -323,6 +323,10 @@ export default function DashboardPage() {
 
   // Reset database (for testing)
   const handleResetDatabase = async () => {
+    if (!confirm('Are you sure you want to reset all data? This will clear all rented plots and cannot be undone.')) {
+      return
+    }
+    
     try {
       const response = await fetch('/api/reset-database', {
         method: 'POST',
@@ -330,12 +334,17 @@ export default function DashboardPage() {
       
       if (response.ok) {
         console.log('Database reset successfully')
+        // Force refresh of the dashboard
         setRefreshTrigger(prev => prev + 1)
+        // Show success message
+        alert('Database reset successfully! All plots are now available.')
       } else {
         console.error('Failed to reset database')
+        alert('Failed to reset database. Please try again.')
       }
     } catch (error) {
       console.error('Error resetting database:', error)
+      alert('Error resetting database. Please try again.')
     }
   }
 
