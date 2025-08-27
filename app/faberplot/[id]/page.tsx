@@ -13,7 +13,6 @@ import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
 import { redirectToCheckout } from "@/lib/stripe-client"
 import { useWallet } from "@/hooks/use-wallet"
-import { PlotDatabase } from "@/lib/database"
 import { getFaberplotPrice } from "@/lib/plot-prices"
 
 // Faberplot data with monthly rent pricing
@@ -72,11 +71,20 @@ export default function FaberplotPage() {
   // Wallet connection
   const { isConnected, address, isLoading: walletLoading } = useWallet()
   
-  // Check if plot is sold using database
+  // Check if plot is sold using API call
   useEffect(() => {
     const checkSoldStatus = async () => {
-      const sold = await PlotDatabase.isPlotSold(plotId)
-      setIsSold(sold)
+      try {
+        const response = await fetch(`/api/database-status`)
+        if (response.ok) {
+          const data = await response.json()
+          const soldPlots = data.soldPlots || []
+          const sold = soldPlots.some((plot: any) => plot.id === plotId && plot.isSold)
+          setIsSold(sold)
+        }
+      } catch (error) {
+        console.error('Error checking sold status:', error)
+      }
     }
     checkSoldStatus()
   }, [plotId])

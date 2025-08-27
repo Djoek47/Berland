@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 import { ExternalLink, Info, MapPin, Gem, Clock, Tag, Search, Filter, X } from "lucide-react"
 import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
-import { PlotDatabase } from "@/lib/database"
+
 import { getFaberplotPrice } from "@/lib/plot-prices"
 
 interface LandPlot {
