@@ -18,13 +18,15 @@ const isProduction = process.env.NODE_ENV === 'production'
 let kv: any = null
 if (isProduction) {
   try {
-    // Use REDIS_URL environment variable
+    // Use Vercel KV environment variables (not REDIS_URL)
     kv = require('@vercel/kv').kv
     console.log('Database: Vercel KV client initialized successfully')
-    console.log('Database: REDIS_URL available:', !!process.env.REDIS_URL)
+    console.log('Database: KV_REST_API_URL available:', !!process.env.KV_REST_API_URL)
+    console.log('Database: KV_REST_API_TOKEN available:', !!process.env.KV_REST_API_TOKEN)
   } catch (error) {
     console.error('Failed to initialize Vercel KV:', error)
-    console.error('Database: REDIS_URL available:', !!process.env.REDIS_URL)
+    console.error('Database: KV_REST_API_URL available:', !!process.env.KV_REST_API_URL)
+    console.error('Database: KV_REST_API_TOKEN available:', !!process.env.KV_REST_API_TOKEN)
   }
 }
 
