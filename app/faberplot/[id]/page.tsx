@@ -14,13 +14,14 @@ import MetaverseFooter from "@/components/metaverse-footer"
 import { redirectToCheckout } from "@/lib/stripe-client"
 import { useWallet } from "@/hooks/use-wallet"
 import { PlotDatabase } from "@/lib/database"
+import { getFaberplotPrice } from "@/lib/plot-prices"
 
 // Faberplot data with monthly rent pricing
 const faberplotData = Array.from({ length: 47 }, (_, i) => ({
   id: i + 1,
   name: `Faberplot #${i + 1}`,
   description: `Faberplot #${i + 1} - A versatile virtual plot perfect for businesses, galleries, or creative projects. This premium location offers excellent visibility and foot traffic for your virtual enterprise.`,
-  monthlyRent: 40 + Math.floor(Math.random() * 41), // Random price between $40-$80
+  monthlyRent: getFaberplotPrice(i + 1), // Fixed price from price database
   image: i % 8 === 0 ? "/images/faberge-eggs/crystal-amber.jpeg" :
          i % 8 === 1 ? "/images/faberge-eggs/amber-glow.png" :
          i % 8 === 2 ? "/images/faberge-eggs/ruby-red.png" :

@@ -15,6 +15,7 @@ import { ExternalLink, Info, MapPin, Gem, Clock, Tag, Search, Filter, X } from "
 import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
 import { PlotDatabase } from "@/lib/database"
+import { getFaberplotPrice } from "@/lib/plot-prices"
 
 interface LandPlot {
   id: string
@@ -177,7 +178,7 @@ const landPlots: LandPlot[] = [
     name: `Faberplot #${i + 1}`,
     type: "faberplot" as const,
     description: `Faberplot #${i + 1} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
-    price: 0.5 + (i * 0.05),
+    price: getFaberplotPrice(i + 1) / 100, // Convert monthly rent to display price (divide by 100 for display)
     image: i % 8 === 0 ? "/images/faberge-eggs/crystal-amber.jpeg" :
            i % 8 === 1 ? "/images/faberge-eggs/amber-glow.png" :
            i % 8 === 2 ? "/images/faberge-eggs/ruby-red.png" :
@@ -769,7 +770,7 @@ function LandCard({ plot }: LandCardProps) {
             <div className="flex items-baseline gap-1">
               {plot.type === "faberplot" ? (
                 <>
-                  <span className="text-2xl font-bold text-white">${40 + Math.floor(Math.random() * 41)}</span>
+                  <span className="text-2xl font-bold text-white">${getFaberplotPrice(parseInt(plot.id.replace('faberplot-', '')))}</span>
                   <span className="text-sm text-white">/month</span>
                 </>
               ) : (

@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
 
     // Persist to file
     try {
-      const persistResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/api/persist-database`, {
+             const persistResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/api/persist-database`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

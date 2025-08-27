@@ -26,6 +26,7 @@ import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
 import { useWallet } from "@/hooks/use-wallet"
 import { redirectToCheckout } from "@/lib/stripe-client"
+import { getFaberplotPrice } from "@/lib/plot-prices"
 
 // Types
 interface Faberplot {
@@ -129,7 +130,7 @@ export default function DashboardPage() {
             id: plot.id,
             name: `Faberplot #${plot.id}`,
             description: `Faberplot #${plot.id} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
-            monthlyRent: 40 + Math.floor(Math.random() * 41), // Random price between $40-$80
+            monthlyRent: getFaberplotPrice(plot.id), // Fixed price from price database
             image: (plot.id % 8 === 0) ? "/images/faberge-eggs/crystal-amber.jpeg" :
                    (plot.id % 8 === 1) ? "/images/faberge-eggs/amber-glow.png" :
                    (plot.id % 8 === 2) ? "/images/faberge-eggs/ruby-red.png" :

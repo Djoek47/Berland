@@ -111,6 +111,23 @@ export class PlotDatabase {
 
     console.log(`Plot ${plotId} marked as sold to ${walletAddress}`)
     console.log(`Database: Total sold plots: ${soldPlots.length}`)
+    
+    // Persist to file immediately
+    try {
+      const fs = require('fs')
+      const path = require('path')
+      const dataPath = path.join(process.cwd(), 'data', 'plots.json')
+      const dataDir = path.dirname(dataPath)
+      
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true })
+      }
+      
+      fs.writeFileSync(dataPath, JSON.stringify(soldPlots, null, 2))
+      console.log(`Database: Persisted ${soldPlots.length} plots to file`)
+    } catch (error) {
+      console.error('Database: Error persisting to file:', error)
+    }
   }
 
   // Extend plot rental - server-side only
@@ -138,6 +155,23 @@ export class PlotDatabase {
       soldPlots[plotIndex].rentalEndDate = newEndDate.toISOString()
       
       console.log(`Plot ${plotId} rental extended to ${newEndDate.toISOString()}`)
+      
+      // Persist to file immediately
+      try {
+        const fs = require('fs')
+        const path = require('path')
+        const dataPath = path.join(process.cwd(), 'data', 'plots.json')
+        const dataDir = path.dirname(dataPath)
+        
+        if (!fs.existsSync(dataDir)) {
+          fs.mkdirSync(dataDir, { recursive: true })
+        }
+        
+        fs.writeFileSync(dataPath, JSON.stringify(soldPlots, null, 2))
+        console.log(`Database: Persisted ${soldPlots.length} plots to file after extension`)
+      } catch (error) {
+        console.error('Database: Error persisting to file:', error)
+      }
     }
   }
 
@@ -159,11 +193,35 @@ export class PlotDatabase {
     return expiredPlotIds
   }
 
+  // Persist database to file - server-side only
+  static persistToFile(): boolean {
+    try {
+      const fs = require('fs')
+      const path = require('path')
+      const dataPath = path.join(process.cwd(), 'data', 'plots.json')
+      const dataDir = path.dirname(dataPath)
+      
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true })
+      }
+      
+      fs.writeFileSync(dataPath, JSON.stringify(soldPlots, null, 2))
+      console.log(`Database: Persisted ${soldPlots.length} plots to file`)
+      return true
+    } catch (error) {
+      console.error('Database: Error persisting to file:', error)
+      return false
+    }
+  }
+
   // Reset all data (for testing) - server-side only
   static resetAllData(): void {
     initializeDatabase()
     soldPlots = []
     console.log('All plot data reset')
+    
+    // Persist empty state to file
+    this.persistToFile()
   }
 
   // Get user's plots - always fetch from server
