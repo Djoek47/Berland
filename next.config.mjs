@@ -1,14 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
+  webpack: (config, { isServer }) => {
+    // Exclude Redis from client-side bundling
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        redis: false,
+      }
+    }
+    return config
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  images: {
-    unoptimized: true,
-  },
+  experimental: {
+    serverComponentsExternalPackages: ['redis']
+  }
 }
 
 export default nextConfig

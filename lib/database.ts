@@ -14,13 +14,16 @@ export interface PlotStatus {
 // Check if we're in production (Vercel)
 const isProduction = process.env.NODE_ENV === 'production'
 
-// Initialize Redis client (only in production)
+// Check if we're on the server side
+const isServer = typeof window === 'undefined'
+
+// Initialize Redis client (only in production and server-side)
 let kv: any = null
 let redisClient: any = null
 
 // Initialize Redis connection
 async function initializeRedis() {
-  if (isProduction && !redisClient) {
+  if (isProduction && isServer && !redisClient) {
     try {
       // Use dynamic import to avoid build issues
       const { createClient } = await import('redis')
@@ -51,7 +54,7 @@ async function initializeDatabase() {
   if (isInitialized) return
   
   try {
-    if (isProduction) {
+    if (isProduction && isServer) {
       // Initialize Redis first
       await initializeRedis()
       
@@ -99,7 +102,7 @@ async function initializeDatabase() {
 // Reload database from storage (only when needed)
 async function reloadFromStorage() {
   try {
-    if (isProduction && kv) {
+    if (isProduction && isServer && kv) {
       // In production, reload from Redis
       console.log('Database: Reloading from Redis...')
       const redisData = await kv.get('faberland_plots')
@@ -134,7 +137,7 @@ async function reloadFromStorage() {
 // Persist data to storage (file in dev, Redis in prod)
 async function persistData() {
   try {
-    if (isProduction && kv) {
+    if (isProduction && isServer && kv) {
       // In production, save to Redis
       console.log('Database: Persisting to Redis...')
       console.log('Database: Data to persist:', soldPlots)
