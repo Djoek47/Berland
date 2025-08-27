@@ -3,27 +3,25 @@ import { PlotDatabase } from '@/lib/database'
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { plotId, userAddress, userEmail, rentalTerm } = body
+    const { plotId, userAddress, userEmail, rentalTerm } = await request.json()
 
-    console.log('Process rental: Processing rental for plot:', { plotId, userAddress, userEmail, rentalTerm })
+    console.log('Process rental: Received request:', { plotId, userAddress, userEmail, rentalTerm })
 
-    // Mark the plot as sold with the specified rental term
-    PlotDatabase.markPlotAsSold(
-      parseInt(plotId), 
-      userAddress, 
-      userEmail,
-      rentalTerm as 'monthly' | 'quarterly' | 'yearly'
-    )
+    if (!plotId || !userAddress || !userEmail || !rentalTerm) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
 
-    // Verify it was marked
-    const isSold = PlotDatabase.isPlotSoldSync(parseInt(plotId))
-    const soldPlots = PlotDatabase.getSoldPlotsSync()
+    // Check if plot is already sold
+    const isSold = await PlotDatabase.isPlotSold(plotId)
+    if (isSold) {
+      return NextResponse.json({ error: 'Plot is already sold' }, { status: 400 })
+    }
 
-        console.log('Process rental: Plot marked as sold:', isSold)
-    console.log('Process rental: Total sold plots:', soldPlots.length)
+    // Mark plot as sold
+    await PlotDatabase.markPlotAsSold(plotId, userAddress, userEmail, rentalTerm)
+    console.log('Process rental: Plot marked as sold successfully')
 
-    // Persist to file and reload to ensure consistency
+    // Persist to storage
     try {
       // First persist the data
       const persistResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/api/persist-database`, {
@@ -35,9 +33,8 @@ export async function POST(request: NextRequest) {
       
       if (persistResponse.ok) {
         console.log('Process rental: Database persisted successfully')
-        
         // Then reload to ensure we have the latest data
-        PlotDatabase.reloadFromFile()
+        await PlotDatabase.reloadFromFile()
       } else {
         console.error('Process rental: Failed to persist database')
       }
@@ -47,17 +44,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ 
       success: true, 
+      message: 'Plot rented successfully',
       plotId,
-      isSold,
-      rentalTerm,
-      totalSold: soldPlots.length,
-      soldPlots: soldPlots.map(p => ({ id: p.id, soldTo: p.soldTo, rentalTerm: p.rentalTerm }))
+      userAddress,
+      rentalTerm
     })
+
   } catch (error) {
-    console.error('Process rental: Error processing rental:', error)
-    return NextResponse.json(
-      { error: 'Failed to process rental' },
-      { status: 500 }
-    )
+    console.error('Process rental: Error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

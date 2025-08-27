@@ -1,21 +1,25 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { PlotDatabase } from '@/lib/database'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const soldPlots = PlotDatabase.getSoldPlotsSync()
+    // Get sold plots using async method
+    const soldPlots = await PlotDatabase.getSoldPlots()
     
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       soldPlots,
       totalSold: soldPlots.length,
       availablePlots: 47 - soldPlots.length
     })
   } catch (error) {
-    console.error('Error getting database status:', error)
-    return NextResponse.json(
-      { error: 'Failed to get database status' },
-      { status: 500 }
-    )
+    console.error('Database status: Error:', error)
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to get database status',
+      soldPlots: [],
+      totalSold: 0,
+      availablePlots: 47
+    })
   }
 }

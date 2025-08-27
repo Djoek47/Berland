@@ -1,4 +1,4 @@
-// Centralized database for plot management
+// Centralized database for plot management using Vercel KV (Redis)
 // This ensures all clients see the same data by always fetching from server
 
 export interface PlotStatus {
@@ -11,26 +11,38 @@ export interface PlotStatus {
   rentalTerm?: 'monthly' | 'quarterly' | 'yearly' // Add rental period information
 }
 
-// Server-side storage (global variable - will be reset on server restart)
-let soldPlots: PlotStatus[] = []
-let isInitialized = false
-
 // Check if we're in production (Vercel)
 const isProduction = process.env.NODE_ENV === 'production'
 
-// TEMPORARY: In-memory storage for production testing
-// TODO: Replace with proper database (Vercel KV, Postgres, etc.)
-let productionMemoryStorage: PlotStatus[] = []
+// Initialize Vercel KV client (only in production)
+let kv: any = null
+if (isProduction) {
+  try {
+    kv = require('@vercel/kv').kv
+  } catch (error) {
+    console.error('Failed to initialize Vercel KV:', error)
+  }
+}
 
-// Initialize database from file (development) or memory (production)
-function initializeDatabase() {
+// Server-side storage for development (file-based)
+let soldPlots: PlotStatus[] = []
+let isInitialized = false
+
+// Initialize database from file (development) or KV (production)
+async function initializeDatabase() {
   if (isInitialized) return
   
   try {
-    if (isProduction) {
-      // In production, use in-memory storage (temporary solution)
-      soldPlots = [...productionMemoryStorage]
-      console.log(`Database: Initialized with ${soldPlots.length} plots from memory (production mode)`)
+    if (isProduction && kv) {
+      // In production, load from Vercel KV
+      const kvData = await kv.get('faberland_plots')
+      if (kvData) {
+        soldPlots = Array.isArray(kvData) ? kvData : []
+        console.log(`Database: Initialized with ${soldPlots.length} plots from Vercel KV`)
+      } else {
+        console.log('Database: No existing KV data found, starting with empty database')
+        soldPlots = []
+      }
     } else {
       // In development, load from file
       const fs = require('fs')
@@ -55,21 +67,19 @@ function initializeDatabase() {
   isInitialized = true
 }
 
-// Force re-initialization (for when we need to reload from file)
-function forceReinitialize() {
+// Force re-initialization (for when we need to reload from storage)
+async function forceReinitialize() {
   isInitialized = false
-  initializeDatabase()
+  await initializeDatabase()
 }
 
-// Persist data to storage (file in dev, memory in prod)
-function persistData() {
+// Persist data to storage (file in dev, KV in prod)
+async function persistData() {
   try {
-    if (isProduction) {
-      // In production, update in-memory storage (temporary solution)
-      productionMemoryStorage = [...soldPlots]
-      console.log(`Database: Updated memory storage with ${soldPlots.length} plots (production mode)`)
-      console.log('Database: WARNING - This is temporary in-memory storage. Data will be lost on server restart.')
-      console.log('Database: TODO - Implement proper database (Vercel KV, Postgres, etc.)')
+    if (isProduction && kv) {
+      // In production, save to Vercel KV
+      await kv.set('faberland_plots', soldPlots)
+      console.log(`Database: Persisted ${soldPlots.length} plots to Vercel KV`)
     } else {
       // In development, save to file
       const fs = require('fs')
@@ -127,9 +137,9 @@ export class PlotDatabase {
   }
 
   // Mark plot as sold - server-side only
-  static markPlotAsSold(plotId: number, walletAddress: string, userEmail: string, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): void {
+  static async markPlotAsSold(plotId: number, walletAddress: string, userEmail: string, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): Promise<void> {
     // Force re-initialization to ensure we have the latest data
-    forceReinitialize()
+    await forceReinitialize()
     const existingIndex = soldPlots.findIndex(plot => plot.id === plotId)
     
     const rentalEndDate = new Date()
@@ -165,13 +175,13 @@ export class PlotDatabase {
     console.log(`Database: Total sold plots: ${soldPlots.length}`)
     
     // Persist data
-    persistData()
+    await persistData()
   }
 
   // Extend plot rental - server-side only
-  static extendPlotRental(plotId: number, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): void {
+  static async extendPlotRental(plotId: number, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): Promise<void> {
     // Force re-initialization to ensure we have the latest data
-    forceReinitialize()
+    await forceReinitialize()
     const plotIndex = soldPlots.findIndex(plot => plot.id === plotId)
     if (plotIndex >= 0) {
       const plot = soldPlots[plotIndex]
@@ -196,14 +206,14 @@ export class PlotDatabase {
       console.log(`Plot ${plotId} rental extended to ${newEndDate.toISOString()}`)
       
       // Persist data
-      persistData()
+      await persistData()
     }
   }
 
   // Remove expired plots - server-side only
-  static removeExpiredPlots(): number[] {
+  static async removeExpiredPlots(): Promise<number[]> {
     // Force re-initialization to ensure we have the latest data
-    forceReinitialize()
+    await forceReinitialize()
     const now = new Date()
     const expiredPlotIds: number[] = []
     
@@ -216,13 +226,15 @@ export class PlotDatabase {
       return true
     })
     
+    // Persist the updated data
+    await persistData()
     return expiredPlotIds
   }
 
   // Persist database to storage - server-side only
-  static persistToFile(): boolean {
+  static async persistToFile(): Promise<boolean> {
     try {
-      persistData()
+      await persistData()
       return true
     } catch (error) {
       console.error('Database: Error persisting data:', error)
@@ -231,9 +243,9 @@ export class PlotDatabase {
   }
 
   // Reload database from storage - server-side only
-  static reloadFromFile(): boolean {
+  static async reloadFromFile(): Promise<boolean> {
     try {
-      forceReinitialize()
+      await forceReinitialize()
       console.log(`Database: Reloaded ${soldPlots.length} plots from storage`)
       return true
     } catch (error) {
@@ -243,8 +255,8 @@ export class PlotDatabase {
   }
 
   // Fix any plots missing soldTo field - server-side only
-  static fixMissingSoldTo(): void {
-    forceReinitialize()
+  static async fixMissingSoldTo(): Promise<void> {
+    await forceReinitialize()
     let fixed = false
     
     soldPlots.forEach(plot => {
@@ -264,18 +276,18 @@ export class PlotDatabase {
     
     if (fixed) {
       console.log('Database: Fixed plots with missing soldTo field')
-      persistData()
+      await persistData()
     }
   }
 
   // Reset all data (for testing) - server-side only
-  static resetAllData(): void {
+  static async resetAllData(): Promise<void> {
     // Clear the in-memory data first
     soldPlots = []
     console.log('All plot data reset')
     
     // Persist empty state
-    persistData()
+    await persistData()
   }
 
   // Get user's plots - always fetch from server
@@ -289,24 +301,87 @@ export class PlotDatabase {
     }
   }
 
-  // Synchronous versions for server-side use only
+  // Synchronous versions for server-side use only (for backward compatibility)
   static getSoldPlotsSync(): PlotStatus[] {
     // Force re-initialization to ensure we have the latest data
-    forceReinitialize()
+    if (!isInitialized) {
+      // For sync methods, we'll initialize synchronously in development
+      if (!isProduction) {
+        try {
+          const fs = require('fs')
+          const path = require('path')
+          const dataPath = path.join(process.cwd(), 'data', 'plots.json')
+          
+          if (fs.existsSync(dataPath)) {
+            const data = fs.readFileSync(dataPath, 'utf8')
+            const parsedData = JSON.parse(data)
+            soldPlots = Array.isArray(parsedData) ? parsedData : []
+          } else {
+            soldPlots = []
+          }
+          isInitialized = true
+        } catch (error) {
+          console.error('Database: Error in sync initialization:', error)
+          soldPlots = []
+        }
+      } else {
+        // In production, return empty array for sync methods (use async instead)
+        console.warn('Database: Sync method called in production - returning empty array')
+        return []
+      }
+    }
+    
     // Fix any plots with missing soldTo field
-    this.fixMissingSoldTo()
+    this.fixMissingSoldToSync()
     return soldPlots
   }
 
   static isPlotSoldSync(plotId: number): boolean {
-    // Force re-initialization to ensure we have the latest data
-    forceReinitialize()
+    const soldPlots = this.getSoldPlotsSync()
     return soldPlots.some(plot => plot.id === plotId && plot.isSold)
   }
 
   static getUserPlotsSync(walletAddress: string): PlotStatus[] {
-    // Force re-initialization to ensure we have the latest data
-    forceReinitialize()
+    const soldPlots = this.getSoldPlotsSync()
     return soldPlots.filter(plot => plot.soldTo === walletAddress)
+  }
+
+  // Sync version of fixMissingSoldTo for backward compatibility
+  static fixMissingSoldToSync(): void {
+    let fixed = false
+    
+    soldPlots.forEach(plot => {
+      if (plot.isSold && !plot.soldTo) {
+        console.log(`Database: Fixing plot ${plot.id} - missing soldTo field, marking as available`)
+        plot.isSold = false
+        plot.soldTo = undefined
+        plot.soldAt = undefined
+        plot.rentalEndDate = undefined
+        plot.rentalTerm = undefined
+        plot.userEmail = undefined
+        fixed = true
+      }
+    })
+    
+    if (fixed) {
+      console.log('Database: Fixed plots with missing soldTo field')
+      // In development, persist immediately
+      if (!isProduction) {
+        try {
+          const fs = require('fs')
+          const path = require('path')
+          const dataPath = path.join(process.cwd(), 'data', 'plots.json')
+          const dataDir = path.dirname(dataPath)
+          
+          if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true })
+          }
+          
+          fs.writeFileSync(dataPath, JSON.stringify(soldPlots, null, 2))
+        } catch (error) {
+          console.error('Database: Error persisting after fix:', error)
+        }
+      }
+    }
   }
 }
