@@ -17,30 +17,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Plot is already sold' }, { status: 400 })
     }
 
-    // Mark plot as sold
+    // Mark plot as sold (this already handles persistence)
     await PlotDatabase.markPlotAsSold(plotId, userAddress, userEmail, rentalTerm)
     console.log('Process rental: Plot marked as sold successfully')
-
-    // Persist to storage
-    try {
-      // First persist the data
-      const persistResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/api/persist-database`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      
-      if (persistResponse.ok) {
-        console.log('Process rental: Database persisted successfully')
-        // Then reload to ensure we have the latest data
-        await PlotDatabase.reloadFromFile()
-      } else {
-        console.error('Process rental: Failed to persist database')
-      }
-    } catch (error) {
-      console.error('Process rental: Error persisting database:', error)
-    }
 
     return NextResponse.json({ 
       success: true, 
