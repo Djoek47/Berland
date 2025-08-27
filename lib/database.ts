@@ -17,8 +17,6 @@ let isInitialized = false
 
 // Initialize database from file
 function initializeDatabase() {
-  if (isInitialized) return
-  
   try {
     const fs = require('fs')
     const path = require('path')
@@ -26,16 +24,25 @@ function initializeDatabase() {
     
     if (fs.existsSync(dataPath)) {
       const data = fs.readFileSync(dataPath, 'utf8')
-      soldPlots = JSON.parse(data)
+      const parsedData = JSON.parse(data)
+      soldPlots = Array.isArray(parsedData) ? parsedData : []
       console.log(`Database: Initialized with ${soldPlots.length} plots from file`)
     } else {
       console.log('Database: No existing data file found, starting with empty database')
+      soldPlots = []
     }
   } catch (error) {
     console.error('Database: Error initializing from file:', error)
+    soldPlots = []
   }
   
   isInitialized = true
+}
+
+// Force re-initialization (for when we need to reload from file)
+function forceReinitialize() {
+  isInitialized = false
+  initializeDatabase()
 }
 
 export class PlotDatabase {
@@ -77,7 +84,8 @@ export class PlotDatabase {
 
   // Mark plot as sold - server-side only
   static markPlotAsSold(plotId: number, walletAddress: string, userEmail: string, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): void {
-    initializeDatabase()
+    // Force re-initialization to ensure we have the latest data
+    forceReinitialize()
     const existingIndex = soldPlots.findIndex(plot => plot.id === plotId)
     
     const rentalEndDate = new Date()
@@ -96,7 +104,7 @@ export class PlotDatabase {
     const plotStatus: PlotStatus = {
       id: plotId,
       isSold: true,
-      soldTo: walletAddress,
+      soldTo: walletAddress, // Always ensure this is set
       soldAt: new Date().toISOString(),
       rentalEndDate: rentalEndDate.toISOString(),
       rentalTerm: rentalTerm, // Store the rental period
@@ -132,7 +140,8 @@ export class PlotDatabase {
 
   // Extend plot rental - server-side only
   static extendPlotRental(plotId: number, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): void {
-    initializeDatabase()
+    // Force re-initialization to ensure we have the latest data
+    forceReinitialize()
     const plotIndex = soldPlots.findIndex(plot => plot.id === plotId)
     if (plotIndex >= 0) {
       const plot = soldPlots[plotIndex]
@@ -177,7 +186,8 @@ export class PlotDatabase {
 
   // Remove expired plots - server-side only
   static removeExpiredPlots(): number[] {
-    initializeDatabase()
+    // Force re-initialization to ensure we have the latest data
+    forceReinitialize()
     const now = new Date()
     const expiredPlotIds: number[] = []
     
@@ -205,6 +215,9 @@ export class PlotDatabase {
         fs.mkdirSync(dataDir, { recursive: true })
       }
       
+      // Ensure we have the latest data before persisting
+      forceReinitialize()
+      
       fs.writeFileSync(dataPath, JSON.stringify(soldPlots, null, 2))
       console.log(`Database: Persisted ${soldPlots.length} plots to file`)
       return true
@@ -214,9 +227,48 @@ export class PlotDatabase {
     }
   }
 
+  // Reload database from file - server-side only
+  static reloadFromFile(): boolean {
+    try {
+      forceReinitialize()
+      console.log(`Database: Reloaded ${soldPlots.length} plots from file`)
+      return true
+    } catch (error) {
+      console.error('Database: Error reloading from file:', error)
+      return false
+    }
+  }
+
+  // Fix any plots missing soldTo field - server-side only
+  static fixMissingSoldTo(): void {
+    forceReinitialize()
+    let fixed = false
+    
+    soldPlots.forEach(plot => {
+      if (plot.isSold && !plot.soldTo) {
+        // If plot is sold but missing soldTo, we can't recover the wallet address
+        // So we'll mark it as available again
+        console.log(`Database: Fixing plot ${plot.id} - missing soldTo field, marking as available`)
+        plot.isSold = false
+        plot.soldTo = undefined
+        plot.soldAt = undefined
+        plot.rentalEndDate = undefined
+        plot.rentalTerm = undefined
+        plot.userEmail = undefined
+        fixed = true
+      }
+    })
+    
+    if (fixed) {
+      console.log('Database: Fixed plots with missing soldTo field')
+      this.persistToFile()
+    }
+  }
+
   // Reset all data (for testing) - server-side only
   static resetAllData(): void {
-    initializeDatabase()
+    // Force re-initialization to ensure we have the latest data
+    forceReinitialize()
     soldPlots = []
     console.log('All plot data reset')
     
@@ -237,17 +289,22 @@ export class PlotDatabase {
 
   // Synchronous versions for server-side use only
   static getSoldPlotsSync(): PlotStatus[] {
-    initializeDatabase()
+    // Force re-initialization to ensure we have the latest data
+    forceReinitialize()
+    // Fix any plots with missing soldTo field
+    this.fixMissingSoldTo()
     return soldPlots
   }
 
   static isPlotSoldSync(plotId: number): boolean {
-    initializeDatabase()
+    // Force re-initialization to ensure we have the latest data
+    forceReinitialize()
     return soldPlots.some(plot => plot.id === plotId && plot.isSold)
   }
 
   static getUserPlotsSync(walletAddress: string): PlotStatus[] {
-    initializeDatabase()
+    // Force re-initialization to ensure we have the latest data
+    forceReinitialize()
     return soldPlots.filter(plot => plot.soldTo === walletAddress)
   }
 }

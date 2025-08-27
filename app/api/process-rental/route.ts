@@ -20,12 +20,13 @@ export async function POST(request: NextRequest) {
     const isSold = PlotDatabase.isPlotSoldSync(parseInt(plotId))
     const soldPlots = PlotDatabase.getSoldPlotsSync()
 
-    console.log('Process rental: Plot marked as sold:', isSold)
+        console.log('Process rental: Plot marked as sold:', isSold)
     console.log('Process rental: Total sold plots:', soldPlots.length)
 
-    // Persist to file
+    // Persist to file and reload to ensure consistency
     try {
-             const persistResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/api/persist-database`, {
+      // First persist the data
+      const persistResponse = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3001'}/api/persist-database`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -34,6 +35,9 @@ export async function POST(request: NextRequest) {
       
       if (persistResponse.ok) {
         console.log('Process rental: Database persisted successfully')
+        
+        // Then reload to ensure we have the latest data
+        PlotDatabase.reloadFromFile()
       } else {
         console.error('Process rental: Failed to persist database')
       }

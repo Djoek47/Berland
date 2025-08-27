@@ -44,6 +44,9 @@ export async function POST(request: NextRequest) {
     const success = saveDataToFile(soldPlots)
     
     if (success) {
+      // Reload the database to ensure consistency
+      PlotDatabase.reloadFromFile()
+      
       return NextResponse.json({ 
         success: true, 
         message: 'Database persisted successfully',
