@@ -16,5 +16,14 @@
     "rentalEndDate": "2026-08-27T03:01:04.256Z",
     "rentalTerm": "yearly",
     "userEmail": "user@email.com"
+  },
+  {
+    "id": 4,
+    "isSold": true,
+    "soldTo": "0xa79Ad9a1270158bC99E1BC21B2b214E0C3436106",
+    "soldAt": "2025-08-27T05:11:38.367Z",
+    "rentalEndDate": "2026-08-27T05:11:38.367Z",
+    "rentalTerm": "yearly",
+    "userEmail": "user@email.com"
   }
 ]
