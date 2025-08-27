@@ -23,12 +23,12 @@ export default function HeroAnimation() {
 
     // Particle class
     class Particle {
-      x: number
-      y: number
-      size: number
-      speedX: number
-      speedY: number
-      color: string
+      x: number = 0
+      y: number = 0
+      size: number = 1
+      speedX: number = 0
+      speedY: number = 0
+      color: string = 'hsl(50, 90%, 60%)'
 
       constructor() {
         if (!canvas) return
