@@ -7,10 +7,20 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { plotId, plotName, selectedTerm, monthlyRent, userEmail, userAddress, isRenewal, currentEndDate, plotImage } = body
 
-    // Validate required fields
+    // Enhanced validation
     if (!plotId || !plotName || !monthlyRent) {
+      console.error('Checkout: Missing required fields:', { plotId, plotName, monthlyRent })
       return NextResponse.json(
         { error: 'Missing required fields' },
+        { status: 400 }
+      )
+    }
+
+    // Validate rental term
+    if (selectedTerm && !['monthly', 'quarterly', 'yearly'].includes(selectedTerm)) {
+      console.error('Checkout: Invalid rental term:', selectedTerm)
+      return NextResponse.json(
+        { error: 'Invalid rental term' },
         { status: 400 }
       )
     }
@@ -21,6 +31,7 @@ export async function POST(request: NextRequest) {
     console.log(`Checkout: All sold plots:`, PlotDatabase.getSoldPlotsSync())
     
     if (!isRenewal && isSold) {
+      console.error('Checkout: Plot already sold:', plotId)
       return NextResponse.json(
         { error: 'Plot is already sold' },
         { status: 400 }
@@ -29,8 +40,18 @@ export async function POST(request: NextRequest) {
 
     // Validate wallet address for new rentals
     if (!isRenewal && !userAddress) {
+      console.error('Checkout: Missing wallet address for new rental')
       return NextResponse.json(
         { error: 'Wallet address is required for new rentals' },
+        { status: 400 }
+      )
+    }
+
+    // Validate email format
+    if (userEmail && !userEmail.includes('@')) {
+      console.error('Checkout: Invalid email format:', userEmail)
+      return NextResponse.json(
+        { error: 'Invalid email format' },
         { status: 400 }
       )
     }
@@ -42,17 +63,9 @@ export async function POST(request: NextRequest) {
     const amount = calculateAmount(monthlyRent, term)
 
     // Use provided plot image or generate based on plot ID
-    const imageUrl = plotImage || (plotId % 8 === 0 ? "/images/faberge-eggs/crystal-amber.jpeg" :
-                     plotId % 8 === 1 ? "/images/faberge-eggs/amber-glow.png" :
-                     plotId % 8 === 2 ? "/images/faberge-eggs/ruby-red.png" :
-                     plotId % 8 === 3 ? "/images/faberge-eggs/emerald-green.png" :
-                     plotId % 8 === 4 ? "/images/faberge-eggs/bronze-glow.png" :
-                     plotId % 8 === 5 ? "/images/faberge-eggs/rose-quartz.jpeg" :
-                     plotId % 8 === 6 ? "/images/faberge-eggs/sapphire-blue.png" :
-                     "/images/faberge-eggs/fire-opal.png")
+    const imageUrl = plotImage
 
-    console.log('Checkout: Creating session with term:', term)
-    console.log('Checkout: Session metadata will include:', { plotId, plotName, selectedTerm: term, userAddress })
+    console.log('Checkout: Creating session with metadata:', { plotId, plotName, selectedTerm: term, userAddress, amount })
     
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
@@ -72,6 +85,7 @@ export async function POST(request: NextRequest) {
                 monthlyRent: monthlyRent.toString(),
                 isRenewal: isRenewal ? 'true' : 'false',
                 currentEndDate: currentEndDate || '',
+                userAddress: userAddress || '', // Ensure userAddress is included
               },
             },
             unit_amount: amount,
@@ -91,20 +105,22 @@ export async function POST(request: NextRequest) {
             : `Complete your ${term} rental for ${plotName}. You'll be charged ${term === 'monthly' ? 'monthly' : term === 'quarterly' ? 'every 3 months' : 'annually'}.`,
         },
       },
-             metadata: {
-         plotId: plotId.toString(),
-         plotName,
-         selectedTerm: term,
-         monthlyRent: monthlyRent.toString(),
-         userAddress: userAddress || '',
-         isRenewal: isRenewal ? 'true' : 'false',
-         currentEndDate: currentEndDate || '',
-       },
+      metadata: {
+        plotId: plotId.toString(),
+        plotName,
+        selectedTerm: term,
+        monthlyRent: monthlyRent.toString(),
+        isRenewal: isRenewal ? 'true' : 'false',
+        currentEndDate: currentEndDate || '',
+        userAddress: userAddress || '', // Ensure userAddress is included
+      },
     })
 
+    console.log('Checkout: Session created successfully:', session.id)
     return NextResponse.json({ sessionId: session.id, url: session.url })
+
   } catch (error) {
-    console.error('Error creating checkout session:', error)
+    console.error('Checkout: Error creating session:', error)
     return NextResponse.json(
       { error: 'Failed to create checkout session' },
       { status: 500 }
