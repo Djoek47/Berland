@@ -175,7 +175,10 @@ export class PlotDatabase {
       await initializeDatabase()
     }
     
-    // Return the in-memory data directly
+    // Reload from storage to get latest data
+    await reloadFromStorage()
+    
+    console.log(`Database: getSoldPlots called, returning ${soldPlots.length} plots`)
     return soldPlots
   }
 
@@ -395,7 +398,17 @@ export class PlotDatabase {
       await initializeDatabase()
     }
     
-    return soldPlots.filter(plot => plot.soldTo === walletAddress)
+    // Reload from storage to get latest data
+    await reloadFromStorage()
+    
+    console.log(`Database: getUserPlots called for wallet ${walletAddress}`)
+    console.log(`Database: Total sold plots: ${soldPlots.length}`)
+    console.log(`Database: All plots:`, soldPlots.map(p => ({ id: p.id, soldTo: p.soldTo })))
+    
+    const userPlots = soldPlots.filter(plot => plot.soldTo === walletAddress)
+    console.log(`Database: Found ${userPlots.length} plots for user ${walletAddress}`)
+    
+    return userPlots
   }
 
   // Synchronous versions for server-side use only (for backward compatibility)

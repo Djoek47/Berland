@@ -16,6 +16,7 @@ export const createCheckoutSession = async (checkoutData: {
   monthlyRent: number
   userEmail: string
   userAddress: string // Now required
+  plotImage?: string // Optional plot image
 }) => {
   try {
     const response = await fetch('/api/create-checkout-session', {
@@ -46,6 +47,7 @@ export const redirectToCheckout = async (checkoutData: {
   monthlyRent: number
   userEmail: string
   userAddress: string // Now required
+  plotImage?: string // Optional plot image
 }) => {
   try {
     const stripe = await getStripe()

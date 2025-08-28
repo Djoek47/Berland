@@ -107,6 +107,47 @@ export default function DashboardPage() {
     return () => clearTimeout(timer)
   }, [isConnected, walletLoading, router])
 
+  // Handle wallet reconnection after payment
+  useEffect(() => {
+    if (!isConnected && !walletLoading) {
+      console.log('Dashboard: Wallet disconnected, attempting to reconnect...')
+      
+      // Add a delay before attempting reconnection
+      const timer = setTimeout(() => {
+        console.log('Dashboard: Attempting wallet reconnection...')
+        // Force a page refresh to reconnect wallet
+        window.location.reload()
+      }, 3000) // Wait 3 seconds before attempting reconnection
+
+      return () => clearTimeout(timer)
+    }
+  }, [isConnected, walletLoading])
+
+  // Handle Thirdweb authentication errors
+  useEffect(() => {
+    const handleThirdwebError = (event: any) => {
+      if (event.detail && event.detail.error && event.detail.error.includes('401')) {
+        console.error('Dashboard: Thirdweb authentication error detected:', event.detail.error)
+        console.log('Dashboard: Attempting to reconnect wallet...')
+        
+        // Show user-friendly error message
+        alert('Wallet connection issue detected. Please reconnect your wallet.')
+        
+        // Force wallet reconnection
+        setTimeout(() => {
+          window.location.reload()
+        }, 2000)
+      }
+    }
+
+    // Listen for Thirdweb errors
+    window.addEventListener('thirdweb-error', handleThirdwebError)
+    
+    return () => {
+      window.removeEventListener('thirdweb-error', handleThirdwebError)
+    }
+  }, [])
+
   // Load user data from server
   useEffect(() => {
     const loadUserData = async () => {
@@ -214,6 +255,9 @@ export default function DashboardPage() {
       if (success === 'true' && sessionId && plotId) {
         console.log('Dashboard: Processing successful payment for plot:', plotId)
         
+        // Add a small delay to ensure webhook has time to process
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        
         // Process the rental immediately since webhooks don't work on localhost
         try {
           const response = await fetch('/api/process-rental', {
@@ -232,24 +276,28 @@ export default function DashboardPage() {
           if (response.ok) {
             const result = await response.json()
             console.log('Dashboard: Rental processed successfully:', result)
+            
+            setSuccessDetails({
+              sessionId,
+              plotId: parseInt(plotId),
+              message: isRenewal 
+                ? 'Renewal successful! Your Faberplot rental has been extended.'
+                : 'Payment successful! Your Faberplot rental has been activated and will be available in your dashboard.'
+            })
+            setShowSuccessMessage(true)
+
+            // Force refresh of dashboard data with a small delay
+            setTimeout(() => {
+              setRefreshTrigger(prev => prev + 1)
+            }, 1000)
           } else {
             console.error('Dashboard: Failed to process rental')
+            const errorData = await response.json()
+            console.error('Dashboard: Error details:', errorData)
           }
         } catch (error) {
           console.error('Dashboard: Error processing rental:', error)
         }
-
-        setSuccessDetails({
-          sessionId,
-          plotId: parseInt(plotId),
-          message: isRenewal 
-            ? 'Renewal successful! Your Faberplot rental has been extended.'
-            : 'Payment successful! Your Faberplot rental has been activated and will be available in your dashboard.'
-        })
-        setShowSuccessMessage(true)
-
-        // Force refresh of dashboard data
-        setRefreshTrigger(prev => prev + 1)
 
         // Clean up URL
         router.replace('/dashboard')
@@ -457,9 +505,44 @@ export default function DashboardPage() {
                   </div>
                   <h3 className="text-xl font-semibold mb-2">No Faberplots Yet</h3>
                   <p className="text-white mb-6">Start building your virtual real estate portfolio by renting your first Faberplot.</p>
-                  <Button asChild>
-                    <Link href="/marketplace">Browse Marketplace</Link>
-                  </Button>
+                  <div className="flex gap-4 justify-center">
+                    <Button asChild>
+                      <Link href="/marketplace">Browse Marketplace</Link>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setRefreshTrigger(prev => prev + 1)}
+                      className="border-apple-green text-apple-green hover:bg-apple-green/10"
+                    >
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      Refresh Data
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={async () => {
+                        try {
+                          const response = await fetch(`/api/debug-database?address=${address}`)
+                          const data = await response.json()
+                          console.log('Debug database result:', data)
+                          alert(`Debug Info:\nTotal plots: ${data.totalSoldPlots}\nYour plots: ${data.userPlots}\nCheck console for details`)
+                        } catch (error) {
+                          console.error('Debug error:', error)
+                          alert('Debug failed - check console')
+                        }
+                      }}
+                      className="border-blue-500 text-blue-400 hover:bg-blue-500/10"
+                    >
+                      Debug DB
+                    </Button>
+                  </div>
+                  {/* Debug info */}
+                  <div className="mt-6 p-4 bg-black/20 rounded-lg text-left">
+                    <p className="text-sm text-white mb-2">Debug Info:</p>
+                    <p className="text-xs text-gray-400">Wallet: {address?.slice(0, 6)}...{address?.slice(-4)}</p>
+                    <p className="text-xs text-gray-400">Connected: {isConnected ? 'Yes' : 'No'}</p>
+                    <p className="text-xs text-gray-400">Loading: {isLoading ? 'Yes' : 'No'}</p>
+                    <p className="text-xs text-gray-400">Refresh Count: {refreshTrigger}</p>
+                  </div>
                 </div>
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -630,20 +713,6 @@ export default function DashboardPage() {
             <div className="grid gap-4 md:grid-cols-2">
               <Card className="border-apple-green/30 glass-apple-dark shadow-apple">
                 <CardHeader>
-                  <CardTitle className="text-white">Database Management</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Button
-                    onClick={handleResetDatabase}
-                    variant="outline"
-                    className="w-full border-red-700/30 text-red-400 hover:bg-red-950/20"
-                  >
-                    Reset All Data
-                  </Button>
-                </CardContent>
-              </Card>
-              <Card className="border-apple-green/30 glass-apple-dark shadow-apple">
-                <CardHeader>
                   <CardTitle className="text-white">System Status</CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -657,17 +726,58 @@ export default function DashboardPage() {
                     <div className="flex justify-between">
                       <span className="text-white">Faberplots Owned:</span>
                       <span className="text-white">{faberplots.length}</span>
-                              </div>
+                    </div>
                     <div className="flex justify-between">
                       <span className="text-white">NFTs Owned:</span>
                       <span className="text-white">{nfts.length}</span>
-                            </div>
-                          </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-apple-green/30 glass-apple-dark shadow-apple">
+                <CardHeader>
+                  <CardTitle className="text-white">Database Management</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <Button
+                      onClick={async () => {
+                        try {
+                          const response = await fetch(`/api/debug-database?address=${address}`)
+                          const data = await response.json()
+                          console.log('Debug database result:', data)
+                          alert(`Debug Info:\nTotal plots: ${data.totalSoldPlots}\nYour plots: ${data.userPlots}\nCheck console for details`)
+                        } catch (error) {
+                          console.error('Debug error:', error)
+                          alert('Debug failed - check console')
+                        }
+                      }}
+                      variant="outline"
+                      className="w-full border-blue-500 text-blue-400 hover:bg-blue-500/10"
+                    >
+                      Debug Database
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        const confirmed = confirm('⚠️ WARNING: This will reset ALL rental data!\n\nThis action cannot be undone and will:\n- Clear all rented plots\n- Remove all user data\n- Reset the entire database\n\nAre you absolutely sure you want to continue?')
+                        if (confirmed) {
+                          const doubleConfirmed = confirm('🚨 FINAL WARNING: This will permanently delete ALL data!\n\nType "DELETE" to confirm:')
+                          if (doubleConfirmed) {
+                            handleResetDatabase()
+                          }
+                        }
+                      }}
+                      variant="outline"
+                      className="w-full border-red-700/30 text-red-400 hover:bg-red-950/20"
+                    >
+                      ⚠️ Reset All Data
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </div>
-                      </div>
-                    </div>
+          </div>
+        </div>
       </section>
 
       {/* Success Message Modal */}

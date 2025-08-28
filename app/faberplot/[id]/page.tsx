@@ -181,6 +181,7 @@ export default function FaberplotPage() {
         monthlyRent: plot.monthlyRent,
         userEmail,
         userAddress: address, // Pass wallet address
+        plotImage: plot.image, // Pass the plot image for Stripe
       })
     } catch (error) {
       console.error('Checkout error:', error)
