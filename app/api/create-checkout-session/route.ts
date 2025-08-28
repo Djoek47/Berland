@@ -134,7 +134,8 @@ export async function POST(request: NextRequest) {
       console.error('Checkout: Stripe session creation failed:', stripeError)
       
       // If the error is related to images, try without images
-      if (stripeError.message && stripeError.message.includes('image')) {
+      if (stripeError && typeof stripeError === 'object' && 'message' in stripeError && 
+          typeof stripeError.message === 'string' && stripeError.message.includes('image')) {
         console.log('Checkout: Retrying without images due to image error')
         session = await stripe.checkout.sessions.create({
           payment_method_types: ['card'],

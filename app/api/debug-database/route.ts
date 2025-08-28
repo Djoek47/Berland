@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     console.log('Debug database: All sold plots:', allSoldPlots)
     
     // Get user plots if address provided
-    let userPlots = []
+    let userPlots: any[] = []
     if (walletAddress) {
       userPlots = await PlotDatabase.getUserPlots(walletAddress)
       console.log('Debug database: User plots for', walletAddress, ':', userPlots)
