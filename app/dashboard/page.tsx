@@ -269,7 +269,8 @@ export default function DashboardPage() {
               plotId: parseInt(plotId),
               userAddress: address,
               userEmail: 'user@email.com',
-              rentalTerm: term as 'monthly' | 'quarterly' | 'yearly'
+              rentalTerm: term as 'monthly' | 'quarterly' | 'yearly',
+              isRenewal: isRenewal
             }),
           })
 
@@ -323,6 +324,8 @@ export default function DashboardPage() {
           plotImage: plot.image,
           monthlyRent: plot.monthlyRent,
           selectedTerm: plot.selectedTerm,
+          userAddress: address, // Add wallet address
+          userEmail: 'user@email.com', // Add email (could be made dynamic)
           isRenewal: true,
           currentEndDate: plot.rentalEndDate
         }),

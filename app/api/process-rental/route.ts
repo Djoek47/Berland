@@ -3,9 +3,9 @@ import { PlotDatabase } from '@/lib/database'
 
 export async function POST(request: NextRequest) {
   try {
-    const { plotId, userAddress, userEmail, rentalTerm } = await request.json()
+    const { plotId, userAddress, userEmail, rentalTerm, isRenewal } = await request.json()
 
-    console.log('Process rental: Received request:', { plotId, userAddress, userEmail, rentalTerm })
+    console.log('Process rental: Received request:', { plotId, userAddress, userEmail, rentalTerm, isRenewal })
 
     // Enhanced validation
     if (!plotId || !userAddress || !userEmail || !rentalTerm) {
@@ -33,16 +33,28 @@ export async function POST(request: NextRequest) {
 
     // Check if plot is already sold
     const isSold = await PlotDatabase.isPlotSold(plotId)
-    if (isSold) {
-      console.error('Process rental: Plot already sold:', plotId)
-      return NextResponse.json({ error: 'Plot is already sold' }, { status: 400 })
+    
+    if (isRenewal) {
+      // For renewals, plot should already be sold
+      if (!isSold) {
+        console.error('Process rental: Cannot renew plot that is not sold:', plotId)
+        return NextResponse.json({ error: 'Cannot renew plot that is not sold' }, { status: 400 })
+      }
+      
+      console.log('Process rental: Processing renewal for plot:', plotId)
+      await PlotDatabase.extendPlotRental(plotId, rentalTerm)
+      console.log('Process rental: Plot renewal processed successfully')
+    } else {
+      // For new rentals, plot should not be sold
+      if (isSold) {
+        console.error('Process rental: Plot already sold:', plotId)
+        return NextResponse.json({ error: 'Plot is already sold' }, { status: 400 })
+      }
+      
+      console.log('Process rental: All validations passed, marking plot as sold')
+      await PlotDatabase.markPlotAsSold(plotId, userAddress, userEmail, rentalTerm)
+      console.log('Process rental: Plot marked as sold successfully')
     }
-
-    console.log('Process rental: All validations passed, marking plot as sold')
-
-    // Mark plot as sold (this already handles persistence)
-    await PlotDatabase.markPlotAsSold(plotId, userAddress, userEmail, rentalTerm)
-    console.log('Process rental: Plot marked as sold successfully')
 
     // Verify the plot was actually marked as sold
     const verifySold = await PlotDatabase.isPlotSold(plotId)

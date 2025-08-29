@@ -262,6 +262,8 @@ export class PlotDatabase {
 
   // Extend plot rental - server-side only
   static async extendPlotRental(plotId: number, rentalTerm: 'monthly' | 'quarterly' | 'yearly'): Promise<void> {
+    console.log('Database: extendPlotRental called with:', { plotId, rentalTerm })
+    
     // Initialize if not already done
     if (!isInitialized) {
       await initializeDatabase()
@@ -290,11 +292,14 @@ export class PlotDatabase {
       
       const newEndDate = new Date(currentEndDate.getTime() + extensionDays * 24 * 60 * 60 * 1000)
       soldPlots[plotIndex].rentalEndDate = newEndDate.toISOString()
+      soldPlots[plotIndex].rentalTerm = rentalTerm // Update the rental term as well
       
-      console.log(`Plot ${plotId} rental extended to ${newEndDate.toISOString()}`)
+      console.log(`Plot ${plotId} rental extended to ${newEndDate.toISOString()} with term ${rentalTerm}`)
       
       // Persist data
       await persistData()
+    } else {
+      console.error(`Plot ${plotId} not found for renewal`)
     }
   }
 
