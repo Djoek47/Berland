@@ -53,7 +53,10 @@ export const FABERPLOT_PRICES: { [key: number]: number } = {
   44: 84,  // Entertainment District - Entertainment complex
   45: 87,  // Central District - Civic center
   46: 83,  // Market District - Retail park
-  47: 89   // Central District - Premium location
+  47: 89,  // Central District - Premium location
+  
+  // Premium plot (48) - Ultimate location, flagship property
+  48: 95   // Central District - Metaverse Flagship
 }
 
 // Function to get price for a specific plot

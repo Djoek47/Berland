@@ -25,6 +25,7 @@ import {
 import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
 import { useWallet } from "@/hooks/use-wallet"
+import { useNFTs } from "@/hooks/use-nfts"
 import { redirectToCheckout } from "@/lib/stripe-client"
 import { getFaberplotPrice } from "@/lib/plot-prices"
 
@@ -68,7 +69,6 @@ interface SuccessDetails {
 export default function DashboardPage() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("faberplots")
-  const [nfts, setNfts] = useState<NFT[]>([])
   const [faberplots, setFaberplots] = useState<Faberplot[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isRenewing, setIsRenewing] = useState<number | null>(null)
@@ -80,6 +80,9 @@ export default function DashboardPage() {
 
   // Wallet connection
   const { isConnected, address, isLoading: walletLoading } = useWallet()
+  
+  // NFT detection
+  const { nfts, isLoading: nftsLoading, error: nftsError, refreshNFTs } = useNFTs()
 
   // Redirect if not connected - but be patient with wallet reconnection
   useEffect(() => {
@@ -196,29 +199,11 @@ export default function DashboardPage() {
           setFaberplots([])
         }
 
-        // Load mock NFTs (placeholder for now)
-        setNfts([
-          {
-            id: "crystal-amber",
-            name: "Crystal Amber Estate",
-            type: "land",
-            description: "A premium crystal estate with amber accents, located in the central district of Faberland.",
-            image: "/images/faberge-eggs/crystal-amber.jpeg",
-            location: "Central District",
-            size: "Large (10,000 sq ft)",
-            visitors: 5200,
-            features: ["Water View", "High Traffic", "Premium Location"],
-            opensea: "https://opensea.io/collection/faberland",
-            rentalStatus: "available"
-          }
-        ])
-
       } catch (error) {
         console.error('Dashboard: Error loading data:', error)
         setFaberplots([])
-      setNfts([])
       } finally {
-      setIsLoading(false)
+        setIsLoading(false)
     }
     }
 
@@ -290,8 +275,8 @@ export default function DashboardPage() {
             // Force refresh of dashboard data with a small delay
             setTimeout(() => {
               setRefreshTrigger(prev => prev + 1)
-            }, 1000)
-          } else {
+      }, 1000)
+    } else {
             console.error('Dashboard: Failed to process rental')
             const errorData = await response.json()
             console.error('Dashboard: Error details:', errorData)
@@ -372,35 +357,10 @@ export default function DashboardPage() {
     }
   }
 
-  // Reset database (for testing)
-  const handleResetDatabase = async () => {
-    if (!confirm('Are you sure you want to reset all data? This will clear all rented plots and cannot be undone.')) {
-      return
-    }
-    
-    try {
-      const response = await fetch('/api/reset-database', {
-        method: 'POST',
-      })
-      
-      if (response.ok) {
-        console.log('Database reset successfully')
-        // Force refresh of the dashboard
-        setRefreshTrigger(prev => prev + 1)
-        // Show success message
-        alert('Database reset successfully! All plots are now available.')
-      } else {
-        console.error('Failed to reset database')
-        alert('Failed to reset database. Please try again.')
-      }
-    } catch (error) {
-      console.error('Error resetting database:', error)
-      alert('Error resetting database. Please try again.')
-    }
-  }
+
 
   // Loading state
-  if (walletLoading || isLoading || isWaitingForWallet) {
+  if (walletLoading || isLoading || nftsLoading || isWaitingForWallet) {
   return (
     <div className="flex min-h-screen flex-col bg-black text-white">
       <MetaverseNavbar />
@@ -446,35 +406,37 @@ export default function DashboardPage() {
 
       {/* Hero Section */}
       <section className="relative py-16 md:py-24">
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-apple-green/20 to-black"></div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-apple-green/20 via-apple-green/10 to-black"></div>
         <div className="container relative z-10 px-4">
           <div className="mb-8 text-center">
-            <Badge className="mb-4 bg-apple-green hover:bg-apple-teal shadow-apple" variant="secondary">
+            <Badge className="mb-4 bg-apple-green hover:bg-apple-teal text-black font-semibold shadow-apple border-0" variant="secondary">
               Personal Dashboard
             </Badge>
-            <h1 className="mb-4 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+            <h1 className="mb-4 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl bg-gradient-to-r from-white via-apple-green/90 to-white bg-clip-text text-transparent">
               Welcome to Your Faberland
             </h1>
-            <p className="mx-auto max-w-2xl text-lg text-white sm:text-xl">
+            <p className="mx-auto max-w-2xl text-lg text-white/90 sm:text-xl">
               Manage your virtual real estate portfolio, track your investments, and explore new opportunities in the metaverse.
             </p>
                       </div>
 
           {/* Wallet Info */}
-          <Card className="mb-8 border-apple-green/30 glass-apple-dark shadow-apple">
+          <Card className="mb-8 border-apple-green/40 glass-apple-dark shadow-apple bg-gradient-to-r from-black/40 to-apple-green/5">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <Wallet className="h-6 w-6 text-apple-green" />
+                  <div className="p-2 bg-apple-green/20 rounded-full">
+                    <Wallet className="h-6 w-6 text-apple-green" />
+                  </div>
                   <div>
-                    <p className="text-sm text-white">Connected Wallet</p>
-                    <p className="font-mono text-sm">{address?.slice(0, 6)}...{address?.slice(-4)}</p>
+                    <p className="text-sm text-white/80 font-medium">Connected Wallet</p>
+                    <p className="font-mono text-sm text-white font-semibold bg-apple-green/20 border border-apple-green/30 px-3 py-1.5 rounded-lg">{address?.slice(0, 6)}...{address?.slice(-4)}</p>
                       </div>
                       </div>
                                   <Button
                     variant="outline"
                     size="sm"
-                    className="border-apple-green text-apple-green hover:bg-apple-green/10 glass-apple"
+                    className="border-apple-green/50 text-apple-green hover:bg-apple-green/20 hover:border-apple-green glass-apple transition-all duration-200"
                     onClick={() => setRefreshTrigger(prev => prev + 1)}
                   >
                   <RefreshCw className="mr-2 h-4 w-4" />
@@ -490,11 +452,11 @@ export default function DashboardPage() {
       <section className="py-16">
         <div className="container px-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 glass-apple-dark border border-apple-green/30">
-              <TabsTrigger value="faberplots" className="text-white data-[state=active]:bg-apple-green data-[state=active]:text-black">
+            <TabsList className="grid w-full grid-cols-2 glass-apple-dark border border-apple-green/40 bg-black/30">
+              <TabsTrigger value="faberplots" className="text-white/80 data-[state=active]:bg-apple-green data-[state=active]:text-black data-[state=active]:shadow-apple transition-all duration-200">
                 Faberplots ({faberplots.length})
               </TabsTrigger>
-              <TabsTrigger value="nfts" className="text-white data-[state=active]:bg-apple-green data-[state=active]:text-black">
+              <TabsTrigger value="nfts" className="text-white/80 data-[state=active]:bg-apple-green data-[state=active]:text-black data-[state=active]:shadow-apple transition-all duration-200">
                 NFTs ({nfts.length})
               </TabsTrigger>
             </TabsList>
@@ -503,49 +465,26 @@ export default function DashboardPage() {
             <TabsContent value="faberplots" className="mt-8">
               {faberplots.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-apple-green flex items-center justify-center">
+                  <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-apple-green flex items-center justify-center bg-apple-green/10">
                     <MapPin className="h-8 w-8 text-apple-green" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">No Faberplots Yet</h3>
-                  <p className="text-white mb-6">Start building your virtual real estate portfolio by renting your first Faberplot.</p>
+                  <h3 className="text-xl font-semibold mb-2 text-white">No Faberplots Yet</h3>
+                  <p className="text-white/80 mb-6">Start building your virtual real estate portfolio by renting your first Faberplot.</p>
                   <div className="flex gap-4 justify-center">
-                    <Button asChild>
+                    <Button asChild className="bg-apple-green hover:bg-apple-teal text-black font-semibold shadow-apple">
                       <Link href="/marketplace">Browse Marketplace</Link>
                     </Button>
                     <Button 
                       variant="outline" 
                       onClick={() => setRefreshTrigger(prev => prev + 1)}
-                      className="border-apple-green text-apple-green hover:bg-apple-green/10"
+                      className="border-apple-green/50 text-apple-green hover:bg-apple-green/20 hover:border-apple-green transition-all duration-200"
                     >
                       <RefreshCw className="mr-2 h-4 w-4" />
                       Refresh Data
                     </Button>
-                    <Button 
-                      variant="outline" 
-                      onClick={async () => {
-                        try {
-                          const response = await fetch(`/api/debug-database?address=${address}`)
-                          const data = await response.json()
-                          console.log('Debug database result:', data)
-                          alert(`Debug Info:\nTotal plots: ${data.totalSoldPlots}\nYour plots: ${data.userPlots}\nCheck console for details`)
-                        } catch (error) {
-                          console.error('Debug error:', error)
-                          alert('Debug failed - check console')
-                        }
-                      }}
-                      className="border-blue-500 text-blue-400 hover:bg-blue-500/10"
-                    >
-                      Debug DB
-                    </Button>
+
                   </div>
-                  {/* Debug info */}
-                  <div className="mt-6 p-4 bg-black/20 rounded-lg text-left">
-                    <p className="text-sm text-white mb-2">Debug Info:</p>
-                    <p className="text-xs text-gray-400">Wallet: {address?.slice(0, 6)}...{address?.slice(-4)}</p>
-                    <p className="text-xs text-gray-400">Connected: {isConnected ? 'Yes' : 'No'}</p>
-                    <p className="text-xs text-gray-400">Loading: {isLoading ? 'Yes' : 'No'}</p>
-                    <p className="text-xs text-gray-400">Refresh Count: {refreshTrigger}</p>
-                  </div>
+
                 </div>
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -554,63 +493,71 @@ export default function DashboardPage() {
                     const isExpiringSoon = !timeRemaining.expired && timeRemaining.days <= 7
 
                     return (
-                      <Card key={plot.id} className="border-apple-green/30 glass-apple-dark shadow-apple overflow-hidden">
+                      <Card key={plot.id} className="border-apple-green/40 glass-apple-dark shadow-apple overflow-hidden bg-gradient-to-b from-black/40 to-black/20 hover:from-black/50 hover:to-black/30 transition-all duration-300">
                         <div className="relative aspect-video">
                           <Image src={plot.image} alt={plot.name} fill className="object-cover" />
                           <div className="absolute top-2 right-2">
                             {timeRemaining.expired ? (
-                              <Badge className="bg-red-500/80 text-white">
+                              <Badge className="bg-red-500/90 text-white font-medium shadow-lg">
                                 Expired
                               </Badge>
                             ) : isExpiringSoon ? (
-                              <Badge className="bg-orange-500/80 text-white">
+                              <Badge className="bg-orange-500/90 text-white font-medium shadow-lg">
                                 Expiring Soon
                               </Badge>
                             ) : (
-                              <Badge className="bg-green-500/80 text-white">
+                              <Badge className="bg-apple-green/90 text-black font-medium shadow-lg">
                                 Active
                               </Badge>
                             )}
                           </div>
                       </div>
-                      <CardHeader>
-                          <CardTitle className="text-white">{plot.name}</CardTitle>
-                          <CardDescription className="text-white">{plot.location}</CardDescription>
+                      <CardHeader className="bg-gradient-to-r from-apple-green/5 to-transparent">
+                          <CardTitle className="text-white font-semibold">{plot.name}</CardTitle>
+                          <CardDescription className="text-white/80">{plot.location}</CardDescription>
                       </CardHeader>
                         <CardContent className="space-y-4">
                           {/* Stats */}
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div className="flex items-center gap-2">
-                              <Users className="h-4 w-4 text-apple-green" />
-                              <span className="text-white">{plot.visitors.toLocaleString()}</span>
+                              <div className="p-1 bg-apple-green/20 rounded">
+                                <Users className="h-4 w-4 text-apple-green" />
+                              </div>
+                              <span className="text-white font-medium">{plot.visitors.toLocaleString()}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <DollarSign className="h-4 w-4 text-apple-green" />
-                              <span className="text-white">${plot.monthlyRent}/mo</span>
+                              <div className="p-1 bg-apple-green/20 rounded">
+                                <DollarSign className="h-4 w-4 text-apple-green" />
+                              </div>
+                              <span className="text-white font-medium">${plot.monthlyRent}/mo</span>
                             </div>
                         </div>
 
                           {/* Rental Period and Time Remaining */}
                           {!timeRemaining.expired ? (
-                            <div className="bg-black/20 rounded-lg p-3">
+                            <div className="bg-gradient-to-r from-apple-green/10 to-apple-green/5 border border-apple-green/20 rounded-lg p-3">
                               <div className="flex items-center gap-2 mb-2">
-                                <Clock className="h-4 w-4 text-apple-green" />
+                                <div className="p-1 bg-apple-green/20 rounded">
+                                  <Clock className="h-4 w-4 text-apple-green" />
+                                </div>
                                 <span className="text-sm font-medium text-white">Time Remaining</span>
-                                <Badge className="ml-auto bg-apple-green/20 text-apple-green border-apple-green/30">
+                                <Badge className="ml-auto bg-apple-green/30 text-apple-green border-apple-green/50 font-medium">
                                   {getRentalPeriodText(plot.selectedTerm)}
                                 </Badge>
-                              </div>
-                              <div className="text-sm text-white">
+                          </div>
+                              <div className="text-sm text-white font-medium">
                                 {timeRemaining.days > 0 && `${timeRemaining.days}d `}
                                 {timeRemaining.hours > 0 && `${timeRemaining.hours}h `}
                                 {timeRemaining.minutes}m
-                              </div>
-                            </div>
+                          </div>
+                        </div>
                           ) : (
-                            <div className="bg-red-900/20 border border-red-700/30 rounded-lg p-3">
+                            <div className="bg-gradient-to-r from-red-900/20 to-red-800/10 border border-red-700/40 rounded-lg p-3">
                               <div className="flex items-center gap-2">
-                                <AlertCircle className="h-4 w-4 text-red-400" />
-                                <span className="text-sm text-red-400">Rental expired</span>
+                                <div className="p-1 bg-red-500/20 rounded">
+                                  <AlertCircle className="h-4 w-4 text-red-400" />
+                                </div>
+                                <span className="text-sm text-red-400 font-medium">Rental expired</span>
                               </div>
                         </div>
                           )}
@@ -619,7 +566,7 @@ export default function DashboardPage() {
                           <div className="flex gap-2">
                             <Button
                               size="sm"
-                              className="flex-1 bg-apple-green hover:bg-apple-teal text-black shadow-apple"
+                              className="flex-1 bg-apple-green hover:bg-apple-teal text-black font-semibold shadow-apple transition-all duration-200"
                               onClick={() => handleRenewPlot(plot)}
                               disabled={isRenewing === plot.id}
                             >
@@ -638,7 +585,7 @@ export default function DashboardPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="border-apple-green text-white hover:bg-apple-green/10 glass-apple"
+                              className="border-apple-green/50 text-white hover:bg-apple-green/20 hover:border-apple-green glass-apple transition-all duration-200"
                               asChild
                             >
                               <Link href={`/manage-plot/${plot.id}`}>Manage</Link>
@@ -656,41 +603,61 @@ export default function DashboardPage() {
             <TabsContent value="nfts" className="mt-8">
               {nfts.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-apple-green flex items-center justify-center">
+                  <div className="mb-4 h-16 w-16 mx-auto rounded-full border-4 border-apple-green flex items-center justify-center bg-apple-green/10">
                     <ExternalLink className="h-8 w-8 text-apple-green" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">No NFTs Yet</h3>
-                  <p className="text-white mb-6">Your NFT collection will appear here once you acquire some.</p>
-                  <Button asChild>
-                    <Link href="/marketplace">Browse Marketplace</Link>
-                  </Button>
+                  <h3 className="text-xl font-semibold mb-2 text-white">No NFTs Yet</h3>
+                  <p className="text-white/80 mb-6">Your NFT collection will appear here once you acquire some.</p>
+                  <div className="flex gap-4 justify-center">
+                    <Button asChild className="bg-apple-green hover:bg-apple-teal text-black font-semibold shadow-apple">
+                      <Link href="/marketplace">Browse Marketplace</Link>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={refreshNFTs}
+                      className="border-apple-green/50 text-apple-green hover:bg-apple-green/20 hover:border-apple-green transition-all duration-200"
+                    >
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      Refresh NFTs
+                    </Button>
+                  </div>
+                  
+                  {nftsError && (
+                    <div className="mt-4 p-3 bg-red-900/20 border border-red-700/40 rounded-lg">
+                      <p className="text-red-400 text-sm">Error loading NFTs: {nftsError}</p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {nfts.map((nft) => (
-                    <Card key={nft.id} className="border-apple-green/30 glass-apple-dark shadow-apple overflow-hidden">
+                    <Card key={nft.id} className="border-apple-green/40 glass-apple-dark shadow-apple overflow-hidden bg-gradient-to-b from-black/40 to-black/20 hover:from-black/50 hover:to-black/30 transition-all duration-300">
                       <div className="relative aspect-video">
                         <Image src={nft.image} alt={nft.name} fill className="object-cover" />
                       </div>
-                      <CardHeader>
-                        <CardTitle className="text-white">{nft.name}</CardTitle>
-                        <CardDescription className="text-white">{nft.location}</CardDescription>
+                      <CardHeader className="bg-gradient-to-r from-apple-green/5 to-transparent">
+                        <CardTitle className="text-white font-semibold">{nft.name}</CardTitle>
+                        <CardDescription className="text-white/80">{nft.location}</CardDescription>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div className="flex items-center gap-2">
-                            <Users className="h-4 w-4 text-apple-green" />
-                            <span>{nft.visitors.toLocaleString()}</span>
+                            <div className="p-1 bg-apple-green/20 rounded">
+                              <Users className="h-4 w-4 text-apple-green" />
+                            </div>
+                            <span className="text-white font-medium">{nft.visitors.toLocaleString()}</span>
                         </div>
                           <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4 text-apple-green" />
-                            <span>{nft.size}</span>
+                            <div className="p-1 bg-apple-green/20 rounded">
+                              <MapPin className="h-4 w-4 text-apple-green" />
+                            </div>
+                            <span className="text-white font-medium">{nft.size}</span>
                           </div>
                         </div>
                         <Button
                           size="sm"
                           variant="outline"
-                          className="w-full border-apple-green text-white hover:bg-apple-green/10 glass-apple"
+                          className="w-full border-apple-green/50 text-white hover:bg-apple-green/20 hover:border-apple-green glass-apple transition-all duration-200"
                           asChild
                         >
                           <Link href={nft.opensea} target="_blank">
@@ -708,80 +675,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* Developer Tools Section */}
-      <section className="py-16 bg-black/50">
-        <div className="container px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold mb-8 text-center">Developer Tools</h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card className="border-apple-green/30 glass-apple-dark shadow-apple">
-                <CardHeader>
-                  <CardTitle className="text-white">System Status</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-white">Wallet Connected:</span>
-                      <span className={isConnected ? "text-green-400" : "text-red-400"}>
-                        {isConnected ? "Yes" : "No"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-white">Faberplots Owned:</span>
-                      <span className="text-white">{faberplots.length}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-white">NFTs Owned:</span>
-                      <span className="text-white">{nfts.length}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="border-apple-green/30 glass-apple-dark shadow-apple">
-                <CardHeader>
-                  <CardTitle className="text-white">Database Management</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <Button
-                      onClick={async () => {
-                        try {
-                          const response = await fetch(`/api/debug-database?address=${address}`)
-                          const data = await response.json()
-                          console.log('Debug database result:', data)
-                          alert(`Debug Info:\nTotal plots: ${data.totalSoldPlots}\nYour plots: ${data.userPlots}\nCheck console for details`)
-                        } catch (error) {
-                          console.error('Debug error:', error)
-                          alert('Debug failed - check console')
-                        }
-                      }}
-                      variant="outline"
-                      className="w-full border-blue-500 text-blue-400 hover:bg-blue-500/10"
-                    >
-                      Debug Database
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        const confirmed = confirm('⚠️ WARNING: This will reset ALL rental data!\n\nThis action cannot be undone and will:\n- Clear all rented plots\n- Remove all user data\n- Reset the entire database\n\nAre you absolutely sure you want to continue?')
-                        if (confirmed) {
-                          const doubleConfirmed = confirm('🚨 FINAL WARNING: This will permanently delete ALL data!\n\nType "DELETE" to confirm:')
-                          if (doubleConfirmed) {
-                            handleResetDatabase()
-                          }
-                        }
-                      }}
-                      variant="outline"
-                      className="w-full border-red-700/30 text-red-400 hover:bg-red-950/20"
-                    >
-                      ⚠️ Reset All Data
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
+      
 
       {/* Success Message Modal */}
       {showSuccessMessage && successDetails && (

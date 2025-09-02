@@ -18,6 +18,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 const isServer = typeof window === 'undefined'
 
 // Initialize Redis client (only in production and server-side)
+
 let kv: any = null
 let redisClient: any = null
 

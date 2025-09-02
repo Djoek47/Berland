@@ -172,8 +172,9 @@ const landPlots: LandPlot[] = [
     features: ["Premium Location", "Exclusive Access", "NFT Ownership"],
   })),
   
-  // Faberplots (47 Properties - 1-47)
-  ...Array.from({ length: 47 }, (_, i) => ({
+  // Faberplots (48 Properties - 1-48)
+  // View the interactive metaverse map at /metaverse-map
+  ...Array.from({ length: 48 }, (_, i) => ({
     id: `faberplot-${i + 1}`,
     name: `Faberplot #${i + 1}`,
     type: "faberplot" as const,
@@ -350,8 +351,16 @@ export default function MarketplacePage() {
           </Badge>
           <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">Faberland Marketplace</h1>
           <p className="mx-auto mb-8 max-w-2xl text-lg text-white sm:text-xl">
-            Own a piece of the Faberland metaverse. 25 exclusive Faberland Estates (NFTs) launching in 2025, plus 47 Faberplots available now. Each plot is represented as a unique Fabergé egg, symbolizing the precious nature of virtual real estate.
+            Own a piece of the Faberland metaverse. 25 exclusive Faberland Estates (NFTs) launching in 2025, plus 48 Faberplots available now. Each plot is represented as a unique Fabergé egg, symbolizing the precious nature of virtual real estate.
           </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/metaverse-map">
+              <Button className="bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white font-semibold shadow-lg">
+                <MapPin className="mr-2 h-5 w-5" />
+                Explore Interactive Metaverse Map
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -369,7 +378,7 @@ export default function MarketplacePage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-emerald-500"></div>
-                    <span className="text-sm">Faberplots (47 Properties - 1-47)</span>
+                    <span className="text-sm">Faberplots (48 Properties - 1-48)</span>
                   </div>
                 </div>
               </div>

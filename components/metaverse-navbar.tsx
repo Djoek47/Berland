@@ -84,6 +84,7 @@ export default function MetaverseNavbar() {
           <Link href="/installation-guide" className="text-sm text-white transition-colors hover:text-apple-green">
             Installation
           </Link>
+
         </nav>
 
         <div className="hidden md:flex md:items-center md:gap-4">
@@ -147,6 +148,7 @@ export default function MetaverseNavbar() {
                 >
                   Installation
                 </Link>
+
               </nav>
               <div className="flex flex-col gap-4">
                 <DownloadButton variant="default" />

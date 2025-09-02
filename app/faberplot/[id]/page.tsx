@@ -16,7 +16,7 @@ import { useWallet } from "@/hooks/use-wallet"
 import { getFaberplotPrice } from "@/lib/plot-prices"
 
 // Faberplot data with monthly rent pricing
-const faberplotData = Array.from({ length: 47 }, (_, i) => ({
+  const faberplotData = Array.from({ length: 48 }, (_, i) => ({
   id: i + 1,
   name: `Faberplot #${i + 1}`,
   description: `Faberplot #${i + 1} - A versatile virtual plot perfect for businesses, galleries, or creative projects. This premium location offers excellent visibility and foot traffic for your virtual enterprise.`,
