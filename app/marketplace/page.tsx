@@ -173,7 +173,7 @@ const landPlots: LandPlot[] = [
   })),
   
   // Faberplots (48 Properties - 1-48)
-  // View the interactive metaverse map at /metaverse-map
+
   ...Array.from({ length: 48 }, (_, i) => ({
     id: `faberplot-${i + 1}`,
     name: `Faberplot #${i + 1}`,
@@ -353,14 +353,7 @@ export default function MarketplacePage() {
           <p className="mx-auto mb-8 max-w-2xl text-lg text-white sm:text-xl">
             Own a piece of the Faberland metaverse. 25 exclusive Faberland Estates (NFTs) launching in 2025, plus 48 Faberplots available now. Each plot is represented as a unique Fabergé egg, symbolizing the precious nature of virtual real estate.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/metaverse-map">
-              <Button className="bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white font-semibold shadow-lg">
-                <MapPin className="mr-2 h-5 w-5" />
-                Explore Interactive Metaverse Map
-              </Button>
-            </Link>
-          </div>
+
         </div>
       </section>
 
