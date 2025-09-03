@@ -32,7 +32,7 @@ import { getFaberplotPrice } from "@/lib/plot-prices"
   color: ["crystal", "amber", "ruby", "emerald", "bronze", "rose", "sapphire", "fire"][i % 8],
   location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][i % 5],
   size: i < 15 ? "Small (2,500 sq ft)" : i < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
-  visitors: 1500 + (i * 100),
+  visitors: 100,
   features: i < 15 ? ["Retail Ready", "Affordable", "High Foot Traffic", "Quick Setup", "24/7 Access"] :
             i < 30 ? ["Corporate Ready", "Meeting Spaces", "Business Hub", "Professional Environment", "Networking Opportunities"] :
             ["Event Space", "Premium Location", "Creative Hub", "Exclusive Access", "Custom Branding"],

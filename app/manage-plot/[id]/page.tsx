@@ -131,7 +131,7 @@ export default function ManagePlotPage() {
                      "/images/faberge-eggs/fire-opal.png",
               location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][foundPlot.id % 5],
               size: foundPlot.id < 15 ? "Small (2,500 sq ft)" : foundPlot.id < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
-              visitors: 1500 + (foundPlot.id * 100),
+              visitors: 100,
               features: foundPlot.id < 15 ? ["Retail Ready", "Affordable", "High Foot Traffic", "Quick Setup", "24/7 Access"] :
                         foundPlot.id < 30 ? ["Corporate Ready", "Meeting Spaces", "Business Hub", "Professional Environment", "Networking Opportunities"] :
                         ["Event Space", "Premium Location", "Creative Hub", "Exclusive Access", "Custom Branding"],

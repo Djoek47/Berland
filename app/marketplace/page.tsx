@@ -192,7 +192,7 @@ const landPlots: LandPlot[] = [
     available: true,
     location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][i % 5],
     size: i < 15 ? "Small (2,500 sq ft)" : i < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
-    visitors: 1500 + (i * 100),
+    visitors: 100,
     features: i < 15 ? ["Retail Ready", "Affordable", "High Foot Traffic"] :
               i < 30 ? ["Corporate Ready", "Meeting Spaces", "Business Hub"] :
               ["Event Space", "Premium Location", "Creative Hub"],

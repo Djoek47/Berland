@@ -457,6 +457,7 @@ export default function RoadmapAndBusinessPage() {
                 </div>
                 <div>
                   <div className="text-sm text-green-400">Virtual Store</div>
+                  <div className="text-xs text-amber-400 mb-1">Estimated</div>
                   <div className="text-4xl font-bold text-white mt-1">
                     <AnimatedCounter end={168} suffix=" hrs" className="text-4xl font-bold" />
                   </div>
@@ -479,6 +480,7 @@ export default function RoadmapAndBusinessPage() {
                 </div>
                 <div>
                   <div className="text-sm text-green-400">Virtual Store</div>
+                  <div className="text-xs text-amber-400 mb-1">Estimated</div>
                   <div className="text-4xl font-bold text-white mt-1">
                     <AnimatedCounter end={24901} suffix=" mi" className="text-4xl font-bold" />
                   </div>
@@ -501,6 +503,7 @@ export default function RoadmapAndBusinessPage() {
                 </div>
                 <div>
                   <div className="text-sm text-green-400">Virtual Store</div>
+                  <div className="text-xs text-amber-400 mb-1">Estimated</div>
                   <div className="text-4xl font-bold text-white mt-1">
                     <AnimatedCounter end={8500} className="text-4xl font-bold" />
                   </div>
