@@ -26,7 +26,7 @@ export default function DownloadButton({ variant = "default", size = "default" }
   const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
 
-  const downloadUrl = "https://storage.googleapis.com/djt45test/VRTester/5.5%20Clothing.7z"
+  const downloadUrl = "https://storage.googleapis.com/djt45test/VRTester/Faberland%20Demo%20v1.7z"
 
   const handleDownload = () => {
     setIsDownloading(true)
@@ -34,7 +34,7 @@ export default function DownloadButton({ variant = "default", size = "default" }
     // Create an anchor element and trigger download
     const link = document.createElement("a")
     link.href = downloadUrl
-    link.setAttribute("download", "Faberland_VR_Demo.7z")
+    link.setAttribute("download", "Faberland_Demo_v1.7z")
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -88,7 +88,7 @@ export default function DownloadButton({ variant = "default", size = "default" }
             <Alert className="border-green-500/50 bg-green-500/10 text-green-500">
               <AlertDescription>
                 Download started! If it doesn't begin automatically,
-                <a href={downloadUrl} download="Faberland_VR_Demo.7z" className="ml-1 underline">
+                <a href={downloadUrl} download="Faberland_Demo_v1.7z" className="ml-1 underline">
                   click here
                 </a>
                 .

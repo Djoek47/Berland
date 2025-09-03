@@ -404,6 +404,19 @@ export default function DashboardPage() {
     <div className="flex min-h-screen flex-col gradient-apple-dark text-white">
       <MetaverseNavbar />
 
+      {/* Coming Soon Banner */}
+      <section className="py-4 bg-emerald-500/20 border-b border-emerald-500/30">
+        <div className="container px-4">
+          <div className="max-w-6xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-2 text-emerald-400">
+              <AlertCircle className="h-5 w-5" />
+              <span className="font-semibold">Coming Soon in 2026:</span>
+              <span className="text-emerald-300">Rental system will be available for all Faberplots. Get ready to secure your virtual real estate!</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Hero Section */}
       <section className="relative py-16 md:py-24">
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-apple-green/20 via-apple-green/10 to-black"></div>
@@ -564,24 +577,16 @@ export default function DashboardPage() {
 
                           {/* Actions */}
                           <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              className="flex-1 bg-apple-green hover:bg-apple-teal text-black font-semibold shadow-apple transition-all duration-200"
-                              onClick={() => handleRenewPlot(plot)}
-                              disabled={isRenewing === plot.id}
-                            >
-                              {isRenewing === plot.id ? (
-                                <>
-                                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
-                                  Renewing...
-                                </>
-                              ) : (
-                                <>
-                                  <CreditCard className="mr-2 h-4 w-4" />
-                                  Renew
-                                </>
-                              )}
-                          </Button>
+                            <div className="flex-1 text-center">
+                              <div className="text-xs text-emerald-400 mb-1 font-semibold">Coming Soon in 2026</div>
+                              <Button
+                                size="sm"
+                                disabled={true}
+                                className="w-full bg-emerald-500/30 text-emerald-300 cursor-not-allowed font-semibold"
+                              >
+                                Available in 2026
+                              </Button>
+                            </div>
                             <Button
                               size="sm"
                               variant="outline"

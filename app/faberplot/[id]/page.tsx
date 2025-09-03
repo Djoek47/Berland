@@ -202,6 +202,19 @@ export default function FaberplotPage() {
     <div className="flex min-h-screen flex-col bg-black text-white">
       <MetaverseNavbar />
 
+      {/* Coming Soon Banner */}
+      <section className="py-4 bg-emerald-500/20 border-b border-emerald-500/30">
+        <div className="container px-4">
+          <div className="max-w-6xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-2 text-emerald-400">
+              <AlertCircle className="h-5 w-5" />
+              <span className="font-semibold">Coming Soon in 2026:</span>
+              <span className="text-emerald-300">Rental system will be available for all Faberplots. Get ready to secure your virtual real estate!</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Hero Section */}
       <section className="relative py-16 md:py-24">
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-amber-900/20 to-black"></div>
@@ -420,36 +433,21 @@ export default function FaberplotPage() {
                   </div>
                 </div>
                 
-                <Button 
-                  className={`w-full font-bold size="lg" ${
-                    isSold 
-                      ? "bg-red-500 hover:bg-red-600 text-white cursor-not-allowed" 
-                      : !isConnected
-                      ? "bg-gray-500 hover:bg-gray-600 text-white cursor-not-allowed"
-                      : "bg-amber-500 hover:bg-amber-600 text-black"
-                  }`}
-                  onClick={handleCheckout}
-                  disabled={isProcessing || isSold || !isConnected}
-                >
-                  {isSold ? (
-                    "Sold Out"
-                  ) : !isConnected ? (
-                    <>
-                      <Wallet className="mr-2 h-4 w-4" />
-                      Connect Wallet to Rent
-                    </>
-                  ) : isProcessing ? (
-                    <>
-                      <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Rent with Card
-                    </>
-                  )}
-                </Button>
+                <div className="w-full p-4 bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-center">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <AlertCircle className="h-5 w-5 text-emerald-400" />
+                    <span className="text-emerald-400 font-semibold">Coming Soon in 2026</span>
+                  </div>
+                  <p className="text-sm text-emerald-300 mb-3">
+                    Rental system will be available for all Faberplots. Get ready to secure your virtual real estate!
+                  </p>
+                  <Button 
+                    disabled={true}
+                    className="w-full bg-emerald-500/30 text-emerald-300 cursor-not-allowed font-bold"
+                  >
+                    Available in 2026
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>

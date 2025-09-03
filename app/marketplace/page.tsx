@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import { ExternalLink, Info, MapPin, Gem, Clock, Tag, Search, Filter, X } from "lucide-react"
+import { ExternalLink, Info, MapPin, Gem, Clock, Tag, Search, Filter, X, AlertCircle } from "lucide-react"
 import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
 
@@ -341,6 +341,19 @@ export default function MarketplacePage() {
   return (
     <div className="flex min-h-screen flex-col gradient-apple-dark text-white">
       <MetaverseNavbar />
+
+      {/* Coming Soon Banner */}
+      <section className="py-4 bg-emerald-500/20 border-b border-emerald-500/30">
+        <div className="container px-4">
+          <div className="max-w-6xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-2 text-emerald-400">
+              <AlertCircle className="h-5 w-5" />
+              <span className="font-semibold">Coming Soon in 2026:</span>
+              <span className="text-emerald-300">Rental system will be available for all Faberplots. Get ready to secure your virtual real estate!</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Hero Section */}
       <section className="relative py-16 md:py-24">
@@ -785,11 +798,12 @@ function LandCard({ plot }: LandCardProps) {
           </div>
           {plot.type === "faberplot" ? (
             plot.available ? (
-              <Button className="bg-apple-green hover:bg-apple-teal text-black font-bold shadow-apple" asChild>
-                <Link href={`/faberplot/${plot.id.replace('faberplot-', '')}`}>
-                  Rent Now
-                </Link>
-              </Button>
+              <div className="text-center">
+                <div className="text-xs text-emerald-400 mb-1 font-semibold">Coming Soon in 2026</div>
+                <Button disabled className="bg-emerald-500/30 text-emerald-300 cursor-not-allowed font-bold">
+                  Available in 2026
+                </Button>
+              </div>
             ) : (
               <Button disabled className="bg-black/30 text-white cursor-not-allowed">
                 Sold Out
