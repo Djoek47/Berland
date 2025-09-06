@@ -281,13 +281,13 @@ export class PlotDatabase {
       let extensionDays = 30
       switch (rentalTerm) {
         case 'monthly':
-          extensionDays = 30
+          extensionDays = 30 + 7 // Add 7 days bonus
           break
         case 'quarterly':
-          extensionDays = 90
+          extensionDays = 90 + 7 // Add 7 days bonus
           break
         case 'yearly':
-          extensionDays = 365
+          extensionDays = 365 + 7 // Add 7 days bonus
           break
       }
       

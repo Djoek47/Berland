@@ -433,21 +433,15 @@ export default function FaberplotPage() {
                   </div>
                 </div>
                 
-                <div className="w-full p-4 bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-center">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <AlertCircle className="h-5 w-5 text-emerald-400" />
-                    <span className="text-emerald-400 font-semibold">Coming Soon in 2026</span>
-                  </div>
-                  <p className="text-sm text-emerald-300 mb-3">
-                    Rental system will be available for all Faberplots. Get ready to secure your virtual real estate!
-                  </p>
-                  <Button 
-                    disabled={true}
-                    className="w-full bg-emerald-500/30 text-emerald-300 cursor-not-allowed font-bold"
-                  >
-                    Available in 2026
-                  </Button>
-                </div>
+                <Button 
+                  className="w-full bg-apple-green hover:bg-apple-teal text-black font-bold shadow-apple"
+                  onClick={() => {
+                    // Handle rental process
+                    console.log('Starting rental process for plot', plotId);
+                  }}
+                >
+                  Rent with Card
+                </Button>
               </CardContent>
             </Card>
           </div>

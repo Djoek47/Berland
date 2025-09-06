@@ -162,9 +162,9 @@ export default function ManagePlotPage() {
     loadPlotData()
   }, [plotId, router, isConnected, address])
 
-  // Countdown to store launch (September 10th, 2025)
+  // Countdown to store launch (September 17th, 2025)
   useEffect(() => {
-    const storeLaunchDate = new Date('2025-09-10T00:00:00')
+    const storeLaunchDate = new Date('2025-09-17T00:00:00')
     
     const updateCountdown = () => {
       const now = new Date()
