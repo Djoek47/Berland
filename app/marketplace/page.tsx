@@ -790,7 +790,7 @@ function LandCard({ plot }: LandCardProps) {
                 className="bg-apple-green hover:bg-apple-teal text-black font-bold shadow-apple"
                 asChild
               >
-                <Link href={`/faberplot/${plot.id}`}>Rent Now</Link>
+                <Link href={`/faberplot/${plot.id.replace('faberplot-', '')}`}>Rent Now</Link>
               </Button>
             ) : (
               <Button disabled className="bg-black/30 text-white cursor-not-allowed">

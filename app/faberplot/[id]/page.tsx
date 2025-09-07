@@ -202,18 +202,6 @@ export default function FaberplotPage() {
     <div className="flex min-h-screen flex-col bg-black text-white">
       <MetaverseNavbar />
 
-      {/* Coming Soon Banner */}
-      <section className="py-4 bg-emerald-500/20 border-b border-emerald-500/30">
-        <div className="container px-4">
-          <div className="max-w-6xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-2 text-emerald-400">
-              <AlertCircle className="h-5 w-5" />
-              <span className="font-semibold">Coming Soon in 2026:</span>
-              <span className="text-emerald-300">Rental system will be available for all Faberplots. Get ready to secure your virtual real estate!</span>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Hero Section */}
       <section className="relative py-16 md:py-24">
@@ -435,12 +423,10 @@ export default function FaberplotPage() {
                 
                 <Button 
                   className="w-full bg-apple-green hover:bg-apple-teal text-black font-bold shadow-apple"
-                  onClick={() => {
-                    // Handle rental process
-                    console.log('Starting rental process for plot', plotId);
-                  }}
+                  onClick={handleCheckout}
+                  disabled={isProcessing}
                 >
-                  Rent with Card
+                  {isProcessing ? 'Processing...' : 'Rent with Card'}
                 </Button>
               </CardContent>
             </Card>
