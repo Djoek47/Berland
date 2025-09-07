@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import AnimatedCounter from "@/components/animated-counter"
 
 export default function DownloadCounter() {
-  const [downloadCount, setDownloadCount] = useState(0)
+  const [downloadCount, setDownloadCount] = useState(25)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -15,12 +15,12 @@ export default function DownloadCounter() {
     const fetchDownloadCount = async () => {
       try {
         // This would typically fetch from your analytics service
-        // For now, we'll simulate a growing number
-        const mockCount = Math.floor(Math.random() * 1000) + 500
+        // Starting with 25 downloads as requested
+        const mockCount = 25
         setDownloadCount(mockCount)
       } catch (error) {
         console.error('Error fetching download count:', error)
-        setDownloadCount(0)
+        setDownloadCount(25) // Fallback to 25
       } finally {
         setIsLoading(false)
       }
