@@ -16,6 +16,7 @@ import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
 
 import { getFaberplotPrice } from "@/lib/plot-prices"
+import { getMockFaberlandEstates } from "@/lib/opensea"
 
 interface LandPlot {
   id: string
@@ -33,144 +34,12 @@ interface LandPlot {
   features: string[]
 }
 
+// Get Faberland Estates from OpenSea integration
+const faberlandEstates = getMockFaberlandEstates()
+
 const landPlots: LandPlot[] = [
-  // Faberland Estates (25 NFTs - 2025)
-  {
-    id: "estate-1",
-    name: "Faberland Estate #1",
-    type: "faberland",
-    description: "The first of 25 exclusive Faberland Estates. A premium crystal estate with amber accents, located in the central district.",
-    price: 2.5,
-    image: "/images/faberge-eggs/crystal-amber.jpeg",
-    color: "amber",
-    available: true,
-    opensea: "https://opensea.io/collection/faberland",
-    location: "Central District",
-    size: "Large (10,000 sq ft)",
-    visitors: 5200,
-    features: ["Water View", "High Traffic", "Premium Location"],
-  },
-  {
-    id: "estate-2",
-    name: "Faberland Estate #2",
-    type: "faberland",
-    description: "A luxurious manor with a warm amber glow, perfect for hosting virtual events.",
-    price: 3.2,
-    image: "/images/faberge-eggs/amber-glow.png",
-    color: "amber",
-    available: true,
-    opensea: "https://opensea.io/collection/faberland",
-    location: "Entertainment District",
-    size: "Extra Large (15,000 sq ft)",
-    visitors: 7800,
-    features: ["Event Space", "High Traffic", "Premium Location"],
-  },
-  {
-    id: "estate-3",
-    name: "Faberland Estate #3",
-    type: "faberland",
-    description: "A striking ruby-colored estate in the exclusive northern district of Faberland.",
-    price: 4.1,
-    image: "/images/faberge-eggs/ruby-red.png",
-    color: "ruby",
-    available: true,
-    opensea: "https://opensea.io/collection/faberland",
-    location: "Northern District",
-    size: "Large (12,000 sq ft)",
-    visitors: 4100,
-    features: ["Mountain View", "Exclusive Area", "Premium Location"],
-  },
-  {
-    id: "estate-4",
-    name: "Faberland Estate #4",
-    type: "faberland",
-    description: "A verdant emerald estate surrounded by virtual gardens and water features.",
-    price: 3.8,
-    image: "/images/faberge-eggs/emerald-green.png",
-    color: "emerald",
-    available: true,
-    opensea: "https://opensea.io/collection/faberland",
-    location: "Garden District",
-    size: "Large (11,000 sq ft)",
-    visitors: 6300,
-    features: ["Garden View", "Water Features", "Premium Location"],
-  },
-  {
-    id: "estate-5",
-    name: "Faberland Estate #5",
-    type: "faberland",
-    description: "A warm bronze estate with a central courtyard, located in the artistic quarter.",
-    price: 2.9,
-    image: "/images/faberge-eggs/bronze-glow.png",
-    color: "bronze",
-    available: true,
-    opensea: "https://opensea.io/collection/faberland",
-    location: "Arts District",
-    size: "Medium (8,000 sq ft)",
-    visitors: 3900,
-    features: ["Art Gallery", "Central Courtyard", "Creative Hub"],
-  },
-  {
-    id: "estate-6",
-    name: "Faberland Estate #6",
-    type: "faberland",
-    description: "A serene rose quartz estate with meditation spaces and relaxation zones.",
-    price: 3.5,
-    image: "/images/faberge-eggs/rose-quartz.jpeg",
-    color: "rose",
-    available: true,
-    opensea: "https://opensea.io/collection/faberland",
-    location: "Wellness District",
-    size: "Medium (9,000 sq ft)",
-    visitors: 4700,
-    features: ["Meditation Space", "Relaxation Zones", "Wellness Hub"],
-  },
-  {
-    id: "estate-7",
-    name: "Faberland Estate #7",
-    type: "faberland",
-    description: "A majestic sapphire estate with waterfront views in the coastal district.",
-    price: 4.5,
-    image: "/images/faberge-eggs/sapphire-blue.png",
-    color: "sapphire",
-    available: true,
-    opensea: "https://opensea.io/collection/faberland",
-    location: "Coastal District",
-    size: "Extra Large (16,000 sq ft)",
-    visitors: 8200,
-    features: ["Ocean View", "Private Beach", "Premium Location"],
-  },
-  {
-    id: "estate-8",
-    name: "Faberland Estate #8",
-    type: "faberland",
-    description: "A vibrant fire opal estate in the entertainment district, perfect for virtual events.",
-    price: 3.9,
-    image: "/images/faberge-eggs/fire-opal.png",
-    color: "fire",
-    available: true,
-    opensea: "https://opensea.io/collection/faberland",
-    location: "Entertainment District",
-    size: "Large (12,500 sq ft)",
-    visitors: 7100,
-    features: ["Event Space", "Entertainment Hub", "Premium Location"],
-  },
-  // Add remaining estates 9-25 (placeholder data)
-  ...Array.from({ length: 17 }, (_, i) => ({
-    id: `estate-${i + 9}`,
-    name: `Faberland Estate #${i + 9}`,
-    type: "faberland" as const,
-    description: `Exclusive Faberland Estate #${i + 9} - Coming 2025.`,
-    price: 3.0 + (i * 0.1),
-    image: "/images/faberge-eggs/crystal-amber.jpeg",
-    color: "crystal",
-    available: true,
-    opensea: "https://opensea.io/collection/faberland",
-    location: "Various Districts",
-    size: "Large (10,000-15,000 sq ft)",
-    visitors: 4000 + (i * 200),
-    features: ["Premium Location", "Exclusive Access", "NFT Ownership"],
-  })),
+  // Faberland Estates (25 NFTs - 2025) - Now using OpenSea integration
+  ...faberlandEstates,
   
   // Faberplots (48 Properties - 1-48)
 

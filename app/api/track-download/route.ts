@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { track } from '@vercel/analytics'
+import { track } from '@vercel/analytics/server'
 import { PlotDatabase } from '@/lib/database'
 
 export async function POST(request: NextRequest) {
