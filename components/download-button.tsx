@@ -28,8 +28,30 @@ export default function DownloadButton({ variant = "default", size = "default" }
 
   const downloadUrl = "https://storage.googleapis.com/djt45test/VRTester/Faberland%20Demo%20v1.7z"
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     setIsDownloading(true)
+
+    try {
+      // Track the download with Vercel Analytics
+      await fetch('/api/track-download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          event: 'demo_download',
+          metadata: {
+            version: 'v1',
+            file_type: 'vr_demo',
+            user_agent: navigator.userAgent,
+            timestamp: new Date().toISOString()
+          }
+        })
+      })
+    } catch (error) {
+      console.error('Error tracking download:', error)
+      // Continue with download even if tracking fails
+    }
 
     // Create an anchor element and trigger download
     const link = document.createElement("a")

@@ -35,6 +35,7 @@ import ROICalculator from "@/components/roi-calculator"
 import AnimatedCounter from "@/components/animated-counter"
 import AnimatedComparison from "@/components/animated-comparison"
 import AnimatedIcon from "@/components/animated-icon"
+import DownloadCounter from "@/components/download-counter"
 
 export default function RoadmapAndBusinessPage() {
   const [selectedPhase, setSelectedPhase] = useState<string>('phase-1')
@@ -512,6 +513,28 @@ export default function RoadmapAndBusinessPage() {
               <p className="mt-6 text-zinc-300">
                 Attract significantly more visitors with 24/7 accessibility and global reach.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Download Counter Section */}
+      <section className="py-12 bg-gradient-to-br from-amber-950/20 to-purple-950/20">
+        <div className="container px-4">
+          <div className="mb-8 text-center">
+            <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              <span className="bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+                Community Engagement
+              </span>
+            </h2>
+            <p className="mx-auto max-w-2xl text-zinc-300">
+              See how our community is growing and experiencing Faberland through our VR demo downloads.
+            </p>
+          </div>
+
+          <div className="flex justify-center">
+            <div className="w-full max-w-md">
+              <DownloadCounter />
             </div>
           </div>
         </div>
