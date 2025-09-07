@@ -3,11 +3,56 @@
 import { useState, useEffect } from "react"
 import { Download, TrendingUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import AnimatedCounter from "@/components/animated-counter"
 
 export default function DownloadCounter() {
   const [downloadCount, setDownloadCount] = useState(25)
   const [isLoading, setIsLoading] = useState(true)
+  const [isDownloading, setIsDownloading] = useState(false)
+
+  const downloadUrl = "https://storage.googleapis.com/djt45test/VRTester/Faberland%20Demo%20v1.7z"
+
+  const handleDownload = async () => {
+    setIsDownloading(true)
+
+    try {
+      // Track the download with Vercel Analytics
+      await fetch('/api/track-download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          event: 'demo_download',
+          metadata: {
+            version: 'v1',
+            file_type: 'vr_demo',
+            user_agent: navigator.userAgent,
+            timestamp: new Date().toISOString()
+          }
+        })
+      })
+    } catch (error) {
+      console.error('Error tracking download:', error)
+      // Continue with download even if tracking fails
+    }
+
+    // Create an anchor element and trigger download
+    const link = document.createElement("a")
+    link.href = downloadUrl
+    link.setAttribute("download", "Faberland_Demo_v1.7z")
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    // Update the counter
+    setDownloadCount(prev => prev + 1)
+
+    setTimeout(() => {
+      setIsDownloading(false)
+    }, 1500)
+  }
 
   useEffect(() => {
     // Fetch download count from analytics
@@ -54,12 +99,18 @@ export default function DownloadCounter() {
     <Card className="rounded-lg border border-amber-700/30 bg-black/40 backdrop-blur text-center">
       <CardContent className="p-6">
         <div className="flex items-center justify-center mb-4">
-          <div className="p-3 rounded-lg bg-amber-500/20 text-amber-400">
-            <Download className="h-6 w-6" />
-          </div>
+          <Button
+            onClick={handleDownload}
+            disabled={isDownloading}
+            className="p-3 rounded-lg bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 transition-colors border-0"
+            variant="ghost"
+            size="icon"
+          >
+            <Download className={`h-6 w-6 ${isDownloading ? 'animate-pulse' : ''}`} />
+          </Button>
         </div>
         
-        <h3 className="mb-2 text-xl font-bold text-white">VR Demo Downloads</h3>
+        <h3 className="mb-2 text-xl font-bold text-white">Faberland Demo Downloads</h3>
         
         <div className="flex items-center justify-center gap-2 mb-4">
           <div className="text-4xl font-bold text-white">

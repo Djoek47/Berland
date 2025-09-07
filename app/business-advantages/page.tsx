@@ -596,7 +596,7 @@ export default function RoadmapAndBusinessPage() {
                 </li>
               </ul>
               <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold" asChild>
-                <a href="#calculator">Calculate Transition ROI</a>
+                <Link href="/marketplace">Calculate Transition ROI</Link>
               </Button>
             </div>
 

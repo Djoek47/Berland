@@ -127,13 +127,13 @@ export default function MetaverseFooter() {
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-amber-700/20 pt-8 text-sm text-zinc-400 md:flex-row">
           <p>© {new Date().getFullYear()} Faberland. All rights reserved.</p>
           <div className="flex gap-4">
-            <Link href="#" className="hover:text-amber-400">
+            <Link href="/privacy" className="hover:text-amber-400">
               Privacy Policy
             </Link>
-            <Link href="#" className="hover:text-amber-400">
+            <Link href="/terms" className="hover:text-amber-400">
               Terms of Service
             </Link>
-            <Link href="#" className="hover:text-amber-400">
+            <Link href="/cookies" className="hover:text-amber-400">
               Cookie Policy
             </Link>
           </div>
