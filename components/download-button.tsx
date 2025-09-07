@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
+import { track } from '@vercel/analytics'
 import {
   Dialog,
   DialogContent,
@@ -31,20 +32,29 @@ export default function DownloadButton({ variant = "default", size = "default" }
   const handleDownload = async () => {
     setIsDownloading(true)
 
+    // Track immediately on client-side for instant analytics
+    track('VR_Demo_Download_Click', {
+      file: 'Faberland_Demo_v1.7z',
+      version: 'v1',
+      source: 'download_button_dialog',
+      timestamp: new Date().toISOString()
+    })
+
     try {
-      // Track the download with Vercel Analytics
+      // Track the download with server-side analytics
       await fetch('/api/track-download', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          event: 'demo_download',
+          event: 'VR_Demo_Download',
           metadata: {
             version: 'v1',
             file_type: 'vr_demo',
             user_agent: navigator.userAgent,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            source: 'download_button_dialog'
           }
         })
       })

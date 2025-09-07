@@ -5,9 +5,10 @@ import { Download, TrendingUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import AnimatedCounter from "@/components/animated-counter"
+import { track } from '@vercel/analytics'
 
 export default function DownloadCounter() {
-  const [downloadCount, setDownloadCount] = useState(25)
+  const [downloadCount, setDownloadCount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [isDownloading, setIsDownloading] = useState(false)
 
@@ -16,20 +17,29 @@ export default function DownloadCounter() {
   const handleDownload = async () => {
     setIsDownloading(true)
 
+    // Track immediately on client-side for instant analytics
+    track('VR_Demo_Download_Click', {
+      file: 'Faberland_Demo_v1.7z',
+      version: 'v1',
+      source: 'download_counter_component',
+      timestamp: new Date().toISOString()
+    })
+
     try {
-      // Track the download with Vercel Analytics
+      // Track the download with server-side analytics
       await fetch('/api/track-download', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          event: 'demo_download',
+          event: 'VR_Demo_Download',
           metadata: {
             version: 'v1',
             file_type: 'vr_demo',
             user_agent: navigator.userAgent,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            source: 'download_counter_component'
           }
         })
       })
@@ -46,26 +56,36 @@ export default function DownloadCounter() {
     link.click()
     document.body.removeChild(link)
 
-    // Update the counter
-    setDownloadCount(prev => prev + 1)
-
-    setTimeout(() => {
+    // Refresh the download count from the server
+    setTimeout(async () => {
+      try {
+        const response = await fetch('/api/track-download')
+        if (response.ok) {
+          const data = await response.json()
+          setDownloadCount(data.downloadCount || 0)
+        }
+      } catch (error) {
+        console.error('Error refreshing download count:', error)
+      }
       setIsDownloading(false)
     }, 1500)
   }
 
   useEffect(() => {
-    // Fetch download count from analytics
-    // For now, we'll use a placeholder that can be updated with real data
+    // Fetch real download count from API
     const fetchDownloadCount = async () => {
       try {
-        // This would typically fetch from your analytics service
-        // Starting with 25 downloads as requested
-        const mockCount = 25
-        setDownloadCount(mockCount)
+        const response = await fetch('/api/track-download')
+        if (response.ok) {
+          const data = await response.json()
+          setDownloadCount(data.downloadCount || 0)
+        } else {
+          console.error('Error fetching download count:', response.statusText)
+          setDownloadCount(0)
+        }
       } catch (error) {
         console.error('Error fetching download count:', error)
-        setDownloadCount(25) // Fallback to 25
+        setDownloadCount(0)
       } finally {
         setIsLoading(false)
       }
@@ -73,9 +93,17 @@ export default function DownloadCounter() {
 
     fetchDownloadCount()
     
-    // Update count every 30 seconds to simulate real-time updates
-    const interval = setInterval(() => {
-      setDownloadCount(prev => prev + Math.floor(Math.random() * 3))
+    // Refresh count every 30 seconds to get real-time updates
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch('/api/track-download')
+        if (response.ok) {
+          const data = await response.json()
+          setDownloadCount(data.downloadCount || 0)
+        }
+      } catch (error) {
+        console.error('Error refreshing download count:', error)
+      }
     }, 30000)
 
     return () => clearInterval(interval)

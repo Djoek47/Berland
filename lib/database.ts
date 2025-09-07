@@ -11,6 +11,13 @@ export interface PlotStatus {
   rentalTerm?: 'monthly' | 'quarterly' | 'yearly' // Add rental period information
 }
 
+export interface DownloadRecord {
+  id: string
+  timestamp: string
+  userAgent?: string
+  ipAddress?: string
+}
+
 // Check if we're in production (Vercel)
 const isProduction = process.env.NODE_ENV === 'production'
 
@@ -498,6 +505,132 @@ export class PlotDatabase {
           console.error('Database: Error persisting after fix:', error)
         }
       }
+    }
+  }
+
+  // Download tracking methods
+  static async recordDownload(userAgent?: string, ipAddress?: string): Promise<void> {
+    try {
+      await initializeDatabase()
+      
+      const downloadRecord: DownloadRecord = {
+        id: `download_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        timestamp: new Date().toISOString(),
+        userAgent,
+        ipAddress
+      }
+
+      if (isProduction && kv) {
+        // Store in Redis
+        await kv.set(`download:${downloadRecord.id}`, JSON.stringify(downloadRecord))
+        console.log(`Database: Recorded download ${downloadRecord.id} in Redis`)
+      } else {
+        // Store in development file
+        const fs = require('fs')
+        const path = require('path')
+        const downloadsPath = path.join(process.cwd(), 'data', 'downloads.json')
+        const dataDir = path.dirname(downloadsPath)
+        
+        if (!fs.existsSync(dataDir)) {
+          fs.mkdirSync(dataDir, { recursive: true })
+        }
+
+        let downloads: DownloadRecord[] = []
+        if (fs.existsSync(downloadsPath)) {
+          try {
+            const data = fs.readFileSync(downloadsPath, 'utf8')
+            downloads = JSON.parse(data)
+          } catch (error) {
+            console.error('Database: Error reading downloads file:', error)
+            downloads = []
+          }
+        }
+
+        downloads.push(downloadRecord)
+        fs.writeFileSync(downloadsPath, JSON.stringify(downloads, null, 2))
+        console.log(`Database: Recorded download ${downloadRecord.id} in file`)
+      }
+    } catch (error) {
+      console.error('Database: Error recording download:', error)
+    }
+  }
+
+  static async getDownloadCount(): Promise<number> {
+    try {
+      await initializeDatabase()
+
+      if (isProduction && kv) {
+        // Count downloads in Redis
+        const keys = await kv.keys('download:*')
+        console.log(`Database: Found ${keys.length} downloads in Redis`)
+        return keys.length
+      } else {
+        // Count downloads in development file
+        const fs = require('fs')
+        const path = require('path')
+        const downloadsPath = path.join(process.cwd(), 'data', 'downloads.json')
+        
+        if (!fs.existsSync(downloadsPath)) {
+          return 0
+        }
+
+        try {
+          const data = fs.readFileSync(downloadsPath, 'utf8')
+          const downloads: DownloadRecord[] = JSON.parse(data)
+          console.log(`Database: Found ${downloads.length} downloads in file`)
+          return downloads.length
+        } catch (error) {
+          console.error('Database: Error reading downloads file:', error)
+          return 0
+        }
+      }
+    } catch (error) {
+      console.error('Database: Error getting download count:', error)
+      return 0
+    }
+  }
+
+  static async getRecentDownloads(limit: number = 10): Promise<DownloadRecord[]> {
+    try {
+      await initializeDatabase()
+
+      if (isProduction && kv) {
+        // Get recent downloads from Redis
+        const keys = await kv.keys('download:*')
+        const downloads: DownloadRecord[] = []
+        
+        for (const key of keys.slice(-limit)) {
+          const data = await kv.get(key)
+          if (data) {
+            downloads.push(JSON.parse(data))
+          }
+        }
+        
+        return downloads.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      } else {
+        // Get recent downloads from development file
+        const fs = require('fs')
+        const path = require('path')
+        const downloadsPath = path.join(process.cwd(), 'data', 'downloads.json')
+        
+        if (!fs.existsSync(downloadsPath)) {
+          return []
+        }
+
+        try {
+          const data = fs.readFileSync(downloadsPath, 'utf8')
+          const downloads: DownloadRecord[] = JSON.parse(data)
+          return downloads
+            .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+            .slice(0, limit)
+        } catch (error) {
+          console.error('Database: Error reading downloads file:', error)
+          return []
+        }
+      }
+    } catch (error) {
+      console.error('Database: Error getting recent downloads:', error)
+      return []
     }
   }
 }

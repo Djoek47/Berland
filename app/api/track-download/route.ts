@@ -1,28 +1,57 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { track } from '@vercel/analytics'
+import { PlotDatabase } from '@/lib/database'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { event, metadata } = body
 
-    // Track the download event with Vercel Analytics
-    track('demo_download', {
+    // Get client IP address
+    const ipAddress = request.headers.get('x-forwarded-for') || 
+                     request.headers.get('x-real-ip') || 
+                     'unknown'
+
+    // Record the download in our database
+    await PlotDatabase.recordDownload(
+      request.headers.get('user-agent') || 'unknown',
+      ipAddress
+    )
+
+    // Track the download event with Vercel Analytics - multiple events for better visibility
+    track('VR_Demo_Download', {
+      file: 'Faberland_Demo_v1.7z',
+      version: 'v1',
       timestamp: new Date().toISOString(),
       userAgent: request.headers.get('user-agent') || 'unknown',
+      ipAddress: ipAddress,
       ...metadata
     })
 
-    // Also track a custom event for our counter
-    track('faberland_demo_download', {
-      download_type: 'vr_demo',
-      version: 'v1',
+    // Track as a conversion event
+    track('Download_Conversion', {
+      product: 'Faberland VR Demo',
+      file_size: '7z',
+      download_source: 'business_advantages_page',
       timestamp: new Date().toISOString()
     })
+
+    // Track as a custom event for detailed analytics
+    track('Faberland_Demo_Downloaded', {
+      download_type: 'vr_demo',
+      version: 'v1',
+      file_name: 'Faberland_Demo_v1.7z',
+      timestamp: new Date().toISOString(),
+      success: true
+    })
+
+    // Get the current download count
+    const downloadCount = await PlotDatabase.getDownloadCount()
 
     return NextResponse.json({ 
       success: true, 
       message: 'Download tracked successfully',
+      downloadCount,
       timestamp: new Date().toISOString()
     })
   } catch (error) {
@@ -35,10 +64,19 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  // Return download count (this would need to be implemented with a database)
-  // For now, we'll return a placeholder that can be updated
-  return NextResponse.json({ 
-    downloadCount: 0, // This will be updated when we have analytics data
-    message: 'Download counter endpoint'
-  })
+  try {
+    // Get the current download count from database
+    const downloadCount = await PlotDatabase.getDownloadCount()
+    
+    return NextResponse.json({ 
+      downloadCount,
+      message: 'Download counter endpoint'
+    })
+  } catch (error) {
+    console.error('Error getting download count:', error)
+    return NextResponse.json(
+      { downloadCount: 0, error: 'Failed to get download count' },
+      { status: 500 }
+    )
+  }
 }
