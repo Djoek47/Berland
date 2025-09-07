@@ -50,12 +50,12 @@ export default function InstallationGuidePage() {
       <section className="py-12">
         <div className="container px-4">
           <div className="mx-auto max-w-4xl">
-            <h2 className="mb-6 text-center text-3xl font-bold">System Requirements</h2>
+            <h2 className="mb-6 text-center text-3xl font-bold text-amber-400">System Requirements</h2>
 
             <div className="mb-8 grid gap-6 md:grid-cols-2">
               <Card className="border-amber-700/30 bg-zinc-900/50 backdrop-blur">
                 <CardHeader>
-                  <CardTitle className="flex items-center">
+                  <CardTitle className="flex items-center text-amber-400">
                     <Laptop className="mr-2 h-5 w-5 text-amber-400" /> Minimum Requirements
                   </CardTitle>
                   <CardDescription>The baseline specs needed to run Faberland VR</CardDescription>
@@ -110,7 +110,7 @@ export default function InstallationGuidePage() {
 
               <Card className="border-amber-700/30 bg-zinc-900/50 backdrop-blur">
                 <CardHeader>
-                  <CardTitle className="flex items-center">
+                  <CardTitle className="flex items-center text-amber-400">
                     <Laptop className="mr-2 h-5 w-5 text-amber-400" /> Recommended Specifications
                   </CardTitle>
                   <CardDescription>For the optimal Faberland experience</CardDescription>
@@ -180,7 +180,7 @@ export default function InstallationGuidePage() {
       <section className="py-12 bg-zinc-950">
         <div className="container px-4">
           <div className="mx-auto max-w-4xl">
-            <h2 className="mb-6 text-center text-3xl font-bold">Installation Steps</h2>
+            <h2 className="mb-6 text-center text-3xl font-bold text-amber-400">Installation Steps</h2>
 
             <Tabs defaultValue="windows" className="w-full">
               <div className="mb-8 flex justify-center">
@@ -443,11 +443,11 @@ export default function InstallationGuidePage() {
       <section className="py-12">
         <div className="container px-4">
           <div className="mx-auto max-w-4xl">
-            <h2 className="mb-6 text-center text-3xl font-bold">Troubleshooting</h2>
+            <h2 className="mb-6 text-center text-3xl font-bold text-amber-400">Troubleshooting</h2>
 
             <Card className="mb-8 border-amber-700/30 bg-zinc-900/50 backdrop-blur">
               <CardHeader>
-                <CardTitle>Common Issues & Solutions</CardTitle>
+                <CardTitle className="text-amber-400">Common Issues & Solutions</CardTitle>
                 <CardDescription>
                   If you encounter problems during installation or when running Faberland VR, try these solutions.
                 </CardDescription>
@@ -500,7 +500,7 @@ export default function InstallationGuidePage() {
             </Card>
 
             <div className="text-center">
-              <h3 className="mb-4 text-xl font-semibold">Still Having Issues?</h3>
+              <h3 className="mb-4 text-xl font-semibold text-amber-400">Still Having Issues?</h3>
               <p className="mb-6 text-zinc-300">
                 If you're still experiencing problems, please contact our support team for assistance.
               </p>
@@ -513,7 +513,7 @@ export default function InstallationGuidePage() {
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-b from-black to-amber-950/20">
         <div className="container px-4 text-center">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">Ready to Experience Faberland?</h2>
+          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl text-amber-400">Ready to Experience Faberland?</h2>
           <p className="mx-auto mb-8 max-w-2xl text-zinc-300">
             Download the Faberland VR demo today and start exploring our virtual world.
           </p>
@@ -553,7 +553,7 @@ function InstallationStep({ number, title, description, icon, children }: Instal
       <div>
         <div className="flex items-center">
           <div className="mr-3">{icon}</div>
-          <h3 className="text-xl font-bold">{title}</h3>
+          <h3 className="text-xl font-bold text-amber-400">{title}</h3>
         </div>
         <p className="mt-2 text-zinc-300">{description}</p>
         {children}
