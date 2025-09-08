@@ -255,7 +255,7 @@ export default function MarketplacePage() {
                 </div>
               </div>
               <Link
-                href="/about"
+                href="/terms"
                 className="flex items-center gap-2 text-sm px-4 py-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
               >
                 <Info className="h-4 w-4" />
