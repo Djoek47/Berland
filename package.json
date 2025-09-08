@@ -44,6 +44,7 @@
     "@thirdweb-dev/sdk": "^4.0.99",
     "@vercel/analytics": "^1.5.0",
     "@vercel/kv": "^3.0.0",
+    "@vercel/speed-insights": "^1.2.0",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
