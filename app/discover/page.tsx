@@ -271,6 +271,96 @@ export default function DiscoverPage() {
         </div>
       </section>
 
+      {/* Faberstore Section */}
+      <section className="py-16 bg-gradient-to-b from-zinc-950 to-black">
+        <div className="container px-4">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              <span className="bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+                Fabershop - VR Merch Shop
+              </span>
+            </h2>
+            <p className="mx-auto max-w-2xl text-white">
+              The only functional shop in the metaverse! Experience Proof of Concept collection
+            </p>
+          </div>
+
+          <div className="grid gap-8 lg:grid-cols-2 items-center">
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <Image
+                  src="/images/Minimal_-_Artboard_2-removebg-preview.png"
+                  alt="Proof of Concept Logo"
+                  width={60}
+                  height={60}
+                  className="w-15 h-15 object-contain"
+                />
+                <div>
+                  <h3 className="text-2xl font-bold text-white">Proof of Concept Collection</h3>
+                  <p className="text-amber-400">Premium VR Merchandise</p>
+                </div>
+              </div>
+              
+              <p className="text-lg text-white">
+                Fabershop is the first functional VR merchandise shop in the Faberland metaverse. 
+                Each item in our Proof of Concept collection comes with a unique QR code that connects 
+                to your Faberland avatar, unlocking exclusive in-game items and experiences.
+              </p>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative overflow-hidden rounded-lg p-4 border border-white/20 backdrop-blur-md bg-gradient-to-br from-white/10 via-white/5 to-transparent before:absolute before:inset-0 before:bg-gradient-to-r before:from-pink-500/20 before:via-purple-500/20 before:to-blue-500/20 before:opacity-50 before:blur-sm">
+                  <div className="relative z-10">
+                    <h4 className="font-semibold text-white mb-2">Metaverse to Reality</h4>
+                    <p className="text-sm text-white">Bridge digital and physical worlds with premium merchandise</p>
+                  </div>
+                </div>
+                <div className="relative overflow-hidden rounded-lg p-4 border border-white/20 backdrop-blur-md bg-gradient-to-br from-white/10 via-white/5 to-transparent before:absolute before:inset-0 before:bg-gradient-to-r before:from-cyan-500/20 before:via-emerald-500/20 before:to-amber-500/20 before:opacity-50 before:blur-sm">
+                  <div className="relative z-10">
+                    <h4 className="font-semibold text-white mb-2">Digital Identity</h4>
+                    <p className="text-sm text-white">Connect your purchases to your Faberland avatar</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <Button 
+                  size="lg" 
+                  className="bg-amber-500 hover:bg-amber-600 text-black font-bold"
+                  asChild
+                >
+                  <a href="https://www.faberland.shop/" target="_blank" rel="noopener noreferrer">
+                    Visit Fabershop
+                  </a>
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="border-amber-500 text-amber-400 hover:bg-amber-950/20"
+                  asChild
+                >
+                  <Link href="/marketplace?tab=faberplot">Rent Your Own Shop</Link>
+                </Button>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="aspect-square rounded-xl overflow-hidden border border-amber-500/30">
+                <Image
+                  src="/images/Minimal_-_Artboard_2-removebg-preview.png"
+                  alt="Fabershop - Proof of Concept Collection"
+                  width={500}
+                  height={500}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="absolute -bottom-4 -right-4 bg-amber-500 text-black px-4 py-2 rounded-lg font-bold">
+                Live in VR
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Case Study Section */}
       <section className="py-16">
         <div className="container px-4">

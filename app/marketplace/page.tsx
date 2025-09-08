@@ -79,6 +79,15 @@ export default function MarketplacePage() {
   const [showFilters, setShowFilters] = useState(false)
   const [activeTab, setActiveTab] = useState("all")
 
+  // Handle URL tab parameter after component mounts
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const tabParam = urlParams.get('tab')
+    if (tabParam && ['all', 'faberland', 'faberplot', 'featured'].includes(tabParam)) {
+      setActiveTab(tabParam)
+    }
+  }, [])
+
   // Derived states
   const [filteredPlots, setFilteredPlots] = useState<LandPlot[]>(landPlots)
 
@@ -379,7 +388,7 @@ export default function MarketplacePage() {
       {/* Marketplace Tabs */}
       <section className="py-8">
         <div className="container px-4">
-          <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
+          <Tabs value={activeTab} className="w-full" onValueChange={setActiveTab}>
             <div className="mb-8 flex justify-center">
               <TabsList className="bg-zinc-900/50 border border-apple-green/30">
                 <TabsTrigger value="all">All Properties</TabsTrigger>
@@ -451,6 +460,7 @@ export default function MarketplacePage() {
                 </div>
               )}
             </TabsContent>
+
 
             <TabsContent value="featured" className="mt-0">
               {filteredPlots.length > 0 ? (

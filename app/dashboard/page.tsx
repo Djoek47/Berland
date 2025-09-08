@@ -568,9 +568,17 @@ export default function DashboardPage() {
                             <Button
                               size="sm"
                               className="flex-1 bg-apple-green hover:bg-apple-teal text-black font-semibold"
-                              onClick={() => router.push(`/faberplot/${plot.id}`)}
+                              onClick={() => handleRenewPlot(plot)}
+                              disabled={isRenewing === plot.id}
                             >
-                              Rent Now
+                              {isRenewing === plot.id ? (
+                                <>
+                                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent"></div>
+                                  Renewing...
+                                </>
+                              ) : (
+                                'Renew'
+                              )}
                             </Button>
                             <Button
                               size="sm"

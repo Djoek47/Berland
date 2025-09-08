@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { MapPin, Users, Calendar, DollarSign, CheckCircle, ArrowLeft, ExternalLink, CreditCard, Wallet, AlertCircle } from "lucide-react"
+import { MapPin, Users, Calendar, DollarSign, CheckCircle, ArrowLeft, ExternalLink, CreditCard, Wallet, AlertCircle, ChevronDown, ChevronUp } from "lucide-react"
 import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
 import { redirectToCheckout } from "@/lib/stripe-client"
@@ -67,6 +67,7 @@ export default function FaberplotPage() {
   const [userEmail, setUserEmail] = useState("")
   const [showCancelMessage, setShowCancelMessage] = useState(false)
   const [showWalletModal, setShowWalletModal] = useState(false)
+  const [isFabershopExpanded, setIsFabershopExpanded] = useState(false)
   
   // Wallet connection
   const { isConnected, address, isLoading: walletLoading } = useWallet()
@@ -422,11 +423,15 @@ export default function FaberplotPage() {
                 </div>
                 
                 <Button 
-                  className="w-full bg-apple-green hover:bg-apple-teal text-black font-bold shadow-apple"
+                  className={`w-full font-bold shadow-apple ${
+                    isSold 
+                      ? "bg-red-500 hover:bg-red-600 text-white cursor-not-allowed" 
+                      : "bg-apple-green hover:bg-apple-teal text-black"
+                  }`}
                   onClick={handleCheckout}
-                  disabled={isProcessing}
+                  disabled={isProcessing || isSold}
                 >
-                  {isProcessing ? 'Processing...' : 'Rent with Card'}
+                  {isSold ? 'Sold Out' : isProcessing ? 'Processing...' : 'Rent with Card'}
                 </Button>
               </CardContent>
             </Card>
@@ -462,6 +467,166 @@ export default function FaberplotPage() {
                       <span className="text-zinc-300">{amenity}</span>
                     </div>
                   ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Fabershop Showcase Section */}
+      <section className="py-16 bg-gradient-to-b from-zinc-950 to-black">
+        <div className="container px-4">
+          <div className="max-w-4xl mx-auto">
+            {/* Collapsible Header */}
+            <div 
+              className="bg-gradient-to-br from-amber-900/20 to-black/40 backdrop-blur-sm rounded-2xl border border-amber-500/30 shadow-2xl cursor-pointer transition-all duration-300 hover:border-amber-500/50"
+              onClick={() => setIsFabershopExpanded(!isFabershopExpanded)}
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <div className={`transition-opacity duration-300 ${isFabershopExpanded ? 'opacity-0' : 'opacity-100'}`}>
+                        <Image
+                          src="/images/Minimal_-_Artboard_2-removebg-preview.png"
+                          alt="Proof of Concept Logo"
+                          width={60}
+                          height={60}
+                          className="w-15 h-15 object-contain"
+                        />
+                      </div>
+                      <div className={`absolute inset-0 transition-opacity duration-300 ${isFabershopExpanded ? 'opacity-100' : 'opacity-0'}`}>
+                        <Image
+                          src="/images/faberland-logo.png"
+                          alt="Faberland Logo"
+                          width={60}
+                          height={60}
+                          className="w-15 h-15 object-contain"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">See It In Action</h2>
+                      <p className="text-amber-400">Fabershop proves virtual retail works in the metaverse</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
+                      Live in VR
+                    </Badge>
+                    {isFabershopExpanded ? (
+                      <ChevronUp className="h-6 w-6 text-amber-400 transition-transform duration-300" />
+                    ) : (
+                      <ChevronDown className="h-6 w-6 text-amber-400 transition-transform duration-300" />
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Collapsible Content */}
+              <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                isFabershopExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+              }`}>
+                <div className="px-6 pb-6 border-t border-white/10">
+                  <div className="pt-6">
+                    <div className="grid gap-8 lg:grid-cols-2 items-center">
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-4">
+                          <Image
+                            src="/images/Minimal_-_Artboard_2-removebg-preview.png"
+                            alt="Proof of Concept Logo"
+                            width={50}
+                            height={50}
+                            className="w-12 h-12 object-contain"
+                          />
+                          <div>
+                            <h3 className="text-xl font-bold text-white">Fabershop</h3>
+                            <p className="text-amber-400 text-sm">The Only Functional VR Shop</p>
+                          </div>
+                        </div>
+                        
+                        <p className="text-white">
+                          Fabershop is the first and only functional merchandise shop in the Faberland metaverse. 
+                          Located on one of our premium Faberplots, it showcases the Proof of Concept collection - 
+                          premium merchandise that bridges the digital and physical worlds.
+                        </p>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="relative overflow-hidden rounded-lg p-3 border border-white/20 backdrop-blur-md bg-gradient-to-br from-white/10 via-white/5 to-transparent before:absolute before:inset-0 before:bg-gradient-to-r before:from-pink-500/20 before:via-purple-500/20 before:to-blue-500/20 before:opacity-50 before:blur-sm">
+                            <div className="relative z-10">
+                              <h4 className="font-semibold text-white text-sm mb-1">Proof of Concept</h4>
+                              <p className="text-xs text-zinc-300">QR codes connect to your avatar</p>
+                            </div>
+                          </div>
+                          <div className="relative overflow-hidden rounded-lg p-3 border border-white/20 backdrop-blur-md bg-gradient-to-br from-white/10 via-white/5 to-transparent before:absolute before:inset-0 before:bg-gradient-to-r before:from-cyan-500/20 before:via-emerald-500/20 before:to-amber-500/20 before:opacity-50 before:blur-sm">
+                            <div className="relative z-10">
+                              <h4 className="font-semibold text-white text-sm mb-1">Metaverse to Reality</h4>
+                              <p className="text-xs text-zinc-300">Premium merchandise with in-game perks</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-3">
+                          <Button 
+                            size="sm" 
+                            className="bg-amber-500 hover:bg-amber-600 text-black font-bold"
+                            asChild
+                          >
+                            <a href="https://www.faberland.shop/" target="_blank" rel="noopener noreferrer">
+                              Visit Fabershop
+                            </a>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            className="border-amber-500 text-amber-400 hover:bg-amber-950/20"
+                            asChild
+                          >
+                            <Link href="/marketplace?tab=faberplot">Rent Your Own Plot</Link>
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="relative">
+                        <div className="aspect-square rounded-xl overflow-hidden border border-amber-500/30">
+                        <Image
+                          src="/images/Minimal_-_Artboard_2-removebg-preview.png"
+                          alt="Fabershop - Proof of Concept Collection"
+                          width={400}
+                          height={400}
+                          className="w-full h-full object-contain"
+                        />
+                        </div>
+                        <div className="absolute -bottom-3 -right-3 bg-amber-500 text-black px-3 py-1 rounded-lg font-bold text-sm">
+                          Live in VR
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-8 pt-6 border-t border-white/10">
+                      <h4 className="text-lg font-bold text-white mb-3">Want Your Own VR Shop?</h4>
+                      <p className="text-zinc-300 text-sm mb-4">
+                        Fabershop proves that virtual retail works in the metaverse. Rent your own Faberplot 
+                        and create your own VR store experience. Perfect for businesses, artists, and entrepreneurs 
+                        looking to reach the metaverse audience.
+                      </p>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="text-center p-3 bg-white/5 rounded-lg">
+                          <div className="text-lg font-bold text-amber-400 mb-1">24/7</div>
+                          <p className="text-xs text-zinc-300">Always Open</p>
+                        </div>
+                        <div className="text-center p-3 bg-white/5 rounded-lg">
+                          <div className="text-lg font-bold text-amber-400 mb-1">Global</div>
+                          <p className="text-xs text-zinc-300">Worldwide Reach</p>
+                        </div>
+                        <div className="text-center p-3 bg-white/5 rounded-lg">
+                          <div className="text-lg font-bold text-amber-400 mb-1">VR Ready</div>
+                          <p className="text-xs text-zinc-300">Immersive Shopping</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
