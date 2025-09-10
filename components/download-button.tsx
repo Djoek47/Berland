@@ -98,22 +98,43 @@ export default function DownloadButton({ variant = "default", size = "default" }
           {buttonText}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Download Faberland VR Demo</DialogTitle>
-          <DialogDescription>Experience the Faberland metaverse on your VR headset</DialogDescription>
+      <DialogContent className="sm:max-w-md bg-white/95 backdrop-blur-xl border-0 shadow-2xl">
+        <DialogHeader className="space-y-3">
+          <DialogTitle className="text-2xl font-bold text-gray-900 text-center">Download Faberland VR Demo</DialogTitle>
+          <DialogDescription className="text-gray-600 text-center text-base">Experience the Faberland metaverse on your VR headset</DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="rounded-md bg-apple-green/10 p-4">
-            <h3 className="mb-2 font-medium text-apple-green">System Requirements</h3>
-            <ul className="ml-4 list-disc text-sm text-zinc-300">
-              <li>Windows 10 or higher</li>
-              <li>Compatible VR headset (Oculus, Vive, Index)</li>
-              <li>8GB RAM minimum (16GB recommended)</li>
-              <li>NVIDIA GTX 1060 / AMD Radeon RX 580 or better</li>
-              <li>10GB free disk space</li>
-            </ul>
+        <div className="grid gap-6 py-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 to-green-100 p-6 border border-emerald-200/50">
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 via-blue-400/20 to-purple-400/20 animate-pulse"></div>
+            <div className="relative">
+              <h3 className="mb-4 text-lg font-semibold text-emerald-800 flex items-center">
+                <div className="mr-2 h-2 w-2 rounded-full bg-emerald-500"></div>
+                System Requirements
+              </h3>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center text-gray-700 font-medium">
+                  <div className="mr-3 h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+                  Windows 10 or higher
+                </li>
+                <li className="flex items-center text-gray-700 font-medium">
+                  <div className="mr-3 h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+                  Compatible VR headset (Oculus, Vive, Index)
+                </li>
+                <li className="flex items-center text-gray-700 font-medium">
+                  <div className="mr-3 h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+                  8GB RAM minimum (16GB recommended)
+                </li>
+                <li className="flex items-center text-gray-700 font-medium">
+                  <div className="mr-3 h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+                  NVIDIA GTX 1060 / AMD Radeon RX 580 or better
+                </li>
+                <li className="flex items-center text-gray-700 font-medium">
+                  <div className="mr-3 h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
+                  10GB free disk space
+                </li>
+              </ul>
+            </div>
           </div>
 
           {showSuccess ? (
@@ -127,26 +148,40 @@ export default function DownloadButton({ variant = "default", size = "default" }
               </AlertDescription>
             </Alert>
           ) : (
-            <div className="flex items-start space-x-2">
+            <div className="flex items-start space-x-3 p-4 rounded-xl bg-gray-50/80 border border-gray-200/50">
               <Checkbox
                 id="terms"
                 checked={agreedToTerms}
                 onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
+                className="border-gray-400 mt-0.5"
               />
-              <Label htmlFor="terms" className="text-sm text-zinc-300">
+              <Label htmlFor="terms" className="text-sm text-gray-700 leading-relaxed font-medium cursor-pointer">
                 I agree to the Faberland terms of service and understand this is a demo version
               </Label>
             </div>
           )}
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="pt-4">
           <Button
             onClick={handleDownload}
             disabled={!agreedToTerms || isDownloading || showSuccess}
-            className="bg-amber-500 hover:bg-amber-600 text-black font-bold"
+            className="relative w-full h-12 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-600 hover:via-orange-600 hover:to-red-600 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
           >
-            {isDownloading ? "Downloading..." : "Download Now"}
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/20 via-blue-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="relative flex items-center justify-center">
+              {isDownloading ? (
+                <>
+                  <div className="mr-3 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Downloading...
+                </>
+              ) : (
+                <>
+                  <Download className="mr-3 h-5 w-5" />
+                  Download Now
+                </>
+              )}
+            </div>
           </Button>
         </DialogFooter>
       </DialogContent>
