@@ -21,7 +21,7 @@ export default function MaintenanceAlert() {
       </div>
       
       <div className="relative z-10 mt-1 text-xs md:text-sm opacity-90">
-        We're performing scheduled maintenance. The site will be fully operational tomorrow at 12:00 PM.
+        We're performing scheduled maintenance. The site will be fully operational on October 24th, 2025.
       </div>
       
       {/* Glass rainbow effect overlay */}
