@@ -19,8 +19,8 @@ import { getFaberplotPrice } from "@/lib/plot-prices"
 const getStoreImage = (plotNumber: number): string => {
   if (plotNumber <= 4) {
     const storeNumber = plotNumber // Direct mapping for plots 1-4
-    const imageNumber = 1 // Use first image for now
-    return `/images/stores/store${storeNumber}/store${storeNumber}-image${imageNumber}.jpg`
+    const imageNumber = 0 // Use first image (0.0.PNG)
+    return `/images/stores/store${storeNumber}/${storeNumber}.${imageNumber}.PNG`
   }
   // For plots 5-48, use original Faberge eggs logic
   const eggIndex = (plotNumber - 1) % 8
