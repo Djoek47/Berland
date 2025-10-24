@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { MapPin, Users, Calendar, DollarSign, CheckCircle, ArrowLeft, ExternalLink, CreditCard, Wallet, AlertCircle, ChevronDown, ChevronUp } from "lucide-react"
+import { MapPin, Users, Calendar, DollarSign, CheckCircle, ArrowLeft, ExternalLink, CreditCard, Wallet, AlertCircle, ChevronDown, ChevronUp, Play, Pause } from "lucide-react"
 import MetaverseNavbar from "@/components/metaverse-navbar"
 import MetaverseFooter from "@/components/metaverse-footer"
 import { redirectToCheckout } from "@/lib/stripe-client"
@@ -35,6 +35,16 @@ const getStoreImage = (plotNumber: number): string => {
     "/images/faberge-eggs/fire-opal.png"
   ]
   return eggImages[eggIndex]
+}
+
+// Function to get second store image for faberplots (only for plots 1-4)
+const getStoreImageSecond = (plotNumber: number): string | null => {
+  if (plotNumber <= 4) {
+    const storeNumber = plotNumber // Direct mapping for plots 1-4
+    const imageNumber = 1 // Use second image (1.1.PNG)
+    return `/images/stores/store${storeNumber}/${storeNumber}.${imageNumber}.PNG`
+  }
+  return null // No second image for plots 5-48
 }
 
 // Faberplot data with monthly rent pricing
@@ -83,6 +93,31 @@ export default function FaberplotPage() {
   const [showCancelMessage, setShowCancelMessage] = useState(false)
   const [showWalletModal, setShowWalletModal] = useState(false)
   const [isFabershopExpanded, setIsFabershopExpanded] = useState(false)
+  const [currentImage, setCurrentImage] = useState(plot?.image || "")
+  const [isAutoSlideshow, setIsAutoSlideshow] = useState(true)
+  
+  // Initialize current image when plot changes
+  useEffect(() => {
+    if (plot) {
+      setCurrentImage(plot.image)
+    }
+  }, [plot])
+
+  // Auto slideshow effect for plots 1-4
+  useEffect(() => {
+    if (!plot || plotId > 4 || !isAutoSlideshow) return
+
+    const secondImage = getStoreImageSecond(plotId)
+    if (!secondImage) return
+
+    const interval = setInterval(() => {
+      setCurrentImage(prevImage => 
+        prevImage === plot.image ? secondImage : plot.image
+      )
+    }, 3000) // Change every 3 seconds
+
+    return () => clearInterval(interval)
+  }, [plot, plotId, isAutoSlideshow])
   
   // Wallet connection
   const { isConnected, address, isLoading: walletLoading } = useWallet()
@@ -236,8 +271,13 @@ export default function FaberplotPage() {
             {/* Image Section */}
             <div className="space-y-4">
               <div className="relative aspect-square rounded-xl overflow-hidden">
-                <Image src={plot.image} alt={plot.name} fill className="object-cover" />
-                <div className="absolute top-4 right-4">
+                <Image 
+                  src={currentImage} 
+                  alt={plot.name} 
+                  fill 
+                  className="object-cover transition-opacity duration-500 ease-in-out" 
+                />
+                <div className="absolute top-4 right-4 flex gap-2">
                   {isSold ? (
                     <Badge className="bg-red-500/80 text-white">
                       Sold Out
@@ -247,13 +287,40 @@ export default function FaberplotPage() {
                       Available
                     </Badge>
                   )}
+                  {plotId <= 4 && getStoreImageSecond(plotId) && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="bg-black/50 hover:bg-black/70 text-white p-2"
+                      onClick={() => setIsAutoSlideshow(!isAutoSlideshow)}
+                    >
+                      {isAutoSlideshow ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                    </Button>
+                  )}
                 </div>
               </div>
               
               <div className="flex gap-2 overflow-x-auto pb-2">
-                <div className="relative aspect-square w-20 rounded-lg overflow-hidden flex-shrink-0">
+                <div 
+                  className="relative aspect-square w-20 rounded-lg overflow-hidden flex-shrink-0 cursor-pointer border-2 border-amber-400"
+                  onClick={() => {
+                    setCurrentImage(plot.image)
+                    setIsAutoSlideshow(false) // Pause slideshow when user clicks
+                  }}
+                >
                   <Image src={plot.image} alt={plot.name} fill className="object-cover" />
                 </div>
+                {getStoreImageSecond(plotId) && (
+                  <div 
+                    className="relative aspect-square w-20 rounded-lg overflow-hidden flex-shrink-0 cursor-pointer border-2 border-transparent hover:border-amber-400"
+                    onClick={() => {
+                      setCurrentImage(getStoreImageSecond(plotId)!)
+                      setIsAutoSlideshow(false) // Pause slideshow when user clicks
+                    }}
+                  >
+                    <Image src={getStoreImageSecond(plotId)!} alt={`${plot.name} - Second View`} fill className="object-cover" />
+                  </div>
+                )}
                 <div className="relative aspect-square w-20 rounded-lg overflow-hidden flex-shrink-0 bg-zinc-800 flex items-center justify-center">
                   <span className="text-xs text-zinc-400">Floor Plan</span>
                 </div>
