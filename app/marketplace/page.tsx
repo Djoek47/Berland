@@ -37,6 +37,28 @@ interface LandPlot {
 // Get Faberland Estates from OpenSea integration
 const faberlandEstates = getMockFaberlandEstates()
 
+// Function to get store images for faberplots (only for plots 1-4)
+const getStoreImage = (plotNumber: number): string => {
+  if (plotNumber <= 4) {
+    const storeNumber = plotNumber // Direct mapping for plots 1-4
+    const imageNumber = 1 // Use first image for now
+    return `/images/stores/store${storeNumber}/store${storeNumber}-image${imageNumber}.jpg`
+  }
+  // For plots 5-48, use original Faberge eggs logic
+  const eggIndex = (plotNumber - 1) % 8
+  const eggImages = [
+    "/images/faberge-eggs/crystal-amber.jpeg",
+    "/images/faberge-eggs/amber-glow.png", 
+    "/images/faberge-eggs/ruby-red.png",
+    "/images/faberge-eggs/emerald-green.png",
+    "/images/faberge-eggs/bronze-glow.png",
+    "/images/faberge-eggs/rose-quartz.jpeg",
+    "/images/faberge-eggs/sapphire-blue.png",
+    "/images/faberge-eggs/fire-opal.png"
+  ]
+  return eggImages[eggIndex]
+}
+
 const landPlots: LandPlot[] = [
   // Faberland Estates (25 NFTs - 2025) - Now using OpenSea integration
   ...faberlandEstates,
@@ -49,14 +71,7 @@ const landPlots: LandPlot[] = [
     type: "faberplot" as const,
     description: `Faberplot #${i + 1} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
     price: getFaberplotPrice(i + 1) / 100, // Convert monthly rent to display price (divide by 100 for display)
-    image: i % 8 === 0 ? "/images/faberge-eggs/crystal-amber.jpeg" :
-           i % 8 === 1 ? "/images/faberge-eggs/amber-glow.png" :
-           i % 8 === 2 ? "/images/faberge-eggs/ruby-red.png" :
-           i % 8 === 3 ? "/images/faberge-eggs/emerald-green.png" :
-           i % 8 === 4 ? "/images/faberge-eggs/bronze-glow.png" :
-           i % 8 === 5 ? "/images/faberge-eggs/rose-quartz.jpeg" :
-           i % 8 === 6 ? "/images/faberge-eggs/sapphire-blue.png" :
-           "/images/faberge-eggs/fire-opal.png",
+    image: getStoreImage(i + 1),
     color: ["crystal", "amber", "ruby", "emerald", "bronze", "rose", "sapphire", "fire"][i % 8],
     available: true,
     location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][i % 5],

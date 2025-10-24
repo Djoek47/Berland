@@ -29,6 +29,28 @@ import MetaverseFooter from "@/components/metaverse-footer"
 import { useWallet } from "@/hooks/use-wallet"
 import { getFaberplotPrice } from "@/lib/plot-prices"
 
+// Function to get store images for faberplots (only for plots 1-4)
+const getStoreImage = (plotNumber: number): string => {
+  if (plotNumber <= 4) {
+    const storeNumber = plotNumber // Direct mapping for plots 1-4
+    const imageNumber = 1 // Use first image for now
+    return `/images/stores/store${storeNumber}/store${storeNumber}-image${imageNumber}.jpg`
+  }
+  // For plots 5-48, use original Faberge eggs logic
+  const eggIndex = (plotNumber - 1) % 8
+  const eggImages = [
+    "/images/faberge-eggs/crystal-amber.jpeg",
+    "/images/faberge-eggs/amber-glow.png", 
+    "/images/faberge-eggs/ruby-red.png",
+    "/images/faberge-eggs/emerald-green.png",
+    "/images/faberge-eggs/bronze-glow.png",
+    "/images/faberge-eggs/rose-quartz.jpeg",
+    "/images/faberge-eggs/sapphire-blue.png",
+    "/images/faberge-eggs/fire-opal.png"
+  ]
+  return eggImages[eggIndex]
+}
+
 interface Plot {
   id: number
   name: string
@@ -121,14 +143,7 @@ export default function ManagePlotPage() {
               name: `Faberplot #${foundPlot.id}`,
               description: `Faberplot #${foundPlot.id} - A versatile virtual plot perfect for businesses, galleries, or creative projects.`,
               monthlyRent: getFaberplotPrice(foundPlot.id), // Fixed price from price database
-              image: (foundPlot.id % 8 === 0) ? "/images/faberge-eggs/crystal-amber.jpeg" :
-                     (foundPlot.id % 8 === 1) ? "/images/faberge-eggs/amber-glow.png" :
-                     (foundPlot.id % 8 === 2) ? "/images/faberge-eggs/ruby-red.png" :
-                     (foundPlot.id % 8 === 3) ? "/images/faberge-eggs/emerald-green.png" :
-                     (foundPlot.id % 8 === 4) ? "/images/faberge-eggs/bronze-glow.png" :
-                     (foundPlot.id % 8 === 5) ? "/images/faberge-eggs/rose-quartz.jpeg" :
-                     (foundPlot.id % 8 === 6) ? "/images/faberge-eggs/sapphire-blue.png" :
-                     "/images/faberge-eggs/fire-opal.png",
+              image: getStoreImage(foundPlot.id),
               location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][foundPlot.id % 5],
               size: foundPlot.id < 15 ? "Small (2,500 sq ft)" : foundPlot.id < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
               visitors: 100,

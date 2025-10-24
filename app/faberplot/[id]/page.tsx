@@ -15,20 +15,35 @@ import { redirectToCheckout } from "@/lib/stripe-client"
 import { useWallet } from "@/hooks/use-wallet"
 import { getFaberplotPrice } from "@/lib/plot-prices"
 
+// Function to get store images for faberplots (only for plots 1-4)
+const getStoreImage = (plotNumber: number): string => {
+  if (plotNumber <= 4) {
+    const storeNumber = plotNumber // Direct mapping for plots 1-4
+    const imageNumber = 1 // Use first image for now
+    return `/images/stores/store${storeNumber}/store${storeNumber}-image${imageNumber}.jpg`
+  }
+  // For plots 5-48, use original Faberge eggs logic
+  const eggIndex = (plotNumber - 1) % 8
+  const eggImages = [
+    "/images/faberge-eggs/crystal-amber.jpeg",
+    "/images/faberge-eggs/amber-glow.png", 
+    "/images/faberge-eggs/ruby-red.png",
+    "/images/faberge-eggs/emerald-green.png",
+    "/images/faberge-eggs/bronze-glow.png",
+    "/images/faberge-eggs/rose-quartz.jpeg",
+    "/images/faberge-eggs/sapphire-blue.png",
+    "/images/faberge-eggs/fire-opal.png"
+  ]
+  return eggImages[eggIndex]
+}
+
 // Faberplot data with monthly rent pricing
   const faberplotData = Array.from({ length: 48 }, (_, i) => ({
   id: i + 1,
   name: `Faberplot #${i + 1}`,
   description: `Faberplot #${i + 1} - A versatile virtual plot perfect for businesses, galleries, or creative projects. This premium location offers excellent visibility and foot traffic for your virtual enterprise.`,
   monthlyRent: getFaberplotPrice(i + 1), // Fixed price from price database
-  image: i % 8 === 0 ? "/images/faberge-eggs/crystal-amber.jpeg" :
-         i % 8 === 1 ? "/images/faberge-eggs/amber-glow.png" :
-         i % 8 === 2 ? "/images/faberge-eggs/ruby-red.png" :
-         i % 8 === 3 ? "/images/faberge-eggs/emerald-green.png" :
-         i % 8 === 4 ? "/images/faberge-eggs/bronze-glow.png" :
-         i % 8 === 5 ? "/images/faberge-eggs/rose-quartz.jpeg" :
-         i % 8 === 6 ? "/images/faberge-eggs/sapphire-blue.png" :
-         "/images/faberge-eggs/fire-opal.png",
+  image: getStoreImage(i + 1),
   color: ["crystal", "amber", "ruby", "emerald", "bronze", "rose", "sapphire", "fire"][i % 8],
   location: ["Market District", "Business District", "Arts District", "Entertainment District", "Central District"][i % 5],
   size: i < 15 ? "Small (2,500 sq ft)" : i < 30 ? "Medium (5,000 sq ft)" : "Large (7,500 sq ft)",
