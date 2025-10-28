@@ -12,7 +12,7 @@ export default function OpeningDayAlert() {
   })
 
   useEffect(() => {
-    const targetDate = new Date("2025-10-28T20:00:00").getTime()
+    const targetDate = new Date("2025-10-29T20:00:00").getTime()
 
     const timer = setInterval(() => {
       const now = new Date().getTime()
@@ -53,7 +53,7 @@ export default function OpeningDayAlert() {
         <div className="flex items-center justify-center gap-2 mb-3">
           <Calendar className="h-4 w-4 drop-shadow-md" />
           <span className="font-semibold text-sm md:text-base drop-shadow-md">
-            October 28th, 2025 at 8:00 PM
+            October 29th, 2025 at 8:00 PM
           </span>
         </div>
 

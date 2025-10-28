@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Twitter, Instagram, Youtube, Facebook, Github } from "lucide-react"
+import { Twitter, Instagram, Youtube, Facebook, Github, MessageCircle } from "lucide-react"
 import DownloadButton from "@/components/download-button"
 
 export default function MetaverseFooter() {
@@ -20,23 +20,27 @@ export default function MetaverseFooter() {
               of the internet.
             </p>
             <div className="flex gap-4">
-              <Link href="https://x.com/Faber4land" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-amber-400">
+              <Link href="https://x.com/Faber4land" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-amber-400" title="Follow us on Twitter">
                 <Twitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
               </Link>
-              <Link href="#" className="text-zinc-400 hover:text-amber-400">
+              <Link href="https://discord.gg/DJsqcrD3" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-blue-400" title="Join our Discord community">
+                <MessageCircle className="h-5 w-5" />
+                <span className="sr-only">Discord</span>
+              </Link>
+              <Link href="#" className="text-zinc-400 hover:text-amber-400" title="Follow us on Instagram">
                 <Instagram className="h-5 w-5" />
                 <span className="sr-only">Instagram</span>
               </Link>
-              <Link href="#" className="text-zinc-400 hover:text-amber-400">
+              <Link href="#" className="text-zinc-400 hover:text-amber-400" title="Subscribe to our YouTube channel">
                 <Youtube className="h-5 w-5" />
                 <span className="sr-only">YouTube</span>
               </Link>
-              <Link href="#" className="text-zinc-400 hover:text-amber-400">
+              <Link href="#" className="text-zinc-400 hover:text-amber-400" title="Follow us on Facebook">
                 <Facebook className="h-5 w-5" />
                 <span className="sr-only">Facebook</span>
               </Link>
-              <Link href="#" className="text-zinc-400 hover:text-amber-400">
+              <Link href="#" className="text-zinc-400 hover:text-amber-400" title="Check out our GitHub">
                 <Github className="h-5 w-5" />
                 <span className="sr-only">GitHub</span>
               </Link>
