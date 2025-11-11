@@ -393,12 +393,6 @@ export default function DiscoverPage() {
               </div>
             </div>
 
-            <p className="mb-4">
-              A Fortune 500 technology company implemented Faberland's virtual training environment to revolutionize
-              their global onboarding process. By creating immersive, interactive training scenarios in the metaverse,
-              they were able to connect employees across 24 countries in a shared learning experience.
-            </p>
-
             <div className="flex justify-center mt-6">
               <Button className="bg-amber-500 hover:bg-amber-600 text-black font-bold" asChild>
                 <Link href="/business-advantages">Explore Business Benefits</Link>

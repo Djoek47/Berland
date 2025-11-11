@@ -10,9 +10,17 @@ export default function OpeningDayAlert() {
     minutes: 0,
     seconds: 0
   })
+  const [tomorrowDate, setTomorrowDate] = useState("")
 
   useEffect(() => {
-    const targetDate = new Date("2025-11-10T20:00:00").getTime()
+    // Set to tomorrow at 8:00 PM
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    tomorrow.setHours(20, 0, 0, 0)
+    const targetDate = tomorrow.getTime()
+    
+    // Format tomorrow's date for display
+    setTomorrowDate(tomorrow.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }))
 
     const timer = setInterval(() => {
       const now = new Date().getTime()
@@ -53,7 +61,7 @@ export default function OpeningDayAlert() {
         <div className="flex items-center justify-center gap-2 mb-3">
           <Calendar className="h-4 w-4 drop-shadow-md" />
           <span className="font-semibold text-sm md:text-base drop-shadow-md">
-            November 10th, 2025 at 8:00 PM
+            {tomorrowDate ? `${tomorrowDate} at 8:00 PM` : "Tomorrow at 8:00 PM"}
           </span>
         </div>
 
