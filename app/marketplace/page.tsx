@@ -576,12 +576,12 @@ export default function MarketplacePage() {
             <Button size="lg" className="bg-apple-green hover:bg-apple-teal text-black font-bold shadow-apple">
               Contact Sales Team
             </Button>
-                          <Button
-                size="lg"
-                variant="outline"
+            <Button
+              size="lg"
+              variant="outline"
                 className="border-apple-green text-white hover:bg-apple-green/10 glass-apple"
-                asChild
-              >
+              asChild
+            >
               <Link href="/business-advantages">Learn About Business Benefits</Link>
             </Button>
           </div>
@@ -612,7 +612,7 @@ function LandCard({ plot }: LandCardProps) {
             <Image src={plot.image || "/placeholder.svg"} alt={plot.name} fill className="object-cover cursor-pointer" />
           </Link>
         ) : (
-          <Image src={plot.image || "/placeholder.svg"} alt={plot.name} fill className="object-cover" />
+        <Image src={plot.image || "/placeholder.svg"} alt={plot.name} fill className="object-cover" />
         )}
         {plot.type === "faberplot" && !plot.available && (
           <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
@@ -672,7 +672,7 @@ function LandCard({ plot }: LandCardProps) {
                 </>
               ) : (
                 <>
-                  <span className="text-2xl font-bold text-white">${(plot.price * 1000).toLocaleString()}</span>
+              <span className="text-2xl font-bold text-white">${(plot.price * 1000).toLocaleString()}</span>
                   <span className="text-sm text-white">≈ {plot.price} ETH</span>
                 </>
               )}
@@ -689,7 +689,7 @@ function LandCard({ plot }: LandCardProps) {
             ) : (
               <Button disabled className="bg-black/30 text-white cursor-not-allowed">
                 Sold Out
-              </Button>
+            </Button>
             )
           ) : (
             <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold shadow-apple">

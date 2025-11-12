@@ -13,9 +13,9 @@ export default function OpeningDayAlert() {
   const [tomorrowDate, setTomorrowDate] = useState("")
 
   useEffect(() => {
-    // Set to tomorrow at 8:00 PM
+    // Set to day after tomorrow at 8:00 PM (24 hours added)
     const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    tomorrow.setDate(tomorrow.getDate() + 2)
     tomorrow.setHours(20, 0, 0, 0)
     const targetDate = tomorrow.getTime()
     
@@ -61,7 +61,7 @@ export default function OpeningDayAlert() {
         <div className="flex items-center justify-center gap-2 mb-3">
           <Calendar className="h-4 w-4 drop-shadow-md" />
           <span className="font-semibold text-sm md:text-base drop-shadow-md">
-            {tomorrowDate ? `${tomorrowDate} at 8:00 PM` : "Tomorrow at 8:00 PM"}
+            {tomorrowDate ? `${tomorrowDate} at 8:00 PM` : "Day after tomorrow at 8:00 PM"}
           </span>
         </div>
 
