@@ -15,7 +15,7 @@
   .fl-map .mono { font-family:var(--font-ibm-plex-mono),monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; }
   .fl-map .up { text-transform:uppercase; }
 
-  .fl-map { position:fixed; inset:0; display:flex; flex-direction:column; }
+  .fl-map { position:fixed; inset:0; display:flex; flex-direction:column; z-index:50; }
   .fl-map header {
     height:89px; flex:none; display:flex; align-items:center; justify-content:space-between;
     gap:34px; padding:0 34px; border-bottom:1px solid var(--border); background:var(--bg); z-index:6;
