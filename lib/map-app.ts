@@ -1,5 +1,4 @@
-// @ts-nocheck — faithful port of design/map-app.js; tighten types in a follow-up
-
+// @ts-nocheck — faithful port of design/map-app.js
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { ISLAND, DISTRICT_BOX, ROAD, ENTRANCE, PLOTS, DISTRICT_OF, OUR_STORE, SQFT } from '@/lib/plots-plan';
@@ -9,17 +8,19 @@ let mapMounted = false;
 /** Mount Faberland map + 3D room + cart. Call after the map DOM exists. */
 export function mountMapApp(): void {
   if (mapMounted) return;
+
+  const svgEl = document.getElementById('plan');
+  if (!svgEl) return;
   mapMounted = true;
+  while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+  const paletteEl = document.getElementById('palette');
+  const lightingEl = document.getElementById('lighting');
+  if (paletteEl) paletteEl.innerHTML = '';
+  if (lightingEl) lightingEl.innerHTML = '';
 
   const SVGNS = 'http://www.w3.org/2000/svg';
   const el = id => document.getElementById(id);
   const svg = el('plan');
-  if (!svg) return;
-  while (svg.firstChild) svg.removeChild(svg.firstChild);
-  const paletteEl = el('palette');
-  const lightingEl = el('lighting');
-  if (paletteEl) paletteEl.innerHTML = '';
-  if (lightingEl) lightingEl.innerHTML = '';
 
   /* ------------------------------------------------------------------ map */
 
