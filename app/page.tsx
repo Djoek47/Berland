@@ -47,7 +47,8 @@ export default function HomePage() {
             flex: 1,
             display: "flex",
             alignItems: "flex-end",
-            background: "linear-gradient(0deg, var(--fl-bg) 0%, color-mix(in srgb, var(--fl-bg) 93%, transparent) 55%, color-mix(in srgb, var(--fl-bg) 62%, transparent) 100%)",
+            background:
+              "linear-gradient(0deg, var(--fl-bg) 0%, color-mix(in srgb, var(--fl-bg) 93%, transparent) 55%, color-mix(in srgb, var(--fl-bg) 62%, transparent) 100%)",
           }}
         >
           <div
@@ -63,7 +64,7 @@ export default function HomePage() {
           >
             <h1 className="fl-h1">Your storefront in a city that never closes.</h1>
             <div style={{ display: "flex", flexDirection: "column", gap: 34 }}>
-              <p style={{ margin: 0 }}>
+              <p style={{ margin: 0, color: "var(--fl-ink)", fontSize: 16, lineHeight: "26px" }}>
                 Faberland is a 3D commercial district where customers walk in, look at your products from every
                 angle, try them on at their real size, and buy. From $53 a month. No rent, no utilities, no
                 build-out.

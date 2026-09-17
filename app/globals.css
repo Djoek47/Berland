@@ -160,14 +160,8 @@ body {
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
-  /* Overhaul pages own their type scale via .fl-* utilities — do not force Apple heading sizes. */
-  .fl-site h1,
-  .fl-site h2,
-  .fl-site h3,
-  .fl-site h4,
-  .fl-site h5,
-  .fl-site h6,
-  .fl-site p {
+  /* Reset Apple heading utilities without clobbering .fl-h* type scale */
+  .fl-site :where(h1, h2, h3, h4, h5, h6, p):not([class*="fl-h"]):not([class*="fl-display"]) {
     font-size: inherit;
     font-weight: inherit;
     letter-spacing: inherit;
