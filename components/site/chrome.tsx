@@ -61,10 +61,10 @@ export function SiteHeader({
         <ThemeToggle />
         <button
           type="button"
-          className="md:hidden"
+          className="flex md:hidden"
           aria-label="Menu"
           onClick={() => setOpen((v) => !v)}
-          style={{ background: "none", border: 0, padding: 0, display: "flex", flexDirection: "column", gap: 5 }}
+          style={{ background: "none", border: 0, padding: 0, flexDirection: "column", gap: 5 }}
         >
           <span style={{ width: 21, height: 1, background: "var(--fl-ink)", display: "block" }} />
           <span style={{ width: 21, height: 1, background: "var(--fl-ink)", display: "block" }} />
