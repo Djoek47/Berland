@@ -52,7 +52,7 @@ export default function HomePage() {
           }}
         >
           <div
-            className="fl-shell"
+            className="fl-shell fl-hero-grid"
             style={{
               width: "100%",
               paddingBottom: 89,

@@ -149,6 +149,13 @@
     line-height: 34px;
     letter-spacing: -0.01em;
   }
+
+  /* Accueil mobile hero: stack, display at 42 */
+  .fl-hero-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 21px !important;
+    padding-bottom: 21px !important;
+  }
 }
 
 .fl-btn {
