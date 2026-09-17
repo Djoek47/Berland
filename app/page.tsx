@@ -62,7 +62,20 @@ export default function HomePage() {
               alignItems: "end",
             }}
           >
-            <h1 className="fl-h1">Your storefront in a city that never closes.</h1>
+            <h1
+              className="fl-h1"
+              style={{
+                margin: 0,
+                fontFamily: "var(--font-space-grotesk), sans-serif",
+                fontWeight: 600,
+                fontSize: 68,
+                lineHeight: "70px",
+                letterSpacing: "-0.03em",
+                textWrap: "balance",
+              }}
+            >
+              Your storefront in a city that never closes.
+            </h1>
             <div style={{ display: "flex", flexDirection: "column", gap: 34 }}>
               <p style={{ margin: 0, color: "var(--fl-ink)", fontSize: 16, lineHeight: "26px" }}>
                 Faberland is a 3D commercial district where customers walk in, look at your products from every

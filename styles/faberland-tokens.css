@@ -156,6 +156,11 @@
     gap: 21px !important;
     padding-bottom: 21px !important;
   }
+
+  .fl-hero-grid .fl-h1 {
+    font-size: 42px !important;
+    line-height: 46px !important;
+  }
 }
 
 .fl-btn {
@@ -175,7 +180,8 @@
   cursor: pointer;
   transition:
     background-color var(--fl-t-fast) var(--fl-ease),
-    border-color var(--fl-t-fast) var(--fl-ease);
+    border-color var(--fl-t-fast) var(--fl-ease),
+    color var(--fl-t-fast) var(--fl-ease);
 }
 
 .fl-btn:hover {
@@ -193,6 +199,21 @@
 .fl-btn-primary:hover {
   background: var(--fl-gold-hover);
   border-color: var(--fl-gold-hover);
+  color: var(--fl-on-gold);
+}
+
+/* Links using .fl-btn must beat `.fl-site a { color: gold }` (Accueil: ink on gold) */
+.fl-site a.fl-btn {
+  color: var(--fl-ink);
+}
+
+.fl-site a.fl-btn:hover {
+  color: var(--fl-ink);
+}
+
+.fl-site a.fl-btn-primary,
+.fl-site a.fl-btn-primary:hover {
+  color: var(--fl-on-gold);
 }
 
 .fl-shell {
