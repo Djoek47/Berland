@@ -35,8 +35,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} ${ibmPlexMono.variable}`}>
-      <body className={`${inter.className} antialiased`}>
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} ${ibmPlexMono.variable}`} suppressHydrationWarning>
+      <body className={`${inter.className} fl-site antialiased`}>
         <ClientLayout>{children}</ClientLayout>
         <Analytics />
         <SpeedInsights />

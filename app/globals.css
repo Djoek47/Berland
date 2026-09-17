@@ -159,57 +159,27 @@ body {
     @apply bg-background text-foreground;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
-  
-  /* Apple-style headings */
-  h1 {
-    @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
-    font-weight: 700;
+
+  /* Overhaul pages own their type scale via .fl-* utilities — do not force Apple heading sizes. */
+  .fl-site h1,
+  .fl-site h2,
+  .fl-site h3,
+  .fl-site h4,
+  .fl-site h5,
+  .fl-site h6,
+  .fl-site p {
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
   }
-  
-  h2 {
-    @apply text-3xl md:text-4xl font-semibold tracking-tight;
-    font-weight: 600;
+
+  .fl-site a {
+    transition: color var(--fl-t-fast) var(--fl-ease);
   }
-  
-  h3 {
-    @apply text-2xl md:text-3xl font-semibold tracking-tight;
-    font-weight: 600;
-  }
-  
-  h4 {
-    @apply text-xl md:text-2xl font-medium tracking-tight;
-    font-weight: 500;
-  }
-  
-  h5 {
-    @apply text-lg md:text-xl font-medium tracking-tight;
-    font-weight: 500;
-  }
-  
-  h6 {
-    @apply text-base md:text-lg font-medium tracking-tight;
-    font-weight: 500;
-  }
-  
-  /* Apple-style paragraphs */
-  p {
-    @apply text-base leading-relaxed;
-    font-weight: 400;
-  }
-  
-  /* Apple-style buttons */
-  button {
-    @apply font-medium tracking-tight;
-    font-weight: 500;
-  }
-  
-  /* Apple-style links */
-  a {
-    @apply transition-colors duration-200;
-  }
-  
-  /* Apple-style focus states */
-  *:focus-visible {
-    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+
+  .fl-site *:focus-visible {
+    outline: 1px solid var(--fl-border-focus);
+    outline-offset: 2px;
   }
 }

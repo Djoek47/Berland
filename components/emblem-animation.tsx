@@ -93,7 +93,7 @@ export default function EmblemAnimation() {
       <div className="absolute w-full h-full bg-gradient-to-r from-amber-900/20 to-amber-700/20 rounded-full animate-pulse"></div>
       <Image
         ref={emblemRef}
-        src="/images/faberland-emblem.png"
+        src="/images/mark-star.png"
         alt="Faberland Emblem"
         width={180}
         height={180}

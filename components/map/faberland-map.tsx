@@ -33,13 +33,13 @@ export default function FaberlandMap() {
     <div className="fl-map" id="shell">
       <header>
         <Link href="/" className="brand" style={{ textDecoration: "none", color: "inherit" }}>
-          <Image src="/images/faberland-emblem.png" alt="" width={26} height={26} style={{ height: 26, width: 26 }} />
+          <Image src="/images/mark-star.png" alt="" width={42} height={42} style={{ height: 42, width: 42, objectFit: "contain" }} />
           <Image
-            src="/images/faberland-logo.png"
+            src="/images/faberland-cream.png"
             alt="Faberland"
-            width={120}
-            height={21}
-            style={{ height: 21, width: "auto" }}
+            width={189}
+            height={34}
+            style={{ height: 34, width: "auto", objectFit: "contain" }}
           />
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: 21 }}>

@@ -34,7 +34,7 @@ export default function HomePage() {
           position: "relative",
           minHeight: 610,
           backgroundColor: "var(--fl-bg)",
-          backgroundImage: "url('/images/stores/store1/1.0.PNG'), linear-gradient(180deg,#1a1814,#0a0a09)",
+          backgroundImage: "url('/images/stores/store1/1.0.PNG'), linear-gradient(180deg, var(--fl-surface2), var(--fl-bg))",
           backgroundSize: "cover",
           backgroundPosition: "0% 100%",
           display: "flex",
@@ -47,7 +47,7 @@ export default function HomePage() {
             flex: 1,
             display: "flex",
             alignItems: "flex-end",
-            background: "linear-gradient(0deg,#0A0A09 0%,rgba(10,10,9,0.93) 55%,rgba(10,10,9,0.62) 100%)",
+            background: "linear-gradient(0deg, var(--fl-bg) 0%, color-mix(in srgb, var(--fl-bg) 93%, transparent) 55%, color-mix(in srgb, var(--fl-bg) 62%, transparent) 100%)",
           }}
         >
           <div

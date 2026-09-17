@@ -3,6 +3,8 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useState } from "react"
+import { BrandLockup } from "@/components/site/brand"
+import { ThemeToggle } from "@/components/site/theme-toggle"
 
 const NAV = [
   { href: "/spaces", label: "Spaces" },
@@ -11,7 +13,13 @@ const NAV = [
   { href: "/get-started", label: "Get started" },
 ]
 
-export function SiteHeader({ opaque = false }: { opaque?: boolean }) {
+export function SiteHeader({
+  opaque = false,
+  trailing,
+}: {
+  opaque?: boolean
+  trailing?: React.ReactNode
+}) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -23,7 +31,7 @@ export function SiteHeader({ opaque = false }: { opaque?: boolean }) {
         alignItems: "center",
         justifyContent: "space-between",
         gap: 34,
-        background: opaque ? "var(--fl-bg)" : "rgba(10,10,9,0.55)",
+        background: opaque ? "var(--fl-bg)" : "var(--fl-scrim)",
         backdropFilter: opaque ? undefined : "blur(8px)",
         borderBottom: "1px solid var(--fl-border)",
         position: "sticky",
@@ -31,35 +39,38 @@ export function SiteHeader({ opaque = false }: { opaque?: boolean }) {
         zIndex: 40,
       }}
     >
-      <Link href="/" style={{ display: "flex", alignItems: "center", gap: 13, color: "inherit" }}>
-        <Image src="/images/faberland-emblem.png" alt="" width={26} height={26} />
-        <Image src="/images/faberland-logo.png" alt="Faberland" width={120} height={21} style={{ height: 21, width: "auto" }} />
+      <Link href="/" style={{ display: "flex", alignItems: "center", color: "inherit" }}>
+        <BrandLockup variant="header" markSize={42} wordHeight={34} />
       </Link>
 
       <nav
         className="hidden md:flex"
-        style={{ alignItems: "center", gap: 34, fontSize: 14, color: "var(--fl-sec)" }}
+        style={{ alignItems: "center", gap: 21, fontSize: 14, color: "var(--fl-sec)" }}
       >
         {NAV.map((item) => (
           <Link key={item.href} href={item.href} style={{ color: "var(--fl-sec)" }}>
             {item.label}
           </Link>
         ))}
-        <Link href="/map" className="fl-btn fl-btn-primary" style={{ color: "var(--fl-bg)" }}>
+        <Link href="/map" className="fl-btn fl-btn-primary" style={{ color: "var(--fl-on-gold)" }}>
           Rent a space
         </Link>
+        {trailing}
+        <ThemeToggle />
       </nav>
 
-      <button
-        type="button"
-        className="md:hidden"
-        aria-label="Menu"
-        onClick={() => setOpen((v) => !v)}
-        style={{ background: "none", border: 0, padding: 0, display: "flex", flexDirection: "column", gap: 5 }}
-      >
-        <span style={{ width: 21, height: 1, background: "var(--fl-ink)", display: "block" }} />
-        <span style={{ width: 21, height: 1, background: "var(--fl-ink)", display: "block" }} />
-      </button>
+      <div className="md:hidden" style={{ display: "flex", alignItems: "center", gap: 13 }}>
+        <ThemeToggle />
+        <button
+          type="button"
+          aria-label="Menu"
+          onClick={() => setOpen((v) => !v)}
+          style={{ background: "none", border: 0, padding: 0, display: "flex", flexDirection: "column", gap: 5 }}
+        >
+          <span style={{ width: 21, height: 1, background: "var(--fl-ink)", display: "block" }} />
+          <span style={{ width: 21, height: 1, background: "var(--fl-ink)", display: "block" }} />
+        </button>
+      </div>
 
       {open && (
         <div
@@ -85,6 +96,7 @@ export function SiteHeader({ opaque = false }: { opaque?: boolean }) {
           <Link href="/map" className="fl-btn fl-btn-primary" onClick={() => setOpen(false)}>
             Rent a space
           </Link>
+          {trailing}
         </div>
       )}
     </header>
@@ -103,10 +115,9 @@ export function SiteFooter() {
     >
       <div className="fl-shell" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 34, flexWrap: "wrap" }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 13 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
-            <Image src="/images/faberland-emblem.png" alt="" width={21} height={21} />
-            <Image src="/images/faberland-logo.png" alt="Faberland" width={100} height={21} style={{ height: 21, width: "auto" }} />
-          </div>
+          <Link href="/" style={{ color: "inherit" }}>
+            <BrandLockup variant="footer" markSize={34} wordHeight={34} />
+          </Link>
           <div style={{ display: "flex", gap: 21, fontSize: 14, color: "var(--fl-sec)", flexWrap: "wrap" }}>
             <Link href="/spaces" style={{ color: "var(--fl-sec)" }}>Spaces</Link>
             <Link href="/showcase" style={{ color: "var(--fl-sec)" }}>Showcase</Link>

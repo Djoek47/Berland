@@ -580,7 +580,7 @@ export default function FaberplotPage() {
                       </div>
                       <div className={`absolute inset-0 transition-opacity duration-300 ${isFabershopExpanded ? 'opacity-100' : 'opacity-0'}`}>
                         <Image
-                          src="/images/faberland-logo.png"
+                          src="/images/faberland-cream.png"
                           alt="Faberland Logo"
                           width={60}
                           height={60}
