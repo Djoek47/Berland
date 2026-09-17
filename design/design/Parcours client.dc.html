@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+body { margin:0; background:#0A0A09; }
+a { color:#D4A24C; text-decoration:none; }
+a:hover { color:#E3B667; }
+@keyframes riseIn { from { opacity:0; transform:translateY(21px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes sweep { from { transform:translateX(-100%); } to { transform:translateX(100%); } }
+@keyframes pulseCore { 0%,100% { opacity:0.55; } 50% { opacity:1; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:1ms !important; animation-delay:0ms !important; transition-duration:1ms !important; }
+}
+</style>
+</helmet>
+<div style="font-family:'Inter',system-ui,sans-serif; font-size:16px; line-height:26px; background:{{ c.bg }}; color:{{ c.ink }}; min-height:100%;">
+
+  <div style="position:sticky; top:0; z-index:20; height:89px; background:{{ c.bg }}; border-bottom:1px solid {{ c.border }};">
+    <div style="max-width:1240px; margin:0 auto; padding:0 34px; height:100%; display:flex; align-items:center; justify-content:space-between; gap:34px;">
+      <div style="display:flex; align-items:center; gap:13px;">
+        <img src="assets/mark-star.png" alt="" style="height:26px; width:26px; flex:none; object-fit:contain; display:block;" />
+        <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><img src="assets/faberland-cream.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if>
+        <sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><img src="assets/faberland-ink.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if>
+      </div>
+      <div style="display:flex; align-items:center; gap:21px;">
+        <sc-if value="{{ signedOut }}" hint-placeholder-val="{{ true }}">
+          <button type="button" onClick="{{ goLogin }}" style="height:55px; padding:0; border:0; background:transparent; color:{{ c.sec }}; font-family:'Inter',sans-serif; font-size:16px; cursor:pointer; border-bottom:1px solid transparent;" style-hover="color:{{ c.ink }};">Sign in</button>
+          <button type="button" onClick="{{ goBrowse }}" style="height:55px; padding:0 21px; border:0; border-radius:10px; background:{{ c.gold }}; color:{{ c.onGold }}; font-family:'Inter',sans-serif; font-weight:600; font-size:16px; cursor:pointer; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:{{ c.goldHover }};">Rent a space</button>
+        </sc-if>
+        <sc-if value="{{ signedIn }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">{{ account }}</div>
+          <button type="button" onClick="{{ goDash }}" style="height:55px; padding:0 21px; border:1px solid {{ c.borderStrong }}; border-radius:10px; background:transparent; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-weight:500; font-size:16px; cursor:pointer;" style-hover="background:{{ c.surface2 }}; border-color:{{ c.borderFocus }};">Dashboard</button>
+          <button type="button" onClick="{{ signOut }}" style="height:55px; padding:0; border:0; background:transparent; color:{{ c.ter }}; font-family:'Inter',sans-serif; font-size:14px; cursor:pointer;" style-hover="color:{{ c.ink }};">Sign out</button>
+        </sc-if>
+      </div>
+    </div>
+    <div style="height:1px; background:{{ c.gold }}; width:{{ progressWidth }}; transition:width 377ms cubic-bezier(0.16,1,0.3,1);"></div>
+  </div>
+
+  <div style="max-width:1240px; margin:0 auto; padding:34px 34px 144px;">
+
+    <div style="display:flex; gap:13px; align-items:center; flex-wrap:wrap; padding-bottom:34px;">
+      <sc-for list="{{ trail }}" as="t" hint-placeholder-count="3">
+        <button type="button" onClick="{{ t.go }}" style="{{ t.style }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+
+    <div key="{{ viewKey }}" style="animation:riseIn 377ms cubic-bezier(0.16,1,0.3,1) both;">
+
+      <sc-if value="{{ isBrowse }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; flex-direction:column; gap:34px;">
+          <div style="display:grid; grid-template-columns:minmax(0,61.9fr) minmax(0,38.1fr); gap:55px; align-items:end;">
+            <h1 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:68px; line-height:70px; letter-spacing:-0.03em; text-wrap:balance;">Pick a space.</h1>
+            <p style="margin:0; color:{{ c.sec }}; max-width:68ch;">Published prices, no lease negotiation. You pay the first term at checkout and the space is yours from that moment.</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; border-top:1px solid {{ c.border }}; border-bottom:1px solid {{ c.border }}; padding:21px 0;">
+            <sc-for list="{{ districts }}" as="d" hint-placeholder-count="6">
+              <button type="button" onClick="{{ d.pick }}" style="{{ d.style }}">{{ d.label }}</button>
+            </sc-for>
+            <div style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.sec }}; font-variant-numeric:tabular-nums; align-self:center;">{{ showing }}</div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:34px;">
+            <sc-for list="{{ plots }}" as="p" hint-placeholder-count="6">
+              <div onClick="{{ p.choose }}" style="{{ p.cardStyle }}" style-hover="background:{{ c.surface2 }}; border-color:{{ c.borderStrong }};">
+                <div style="aspect-ratio:13/8; background-color:{{ c.bg }}; background-size:145% auto; background-position:0% 100%; background-repeat:no-repeat; background-image:{{ p.bg }};"></div>
+                <div style="padding:21px; display:flex; flex-direction:column; gap:5px;">
+                  <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em; color:{{ c.gold }}; font-variant-numeric:tabular-nums;">{{ p.price }} <span style="font-size:14px; color:{{ c.sec }}; font-family:'Inter',sans-serif; font-weight:400; letter-spacing:0;">/month</span></div>
+                  <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">{{ p.name }}</div>
+                  <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">{{ p.meta }}</div>
+                  <div style="display:flex; align-items:center; justify-content:space-between; gap:13px; margin-top:8px;">
+                    <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; background:{{ c.surface2 }}; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ink }};"><span style="width:5px; height:5px; border-radius:999px; background:{{ c.pos }}; display:block;"></span>Available</div>
+                    <div style="font-size:14px; color:{{ c.ink }}; border-bottom:1px solid {{ c.borderFocus }};">Rent this space</div>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCheckout }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid; grid-template-columns:minmax(0,61.9fr) minmax(0,38.1fr); gap:55px; align-items:start;">
+          <div style="display:flex; flex-direction:column; gap:34px;">
+            <h1 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em;">Checkout</h1>
+            <div style="display:flex; flex-direction:column; gap:13px;">
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Term</div>
+              <sc-for list="{{ terms }}" as="t" hint-placeholder-count="3">
+                <button type="button" onClick="{{ t.pick }}" style="{{ t.style }}"><span>{{ t.label }}</span><span style="color:{{ c.sec }}; font-size:14px;">{{ t.note }}</span></button>
+              </sc-for>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:13px;">
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Payment</div>
+              <div style="border:1px solid {{ c.borderStrong }}; border-radius:10px; padding:21px; display:flex; flex-direction:column; gap:13px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:13px; flex-wrap:wrap;">
+                  <div style="font-size:14px; color:{{ c.sec }};">Card · Stripe</div>
+                  <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }}; font-variant-numeric:tabular-nums;">•••• 4242</div>
+                </div>
+                <div style="font-size:10px; line-height:16px; letter-spacing:0.02em; color:{{ c.ter }};">Stripe processes rent. Your sales settle to you.</div>
+              </div>
+            </div>
+          </div>
+          <div style="position:sticky; top:123px; border:1px solid {{ c.border }}; border-radius:10px; background:{{ c.surface }}; padding:34px; display:flex; flex-direction:column; gap:21px;">
+            <div style="aspect-ratio:13/8; border-radius:10px; background-color:{{ c.bg }}; background-size:145% auto; background-position:0% 100%; background-repeat:no-repeat; background-image:{{ chosenBg }};"></div>
+            <div style="display:flex; flex-direction:column; gap:5px;">
+              <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px;">{{ chosenName }}</div>
+              <div style="font-size:14px; color:{{ c.sec }};">{{ chosenMeta }}</div>
+            </div>
+            <div style="border-top:1px solid {{ c.border }}; padding-top:21px; display:flex; flex-direction:column; gap:8px; font-variant-numeric:tabular-nums;">
+              <div style="display:flex; justify-content:space-between; gap:13px;"><span style="color:{{ c.sec }};">Rent</span><span>{{ lineRent }}</span></div>
+              <div style="display:flex; justify-content:space-between; gap:13px;"><span style="color:{{ c.sec }};">Fit-out</span><span>Included</span></div>
+              <div style="display:flex; justify-content:space-between; gap:13px;"><span style="color:{{ c.sec }};">Utilities</span><span>None</span></div>
+              <div style="display:flex; justify-content:space-between; gap:13px; border-top:1px solid {{ c.border }}; margin-top:8px; padding-top:13px; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px;"><span>Due today</span><span style="color:{{ c.gold }};">{{ dueToday }}</span></div>
+            </div>
+            <button type="button" onClick="{{ payNow }}" style="height:55px; padding:0 21px; border:0; border-radius:10px; background:{{ c.gold }}; color:{{ c.onGold }}; font-family:'Inter',sans-serif; font-weight:600; font-size:16px; cursor:pointer; position:relative; overflow:hidden; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:{{ c.goldHover }};">{{ payLabel }}</button>
+            <div style="font-size:10px; line-height:16px; letter-spacing:0.02em; color:{{ c.ter }};">Cancellation terms à fournir — engagement contractuel, non inventé.</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:466px; margin:55px auto 0; display:flex; flex-direction:column; gap:34px;">
+          <div style="display:flex; flex-direction:column; gap:13px;">
+            <h1 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em;">{{ loginTitle }}</h1>
+            <p style="margin:0; color:{{ c.sec }};">{{ loginBlurb }}</p>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:21px;">
+            <label style="display:flex; flex-direction:column; gap:8px;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Email</span>
+              <input type="email" value="{{ email }}" onInput="{{ setEmail }}" placeholder="you@company.com" style="height:55px; padding:0 21px; background:{{ c.surface }}; border:1px solid {{ c.borderStrong }}; border-radius:10px; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-size:16px;" />
+            </label>
+            <button type="button" onClick="{{ doLogin }}" style="height:55px; padding:0 21px; border:0; border-radius:10px; background:{{ c.gold }}; color:{{ c.onGold }}; font-family:'Inter',sans-serif; font-weight:600; font-size:16px; cursor:pointer; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:{{ c.goldHover }};">Continue</button>
+            <div style="display:flex; align-items:center; gap:13px;">
+              <div style="height:1px; background:{{ c.border }}; flex:1;"></div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">or</div>
+              <div style="height:1px; background:{{ c.border }}; flex:1;"></div>
+            </div>
+            <button type="button" onClick="{{ doWallet }}" style="height:55px; padding:0 21px; border:1px solid {{ c.borderStrong }}; border-radius:10px; background:transparent; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-weight:500; font-size:16px; cursor:pointer;" style-hover="background:{{ c.surface2 }}; border-color:{{ c.borderFocus }};">Connect a wallet</button>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:{{ c.ter }};">Le courriel suffit pour louer un espace. Le portefeuille n'est requis que pour détenir ou revendre un œuf.</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDash }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:55px;">
+          <div style="display:grid; grid-template-columns:minmax(0,61.9fr) minmax(0,38.1fr); gap:55px; align-items:end;">
+            <h1 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em;">Your holdings.</h1>
+            <p style="margin:0; color:{{ c.sec }};">Two rented spaces, three eggs. Rent renews on the first of the month.</p>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-top:1px solid {{ c.border }}; border-bottom:1px solid {{ c.border }};">
+            <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+              <div style="{{ s.style }}">
+                <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; font-variant-numeric:tabular-nums;">{{ s.value }}</div>
+                <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">{{ s.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:34px;">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:21px; flex-wrap:wrap;">
+              <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Rented spaces</h2>
+              <button type="button" onClick="{{ goBrowse }}" style="height:34px; padding:0; border:0; background:transparent; color:{{ c.sec }}; font-family:'Inter',sans-serif; font-size:14px; cursor:pointer; border-bottom:1px solid transparent;" style-hover="color:{{ c.ink }}; border-bottom-color:{{ c.borderFocus }};">Rent another</button>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:34px;">
+              <sc-for list="{{ rentals }}" as="r" hint-placeholder-count="2">
+                <div style="border:1px solid {{ c.border }}; border-radius:10px; background:{{ c.surface }}; overflow:hidden; transition:border-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="border-color:{{ c.borderFocus }};">
+                  <div style="aspect-ratio:13/8; background-color:{{ c.bg }}; background-size:145% auto; background-position:0% 100%; background-repeat:no-repeat; background-image:{{ r.bg }};"></div>
+                  <div style="padding:21px; display:flex; flex-direction:column; gap:13px;">
+                    <div style="display:flex; justify-content:space-between; align-items:baseline; gap:13px;">
+                      <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">{{ r.name }}</div>
+                      <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; color:{{ c.gold }}; font-variant-numeric:tabular-nums;">{{ r.rent }}</div>
+                    </div>
+                    <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">{{ r.meta }}</div>
+                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                      <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; background:{{ c.surface2 }}; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ink }};"><span style="width:5px; height:5px; border-radius:999px; background:{{ r.dot }}; display:block;"></span>{{ r.status }}</div>
+                      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }}; font-variant-numeric:tabular-nums;">{{ r.renews }}</div>
+                    </div>
+                    <div style="display:flex; gap:13px; flex-wrap:wrap; padding-top:8px;">
+                      <button type="button" onClick="{{ r.edit }}" style="height:55px; padding:0 21px; border:0; border-radius:10px; background:{{ c.gold }}; color:{{ c.onGold }}; font-family:'Inter',sans-serif; font-weight:600; font-size:16px; cursor:pointer; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:{{ c.goldHover }};">Edit store</button>
+                      <button type="button" style="height:55px; padding:0 21px; border:1px solid {{ c.borderStrong }}; border-radius:10px; background:transparent; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-weight:500; font-size:16px; cursor:pointer;" style-hover="background:{{ c.surface2 }}; border-color:{{ c.borderFocus }};">Billing</button>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:34px;">
+            <div style="display:flex; align-items:baseline; justify-content:space-between; gap:21px; flex-wrap:wrap;">
+              <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Eggs you hold</h2>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.warn }};">valeurs illustratives — flux de prix à brancher</div>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:34px;">
+              <sc-for list="{{ eggs }}" as="e" hint-placeholder-count="3">
+                <div style="border:1px solid {{ c.border }}; border-radius:10px; background:{{ c.surface }}; overflow:hidden; transition:border-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="border-color:{{ c.borderFocus }};">
+                  <div style="aspect-ratio:1/1; background-color:#0A0A09; background-size:cover; background-position:center; background-image:{{ e.bg }}; position:relative;">
+                    <div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 55%, rgba(212,162,76,0.18), transparent 55%); animation:pulseCore 2584ms ease-in-out infinite;"></div>
+                  </div>
+                  <div style="padding:21px; display:flex; flex-direction:column; gap:13px;">
+                    <div style="display:flex; justify-content:space-between; align-items:baseline; gap:13px;">
+                      <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">{{ e.name }}</div>
+                      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }};">{{ e.id }}</div>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:5px; font-variant-numeric:tabular-nums;">
+                      <div style="display:flex; justify-content:space-between; gap:13px; font-size:14px;"><span style="color:{{ c.sec }};">Paid</span><span>{{ e.paid }}</span></div>
+                      <div style="display:flex; justify-content:space-between; gap:13px; font-size:14px;"><span style="color:{{ c.sec }};">Floor now</span><span>{{ e.floor }}</span></div>
+                      <div style="display:flex; justify-content:space-between; gap:13px; align-items:baseline; border-top:1px solid {{ c.border }}; margin-top:8px; padding-top:8px;">
+                        <span style="color:{{ c.sec }}; font-size:14px;">Change</span>
+                        <span style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; color:{{ e.deltaColor }};">{{ e.delta }}</span>
+                      </div>
+                    </div>
+                    <button type="button" onClick="{{ e.list }}" style="height:55px; padding:0 21px; border:1px solid {{ c.borderStrong }}; border-radius:10px; background:transparent; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-weight:500; font-size:16px; cursor:pointer; margin-top:5px;" style-hover="background:{{ c.surface2 }}; border-color:{{ c.borderFocus }};">List for resale</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isListing }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:55px; align-items:start;">
+          <div style="border:1px solid {{ c.border }}; border-radius:10px; overflow:hidden; background:{{ c.surface }};">
+            <div style="aspect-ratio:1/1; background-color:#0A0A09; background-size:cover; background-position:center; background-image:{{ listBg }};"></div>
+            <div style="padding:21px; display:flex; flex-direction:column; gap:5px;">
+              <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px;">{{ listName }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }};">{{ listId }}</div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:34px;">
+            <h1 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em;">List for resale</h1>
+            <label style="display:flex; flex-direction:column; gap:8px; max-width:340px;">
+              <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Ask, in ETH</span>
+              <input type="number" step="0.01" min="0" value="{{ ask }}" onInput="{{ setAsk }}" style="height:55px; padding:0 21px; background:{{ c.surface }}; border:1px solid {{ c.borderStrong }}; border-radius:10px; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-size:16px; font-variant-numeric:tabular-nums;" />
+            </label>
+            <div style="border:1px solid {{ c.border }}; border-radius:10px; overflow:hidden; max-width:610px;">
+              <div style="display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }}; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};"><div>Line</div><div style="text-align:right;">Amount</div></div>
+              <sc-for list="{{ payout }}" as="l" hint-placeholder-count="4">
+                <div style="{{ l.style }}"><div>{{ l.label }}</div><div style="text-align:right; color:{{ l.color }};">{{ l.value }}</div></div>
+              </sc-for>
+            </div>
+            <div style="display:flex; gap:21px; flex-wrap:wrap; align-items:center;">
+              <button type="button" onClick="{{ confirmList }}" style="height:55px; padding:0 21px; border:0; border-radius:10px; background:{{ c.gold }}; color:{{ c.onGold }}; font-family:'Inter',sans-serif; font-weight:600; font-size:16px; cursor:pointer; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:{{ c.goldHover }};">{{ listLabel }}</button>
+              <button type="button" onClick="{{ goDash }}" style="height:55px; padding:0; border:0; background:transparent; color:{{ c.sec }}; font-family:'Inter',sans-serif; font-size:16px; cursor:pointer;" style-hover="color:{{ c.ink }};">Cancel</button>
+            </div>
+            <div style="border:1px solid {{ c.warn }}; border-radius:10px; padding:21px; font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:{{ c.sec }};">Le taux de redevance, les frais de plateforme et le mode de règlement sont des engagements contractuels. Les valeurs affichées sont des espaces réservés jusqu'à l'avis juridique.</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isStore }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:34px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:34px; flex-wrap:wrap;">
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <h1 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em;">{{ storeName }}</h1>
+              <div style="font-size:14px; color:{{ c.sec }};">{{ storeMeta }}</div>
+            </div>
+            <div style="display:flex; gap:13px; align-items:center; flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; background:{{ c.surface2 }}; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ink }};"><span style="width:5px; height:5px; border-radius:999px; background:{{ publishDot }}; display:block;"></span>{{ publishState }}</div>
+              <button type="button" onClick="{{ publish }}" style="height:55px; padding:0 21px; border:0; border-radius:10px; background:{{ c.gold }}; color:{{ c.onGold }}; font-family:'Inter',sans-serif; font-weight:600; font-size:16px; cursor:pointer; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:{{ c.goldHover }};">{{ publishLabel }}</button>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:minmax(0,61.9fr) minmax(0,38.1fr); gap:34px; align-items:start;">
+            <div style="display:flex; flex-direction:column; gap:21px;">
+              <div style="position:relative; aspect-ratio:16/9; border:1px solid {{ c.borderStrong }}; border-radius:10px; background-color:#0A0A09; background-image:url(assets/shot-interior.png); background-size:cover; background-position:0% 100%; overflow:hidden;">
+                <div style="position:absolute; inset:0; background:linear-gradient(0deg,rgba(10,10,9,0.88) 0%,rgba(10,10,9,0.88) 42%,rgba(10,10,9,0.10) 78%);"></div>
+                <div style="position:absolute; top:13px; left:13px; display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; background:rgba(10,10,9,0.62); border-radius:999px; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#F4F1E9;"><span style="width:5px; height:5px; border-radius:999px; background:#4E8C6A; display:block;"></span>Pixel stream · Unreal</div>
+                <div style="position:absolute; left:0; right:0; bottom:0; height:1px; overflow:hidden;"><div style="height:1px; width:100%; background:linear-gradient(90deg,transparent,#D4A24C,transparent); animation:sweep 2584ms linear infinite;"></div></div>
+                <div style="position:absolute; left:21px; bottom:21px; right:21px; display:flex; justify-content:space-between; align-items:flex-end; gap:21px; flex-wrap:wrap;">
+                  <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#F4F1E9;">FLUX RÉSERVÉ — la scène éditable arrive par pixel streaming.<br />Déplacer, pivoter et prix se font dans ce cadre, pas en DOM.</div>
+                  <div style="display:flex; gap:8px;">
+                    <div style="height:34px; padding:0 13px; border:1px solid #4A443A; border-radius:999px; display:flex; align-items:center; font-size:10px; letter-spacing:0.02em; color:#F4F1E9;">Move</div>
+                    <div style="height:34px; padding:0 13px; border:1px solid #4A443A; border-radius:999px; display:flex; align-items:center; font-size:10px; letter-spacing:0.02em; color:#F4F1E9;">Rotate</div>
+                    <div style="height:34px; padding:0 13px; border:1px solid #4A443A; border-radius:999px; display:flex; align-items:center; font-size:10px; letter-spacing:0.02em; color:#F4F1E9;">Scale</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:13px;">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; gap:21px; flex-wrap:wrap;">
+                  <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Products</h2>
+                  <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }}; font-variant-numeric:tabular-nums;">{{ productCount }}</div>
+                </div>
+                <div style="border:1px solid {{ c.border }}; border-radius:10px; overflow:hidden;">
+                  <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,0.8fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }}; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};"><div>Product</div><div>Asset</div><div style="text-align:right;">Price</div><div style="text-align:right;">Shelf</div></div>
+                  <sc-for list="{{ products }}" as="p" hint-placeholder-count="4">
+                    <div style="{{ p.style }}">
+                      <div style="display:flex; flex-direction:column;"><span>{{ p.name }}</span><span style="font-size:14px; color:{{ c.ter }};">{{ p.sku }}</span></div>
+                      <div style="display:flex; align-items:center; gap:5px; font-size:14px; color:{{ p.assetColor }};"><span style="width:5px; height:5px; border-radius:999px; background:{{ p.assetDot }}; display:block; flex:none;"></span>{{ p.asset }}</div>
+                      <div style="text-align:right; font-variant-numeric:tabular-nums;">{{ p.price }}</div>
+                      <div style="text-align:right; font-family:'IBM Plex Mono',monospace; font-size:10px; color:{{ c.ter }};">{{ p.shelf }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="display:flex; gap:13px; flex-wrap:wrap; padding-top:8px;">
+                  <button type="button" onClick="{{ addProduct }}" style="height:55px; padding:0 21px; border:1px solid {{ c.borderStrong }}; border-radius:10px; background:transparent; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-weight:500; font-size:16px; cursor:pointer;" style-hover="background:{{ c.surface2 }}; border-color:{{ c.borderFocus }};">Add a product</button>
+                  <button type="button" onClick="{{ addScan }}" style="height:55px; padding:0 21px; border:1px solid {{ c.borderStrong }}; border-radius:10px; background:transparent; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-weight:500; font-size:16px; cursor:pointer;" style-hover="background:{{ c.surface2 }}; border-color:{{ c.borderFocus }};">Upload a 3D scan</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:34px; position:sticky; top:123px;">
+              <div style="border:1px solid {{ c.border }}; border-radius:10px; background:{{ c.surface }}; padding:21px; display:flex; flex-direction:column; gap:13px;">
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Season</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <sc-for list="{{ seasons }}" as="s" hint-placeholder-count="4">
+                    <button type="button" onClick="{{ s.pick }}" style="{{ s.style }}">{{ s.label }}</button>
+                  </sc-for>
+                </div>
+                <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">A physical store closes for three days and pays a contractor. Yours changes in one click.</div>
+              </div>
+
+              <div style="border:1px solid {{ c.border }}; border-radius:10px; background:{{ c.surface }}; padding:21px; display:flex; flex-direction:column; gap:13px;">
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">This month</div>
+                <div style="display:flex; flex-direction:column; gap:8px; font-variant-numeric:tabular-nums;">
+                  <div style="display:flex; justify-content:space-between; gap:13px;"><span style="color:{{ c.sec }};">Visitors</span><span>1,284</span></div>
+                  <div style="display:flex; justify-content:space-between; gap:13px;"><span style="color:{{ c.sec }};">Try-ons</span><span>317</span></div>
+                  <div style="display:flex; justify-content:space-between; gap:13px;"><span style="color:{{ c.sec }};">Orders</span><span>41</span></div>
+                  <div style="display:flex; justify-content:space-between; gap:13px; border-top:1px solid {{ c.border }}; margin-top:5px; padding-top:8px;"><span style="color:{{ c.sec }};">Rent</span><span>{{ storeRent }}</span></div>
+                </div>
+                <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:{{ c.warn }};">Chiffres de démonstration — à brancher sur les vraies données.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;dark | light&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+const THEMES = {
+  dark: {
+    bg:'#0A0A09', surface:'#131210', surface2:'#1C1A17', raised:'#232019',
+    border:'#262420', borderStrong:'#35312A', borderFocus:'#4A443A',
+    ink:'#F4F1E9', sec:'#A8A093', ter:'#6E675C',
+    gold:'#D4A24C', goldHover:'#E3B667', onGold:'#0A0A09', warn:'#C08A3E', pos:'#4E8C6A', neg:'#B4553F', isDark:true
+  },
+  light: {
+    bg:'#F4F1E9', surface:'#EAE5DA', surface2:'#E1DACB', raised:'#FFFFFF',
+    border:'#D9D2C4', borderStrong:'#C4BBA9', borderFocus:'#8A8272',
+    ink:'#0A0A09', sec:'#4A443A', ter:'#6E675C',
+    gold:'#8A6C33', goldHover:'#6F561F', onGold:'#F4F1E9', warn:'#8A5A1E', pos:'#2F6B49', neg:'#8C3B28', isDark:false
+  }
+};
+
+const SHOTS = ['assets/shot-street-1.png','assets/shot-interior.png','assets/shot-street-2.png','assets/shot-street-3.png'];
+const PLOTS = [
+  { id:1,  price:65, district:'Market',        size:'Small'  },
+  { id:12, price:57, district:'Business',      size:'Medium' },
+  { id:18, price:80, district:'Arts',          size:'Medium' },
+  { id:24, price:66, district:'Entertainment', size:'Medium' },
+  { id:31, price:85, district:'Market',        size:'Large'  },
+  { id:47, price:89, district:'Central',       size:'Large'  }
+];
+const HELD_EGGS = [
+  { id:'#0142', name:'Verdant', file:'egg-verdant.png', paid:0.42, floor:0.61 },
+  { id:'#0917', name:'Flame',   file:'egg-flame.png',   paid:0.55, floor:0.48 },
+  { id:'#1188', name:'Rose',    file:'egg-rose.png',    paid:0.30, floor:0.74 }
+];
+const SEASONS = ['Standard','Halloween','Christmas','Snow'];
+
+class Component extends DCLogic {
+  state = {
+    view:'browse', signedIn:false, email:'', account:'',
+    district:'All', chosen:PLOTS[0], term:'Monthly', paid:false,
+    editing:null, season:'Standard', published:true, extraProducts:0, extraScans:0,
+    listEgg:null, ask:'0.65', listed:false, key:0
+  };
+
+  go(view, patch) {
+    this.setState(s => Object.assign({ view, key:s.key + 1 }, patch || {}));
+    if (typeof window !== 'undefined') window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  chip(active, c) {
+    const base = "height:34px; padding:0 13px; border-radius:999px; font-family:'Inter',sans-serif; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; cursor:pointer; display:flex; align-items:center; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1), border-color 89ms cubic-bezier(0.16,1,0.3,1);";
+    return active
+      ? base + ' background:' + c.gold + '; border:1px solid ' + c.gold + '; color:' + c.onGold + '; font-weight:600;'
+      : base + ' background:transparent; border:1px solid ' + c.borderStrong + '; color:' + c.sec + '; font-weight:400;';
+  }
+
+  renderVals() {
+    const c = THEMES[this.props.theme ?? 'dark'] || THEMES.dark;
+    const s = this.state;
+    const v = s.view;
+    const money = n => '$' + n;
+    const eth = n => n.toFixed(2) + ' ETH';
+
+    const steps = { browse:1, checkout:2, login:3, dash:4, store:5, listing:5 };
+    const rentPrice = s.chosen.price;
+    const termDefs = [
+      { label:'Monthly',   note:'',          mult:1,  due:rentPrice },
+      { label:'Quarterly', note:'',          mult:3,  due:rentPrice * 3 },
+      { label:'Yearly',    note:'save 15%',  mult:12, due:Math.round(rentPrice * 12 * 0.85) }
+    ];
+    const term = termDefs.find(t => t.label === s.term) || termDefs[0];
+
+    const rowBase = 'display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,0.8fr); gap:21px; padding:13px 21px; border-bottom:1px solid ' + c.border + ';';
+    const baseProducts = [
+      { name:'Rider jacket',   sku:'RJ-01', asset:'Model uploaded', ready:true,  price:'$420', shelf:'Front wall' },
+      { name:'Field boot',     sku:'FB-04', asset:'Model uploaded', ready:true,  price:'$260', shelf:'Left shelf' },
+      { name:'Wool scarf',     sku:'WS-11', asset:'Scan processing', ready:false, price:'$85',  shelf:'Counter' },
+      { name:'Canvas holdall', sku:'CH-07', asset:'Model uploaded', ready:true,  price:'$310', shelf:'Right shelf' }
+    ];
+    const extra = [];
+    for (let i = 0; i < s.extraProducts; i++) extra.push({ name:'New product ' + (i + 1), sku:'—', asset:'Awaiting asset', ready:false, price:'—', shelf:'Unplaced' });
+    for (let i = 0; i < s.extraScans; i++)   extra.push({ name:'Scan ' + (i + 1),        sku:'—', asset:'Scan processing', ready:false, price:'—', shelf:'Unplaced' });
+    const allProducts = baseProducts.concat(extra);
+
+    const rentals = [
+      { plot:PLOTS[0], status:'Open',      dot:c.pos,  renews:'Renews Oct 1' },
+      { plot:PLOTS[2], status:'Draft',     dot:c.warn, renews:'Renews Oct 1' }
+    ];
+
+    const listEgg = s.listEgg || HELD_EGGS[0];
+    const ask = Number(s.ask) || 0;
+    const royalty = ask * 0.05;
+    const fee = ask * 0.025;
+    const net = Math.max(0, ask - royalty - fee);
+    const payRow = 'display:grid; grid-template-columns:minmax(0,1.4fr) minmax(0,1fr); gap:21px; padding:13px 21px; font-variant-numeric:tabular-nums; border-bottom:1px solid ' + c.border + ';';
+
+    const trailFor = {
+      browse:   [['Spaces', null]],
+      checkout: [['Spaces','browse'], ['Checkout', null]],
+      login:    [['Spaces','browse'], ['Checkout','checkout'], ['Sign in', null]],
+      dash:     [['Dashboard', null]],
+      store:    [['Dashboard','dash'], ['Store editor', null]],
+      listing:  [['Dashboard','dash'], ['Resale', null]]
+    }[v] || [];
+
+    const crumbStyle = active => 'height:34px; padding:0; border:0; background:transparent; font-family:\'IBM Plex Mono\',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; cursor:' + (active ? 'pointer' : 'default') + '; color:' + (active ? c.sec : c.ink) + '; border-bottom:1px solid ' + (active ? 'transparent' : c.gold) + ';';
+
+    return {
+      c,
+      isDark: c.isDark,
+      isLight: !c.isDark,
+      viewKey: v + '-' + s.key,
+      signedIn: s.signedIn,
+      signedOut: !s.signedIn,
+      account: s.account,
+      progressWidth: Math.round((steps[v] || 1) / 5 * 100) + '%',
+
+      trail: trailFor.map(([label, target], i) => ({
+        label: (i ? '/ ' : '') + label,
+        style: crumbStyle(!!target),
+        go: target ? () => this.go(target) : () => {}
+      })),
+
+      isBrowse:   v === 'browse',
+      isCheckout: v === 'checkout',
+      isLogin:    v === 'login',
+      isDash:     v === 'dash',
+      isStore:    v === 'store',
+      isListing:  v === 'listing',
+
+      goBrowse: () => this.go('browse'),
+      goLogin:  () => this.go('login'),
+      goDash:   () => this.go(s.signedIn ? 'dash' : 'login'),
+      signOut:  () => this.go('browse', { signedIn:false, account:'', paid:false }),
+
+      districts: ['All','Market','Business','Arts','Entertainment','Central'].map(d => ({
+        label: d, style: this.chip(s.district === d, c), pick: () => this.setState({ district: d })
+      })),
+      showing: (() => {
+        const n = PLOTS.filter(p => s.district === 'All' || p.district === s.district).length;
+        return 'Showing ' + n + ' of 48';
+      })(),
+      plots: PLOTS.filter(p => s.district === 'All' || p.district === s.district).map((p, i) => ({
+        price: money(p.price),
+        name: 'Faberplot #' + p.id,
+        meta: p.district + ' District · ' + p.size,
+        bg: 'url(' + SHOTS[i % SHOTS.length] + ')',
+        cardStyle: 'border:1px solid ' + c.border + '; border-radius:10px; background:' + c.surface + '; overflow:hidden; cursor:pointer; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1), border-color 89ms cubic-bezier(0.16,1,0.3,1);',
+        choose: () => this.go('checkout', { chosen:p, paid:false })
+      })),
+
+      terms: termDefs.map(t => ({
+        label: t.label,
+        note: t.note,
+        style: "height:55px; padding:0 21px; border-radius:10px; font-family:'Inter',sans-serif; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:13px; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1), border-color 89ms cubic-bezier(0.16,1,0.3,1); " +
+          (s.term === t.label
+            ? 'background:' + c.surface2 + '; border:1px solid ' + c.borderFocus + '; color:' + c.ink + '; font-weight:600;'
+            : 'background:transparent; border:1px solid ' + c.borderStrong + '; color:' + c.sec + '; font-weight:400;'),
+        pick: () => this.setState({ term: t.label })
+      })),
+      chosenName: 'Faberplot #' + s.chosen.id,
+      chosenMeta: s.chosen.district + ' District · ' + s.chosen.size,
+      chosenBg: 'url(' + SHOTS[0] + ')',
+      lineRent: money(rentPrice) + ' × ' + term.mult,
+      dueToday: money(term.due),
+      payLabel: s.paid ? 'Paid — continue' : 'Pay ' + money(term.due),
+      payNow: () => (s.paid ? this.go('login') : this.setState({ paid:true }, () => setTimeout(() => this.go('login'), 610))),
+
+      loginTitle: s.paid ? 'Claim your space' : 'Sign in',
+      loginBlurb: s.paid
+        ? 'Payment received. Create the account that will manage Faberplot #' + s.chosen.id + '.'
+        : 'Manage your rented spaces, your store and the eggs you hold.',
+      email: s.email,
+      setEmail: e => this.setState({ email: e.target.value }),
+      doLogin: () => this.go('dash', { signedIn:true, account: s.email || 'you@company.com' }),
+      doWallet: () => this.go('dash', { signedIn:true, account:'0x7f…41c9' }),
+
+      stats: [
+        { value:'2',      label:'Rented spaces' },
+        { value:'$122',   label:'Rent due on the first' },
+        { value:'3',      label:'Eggs held' },
+        { value:'1.83',   label:'ETH at current floor' }
+      ].map((st, i) => ({
+        value: st.value,
+        label: st.label,
+        style: 'padding:34px 21px; display:flex; flex-direction:column; gap:8px; animation:riseIn 377ms cubic-bezier(0.16,1,0.3,1) ' + (i * 55) + 'ms both;' + (i ? ' border-left:1px solid ' + c.border + ';' : '')
+      })),
+
+      rentals: rentals.map((r, i) => ({
+        name: 'Faberplot #' + r.plot.id,
+        rent: money(r.plot.price),
+        meta: r.plot.district + ' District · ' + r.plot.size,
+        bg: 'url(' + SHOTS[i % SHOTS.length] + ')',
+        status: r.status,
+        dot: r.dot,
+        renews: r.renews,
+        edit: () => this.go('store', { editing:r.plot, published:r.status === 'Open' })
+      })),
+
+      eggs: HELD_EGGS.map(e => {
+        const d = (e.floor - e.paid) / e.paid * 100;
+        return {
+          id: e.id,
+          name: e.name,
+          bg: 'url(assets/' + e.file + ')',
+          paid: eth(e.paid),
+          floor: eth(e.floor),
+          delta: (d >= 0 ? '+' : '') + d.toFixed(0) + '%',
+          deltaColor: d >= 0 ? c.pos : c.neg,
+          list: () => this.go('listing', { listEgg:e, ask:e.floor.toFixed(2), listed:false })
+        };
+      }),
+
+      listName: listEgg.name,
+      listId: listEgg.id,
+      listBg: 'url(assets/' + listEgg.file + ')',
+      ask: s.ask,
+      setAsk: e => this.setState({ ask: e.target.value }),
+      payout: [
+        { label:'Ask',              value: eth(ask),     color: c.ink },
+        { label:'Creator royalty',  value: '− ' + eth(royalty), color: c.sec },
+        { label:'Platform fee',     value: '− ' + eth(fee),     color: c.sec },
+        { label:'You receive',      value: eth(net),     color: c.gold }
+      ].map((l, i) => ({
+        label: l.label, value: l.value, color: l.color,
+        style: payRow + (i === 3 ? ' border-bottom:0; font-family:\'Space Grotesk\',sans-serif; font-weight:600; font-size:21px;' : '')
+      })),
+      listLabel: s.listed ? 'Listed' : 'List at ' + eth(ask),
+      confirmList: () => this.setState({ listed:true }, () => setTimeout(() => this.go('dash'), 610)),
+
+      storeName: 'Faberplot #' + (s.editing ? s.editing.id : PLOTS[0].id),
+      storeMeta: (s.editing ? s.editing.district : PLOTS[0].district) + ' District · store editor',
+      storeRent: money(s.editing ? s.editing.price : PLOTS[0].price) + '/month',
+      publishState: s.published ? 'Live' : 'Draft',
+      publishDot: s.published ? c.pos : c.warn,
+      publishLabel: s.published ? 'Unpublish' : 'Publish store',
+      publish: () => this.setState(st => ({ published: !st.published })),
+      seasons: SEASONS.map(x => ({
+        label: x, style: this.chip(s.season === x, c), pick: () => this.setState({ season: x })
+      })),
+      productCount: allProducts.length + ' items',
+      products: allProducts.map((p, i) => ({
+        name: p.name, sku: p.sku, asset: p.asset, price: p.price, shelf: p.shelf,
+        assetColor: p.ready ? c.sec : c.warn,
+        assetDot: p.ready ? c.pos : c.warn,
+        style: rowBase + (i === allProducts.length - 1 ? ' border-bottom:0;' : '') + ' animation:fadeIn 233ms linear ' + Math.min(i * 34, 233) + 'ms both;'
+      })),
+      addProduct: () => this.setState(st => ({ extraProducts: st.extraProducts + 1 })),
+      addScan:    () => this.setState(st => ({ extraScans: st.extraScans + 1 }))
+    };
+  }
+}
+</script>
+</body>
+</html>

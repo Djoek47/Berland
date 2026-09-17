@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Faberland — Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js",
+    "three/addons/exporters/OBJExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js",
+    "three/addons/exporters/GLTFExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js": "sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js": "sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ"
+  }
+}
+</script>
+<style>
+  :root {
+    --bg:#0A0A09; --surface:#131210; --surface2:#1C1A17;
+    --border:#262420; --border-strong:#35312A; --border-focus:#4A443A;
+    --ink:#F4F1E9; --sec:#A8A093; --ter:#6E675C;
+    --gold:#D4A24C; --gold-hover:#E3B667; --pos:#4E8C6A; --warn:#C08A3E; --neg:#B4553F;
+  }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',system-ui,sans-serif; font-size:16px; line-height:26px; overflow:hidden; }
+  a { color:var(--gold); text-decoration:none; }
+  a:hover { color:var(--gold-hover); }
+  button { font-family:'Inter',sans-serif; cursor:pointer; }
+  .mono { font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; }
+  .up { text-transform:uppercase; }
+
+  #shell { position:fixed; inset:0; display:flex; flex-direction:column; }
+  header {
+    height:89px; flex:none; display:flex; align-items:center; justify-content:space-between;
+    gap:34px; padding:0 34px; border-bottom:1px solid var(--border); background:var(--bg); z-index:6;
+  }
+  .brand { display:flex; align-items:center; gap:13px; }
+  .brand img { display:block; flex:none; object-fit:contain; }
+  .btn {
+    height:55px; padding:0 21px; border-radius:10px; border:1px solid var(--border-strong);
+    background:transparent; color:var(--ink); font-size:16px; font-weight:500;
+    display:flex; align-items:center; gap:8px;
+    transition:background-color 89ms cubic-bezier(0.16,1,0.3,1), border-color 89ms cubic-bezier(0.16,1,0.3,1);
+  }
+  .btn:hover { background:var(--surface2); border-color:var(--border-focus); }
+  .btn-primary { background:var(--gold); border-color:var(--gold); color:var(--bg); font-weight:600; }
+  .btn-primary:hover { background:var(--gold-hover); border-color:var(--gold-hover); }
+  .btn-sm { height:34px; padding:0 13px; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; }
+
+  #stage { position:relative; flex:1; min-height:0; }
+
+  /* ---- map ---- */
+  #mapView { position:absolute; inset:0; overflow:hidden; background:
+      radial-gradient(circle at 50% 45%, #14150F 0%, #0A0A09 62%); cursor:grab; }
+  #mapView.dragging { cursor:grabbing; }
+  #mapWorld { position:absolute; inset:0; transform-origin:0 0; will-change:transform; }
+  #plan { position:absolute; inset:0; width:100%; height:100%; display:block; }
+
+  .plot { cursor:pointer; }
+  .plot rect { transition:fill 89ms linear, stroke 89ms linear; }
+  .plot:hover rect.body { fill:#D4A24C; }
+  .plot:hover text { fill:#0A0A09; }
+  .plot.leased { cursor:not-allowed; }
+  .plot.leased:hover rect.body { fill:#1A1814; }
+  .plot.leased:hover text { fill:#6E675C; }
+
+  #hud { position:absolute; left:34px; bottom:34px; max-width:392px; z-index:3; display:flex; flex-direction:column-reverse; align-items:flex-start; gap:13px; }
+  #legend {
+    background:rgba(10,10,9,0.88); border:1px solid var(--border); border-radius:10px;
+    padding:13px 21px; display:flex; flex-direction:column; gap:5px;
+  }
+  #legend[hidden] { display:none; }
+  .lg { display:flex; align-items:center; gap:8px; color:var(--sec); }
+  .sw { width:13px; height:13px; border-radius:3px; flex:none; }
+
+  #zoomBar { position:absolute; right:34px; bottom:34px; display:flex; gap:8px; z-index:3; }
+  #zoomBar button {
+    width:55px; height:55px; border-radius:10px; border:1px solid var(--border-strong);
+    background:rgba(10,10,9,0.88); color:var(--ink); font-size:21px; display:flex; align-items:center; justify-content:center;
+  }
+  #zoomBar button:hover { background:var(--surface2); border-color:var(--border-focus); }
+
+  #tip {
+    position:absolute; z-index:5; pointer-events:none; opacity:0;
+    background:rgba(10,10,9,0.94); border:1px solid var(--border-focus); border-radius:10px;
+    padding:13px 21px; min-width:196px; transition:opacity 89ms linear;
+  }
+  #tip .price { font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; color:var(--gold); font-variant-numeric:tabular-nums; }
+  #tip .name { font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px; }
+
+  #mapTitle {
+    position:absolute; left:34px; top:21px; z-index:3; max-width:360px;
+    display:flex; flex-direction:column; gap:5px;
+    background:rgba(10,10,9,0.88); border:1px solid var(--border); border-radius:10px; padding:13px 21px;
+  }
+  #mapTitle h1 { margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em; }
+
+  /* ---- dive transition ---- */
+  #veil { position:absolute; inset:0; background:var(--bg); opacity:0; pointer-events:none; z-index:8; transition:opacity 233ms linear; }
+  #veil.on { opacity:1; }
+
+  /* ---- room ---- */
+  #roomView { position:absolute; inset:0; display:none; }
+  #roomView.on { display:flex; }
+  #canvasWrap { position:relative; flex:1; min-width:0; }
+  #roomCanvas { display:block; width:100%; height:100%; }
+  #roomTop {
+    position:absolute; left:21px; top:21px; right:21px; display:flex; flex-wrap:wrap; justify-content:space-between;
+    align-items:flex-start; gap:13px; pointer-events:none;
+  }
+  #roomTop > * { pointer-events:auto; }
+  .plate { background:rgba(10,10,9,0.88); border:1px solid var(--border); border-radius:10px; padding:13px 21px; }
+  #bigger { display:flex; flex-wrap:wrap; align-items:center; gap:13px 21px; max-width:100%; }
+  #bigger .n { font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; font-variant-numeric:tabular-nums; }
+
+  aside {
+    width:340px; flex:none; border-left:1px solid var(--border); background:var(--surface);
+    display:flex; flex-direction:column; gap:21px; padding:21px; overflow-y:auto;
+  }
+  aside h2 { margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em; }
+  .palette { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .palette button {
+    height:55px; border-radius:10px; border:1px solid var(--border-strong); background:transparent;
+    color:var(--ink); font-size:14px; display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .palette button:hover { background:var(--surface2); border-color:var(--border-focus); }
+  .rowline { display:flex; justify-content:space-between; gap:13px; padding:8px 0; border-bottom:1px solid var(--border); font-variant-numeric:tabular-nums; }
+  .rowline:last-child { border-bottom:0; }
+  .note { border:1px solid var(--warn); border-radius:10px; padding:13px 21px; color:var(--sec); }
+
+  /* ---- pixel-streaming stub ---- */
+  #streamBar {
+    position:absolute; left:21px; bottom:21px; z-index:4; display:flex; gap:3px; padding:3px;
+    background:rgba(10,10,9,0.88); border:1px solid var(--border); border-radius:999px;
+  }
+  #streamBar button {
+    height:34px; padding:0 16px; border-radius:999px; border:0; background:transparent; color:var(--sec);
+    font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase;
+  }
+  #streamBar button[aria-pressed="true"] { background:var(--surface2); color:var(--ink); }
+  #streamPane {
+    position:absolute; inset:0; z-index:3; display:none; background:#06060A;
+    align-items:flex-start; justify-content:center; padding:34px; overflow-y:auto;
+  }
+  #streamPane.on { display:flex; }
+  .streamCard { width:100%; max-width:520px; margin:auto; display:flex; flex-direction:column; gap:21px; }
+  .field { display:flex; gap:8px; }
+  .field input {
+    flex:1; min-width:0; height:55px; padding:0 16px; border-radius:10px; background:var(--surface);
+    border:1px solid var(--border-strong); color:var(--ink);
+    font-family:'IBM Plex Mono',monospace; font-size:14px;
+  }
+  .field input:focus { outline:none; border-color:var(--border-focus); }
+  #streamLog {
+    background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:13px 21px;
+    display:flex; flex-direction:column; gap:3px; min-height:144px; max-height:233px; overflow-y:auto;
+  }
+  .dot { width:8px; height:8px; border-radius:999px; flex:none; display:inline-block; }
+
+  /* ---- cart ---- */
+  #cartBtn { position:relative; }
+  #cartCount {
+    min-width:21px; height:21px; padding:0 6px; border-radius:999px; background:var(--gold); color:var(--bg);
+    display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:600;
+  }
+  #drawer { position:absolute; inset:0; z-index:9; display:none; }
+  #drawer.on { display:block; }
+  #scrim { position:absolute; inset:0; background:rgba(6,6,5,0.72); }
+  #sheet {
+    position:absolute; right:0; top:0; bottom:0; width:432px; max-width:100%; background:var(--surface);
+    border-left:1px solid var(--border); display:flex; flex-direction:column;
+  }
+  #sheetBody { flex:1; min-height:0; overflow-y:auto; padding:21px 34px; display:flex; flex-direction:column; gap:21px; }
+  #sheetFoot { flex:none; padding:21px 34px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:13px; }
+  .line { display:flex; justify-content:space-between; align-items:flex-start; gap:13px; padding:13px 0; border-bottom:1px solid var(--border); }
+  .steps { display:flex; gap:8px; }
+  .steps span { flex:1; height:3px; border-radius:999px; background:var(--border-strong); }
+  .steps span.on { background:var(--gold); }
+  .linkbtn { background:none; border:0; color:var(--ter); font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; padding:0; }
+  .linkbtn:hover { color:var(--ink); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration:1ms !important; transition-duration:1ms !important; }
+  }
+</style>
+</head>
+<body>
+<div id="shell">
+  <header>
+    <div class="brand">
+      <img src="assets/mark-star.png" alt="" style="height:26px; width:26px;" />
+      <img src="assets/faberland-cream.png" alt="Faberland" style="height:21px; width:auto;" />
+    </div>
+    <div style="display:flex; align-items:center; gap:21px;">
+      <div id="crumb" class="mono up" style="color:var(--ter);">Map · 48 plots</div>
+      <button class="btn btn-sm" id="cartBtn" style="gap:8px;">Cart <span id="cartCount">0</span></button>
+      <button class="btn" id="backBtn" style="display:none;">Back to the map</button>
+      <button class="btn btn-primary" id="rentBtn" style="display:none;">Rent this space</button>
+    </div>
+  </header>
+
+  <div id="stage">
+    <div id="mapView">
+      <div id="mapWorld"><svg id="plan" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet"></svg></div>
+
+      <div id="mapTitle">
+        <div class="mono up" style="color:var(--ter);">Faberland · top-down</div>
+        <h1>Pick your exact store.</h1>
+        <div class="mono" style="color:var(--ter);">Click any lit plot to walk inside it in 3D. Scroll to zoom, drag to pan. Closer to the entrance portal costs more.</div>
+      </div>
+
+      <div id="hud">
+        <button id="legendToggle" class="btn btn-sm" style="background:rgba(10,10,9,0.88);">Legend</button>
+        <div id="legend" hidden>
+          <div class="lg"><span class="sw" style="background:#2A2721;"></span><span>Available plot</span></div>
+          <div class="lg"><span class="sw" style="background:#1A1814; border:1px solid #35312A;"></span><span>Leased</span></div>
+          <div class="lg"><span class="sw" style="background:#7C5CBF;"></span><span>Our own store · #21</span></div>
+          <div class="lg"><span class="sw" style="background:#B4553F;"></span><span>Ad wall (to remove)</span></div>
+          <div class="lg"><span class="sw" style="background:#4B7FD4;"></span><span>Entrance portal</span></div>
+          <div class="lg"><span class="sw" style="background:#8FD44C;"></span><span>Island edge</span></div>
+          <div class="mono" style="color:var(--ter); padding-top:5px;">Schematic reconstruction of the Unreal top-down plan.</div>
+        </div>
+      </div>
+
+      <div id="zoomBar">
+        <button id="zoomOut" aria-label="Zoom out">−</button>
+        <button id="zoomIn" aria-label="Zoom in">+</button>
+        <button id="zoomReset" aria-label="Reset" style="font-size:10px; letter-spacing:0.02em;">FIT</button>
+      </div>
+
+      <div id="tip"></div>
+    </div>
+
+    <div id="roomView">
+      <div id="canvasWrap">
+        <canvas id="roomCanvas"></canvas>
+        <div id="roomTop">
+          <div class="plate" id="roomLabel"></div>
+          <div class="plate" id="bigger">
+            <div>
+              <div class="mono up" style="color:var(--ter);">Exterior</div>
+              <div class="n" id="extArea">2,500</div>
+            </div>
+            <div style="width:1px; height:34px; background:var(--border);"></div>
+            <div>
+              <div class="mono up" style="color:var(--gold);">Interior</div>
+              <div class="n" id="intArea" style="color:var(--gold);">7,500</div>
+            </div>
+            <div class="mono" style="color:var(--ter); flex:1 1 144px; min-width:144px; max-width:216px;">Bigger inside than out. The dotted floor line is the exterior footprint.</div>
+          </div>
+        </div>
+
+        <div id="streamBar" role="group" aria-label="Render source">
+          <button id="modeWeb" aria-pressed="true">Web mock</button>
+          <button id="modeUnreal" aria-pressed="false">Unreal stream</button>
+        </div>
+
+        <div id="streamPane">
+          <div class="streamCard">
+            <div>
+              <div class="mono up" style="color:var(--ter);">Pixel streaming · stub</div>
+              <h2 style="margin:5px 0 0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:34px; line-height:42px; letter-spacing:-0.01em;">Connect the Unreal signalling server</h2>
+              <div style="color:var(--sec); padding-top:8px;">Same gestures, engine render. Point this at your Pixel Streaming signalling URL; the handshake below is wired and waiting for a real endpoint.</div>
+            </div>
+            <div class="field">
+              <input id="streamUrl" value="wss://stream.faberland.io/signalling" spellcheck="false" aria-label="Signalling URL" />
+              <button class="btn btn-primary" id="streamConnect">Connect</button>
+            </div>
+            <div id="streamLog" class="mono" aria-live="polite"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:13px;">
+              <div class="mono" style="color:var(--ter);">Input forwarding, resolution and touch mapping are stubbed here.</div>
+              <button class="btn btn-sm" id="streamBack">Back to web mock</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <h2>Fit out the space</h2>
+        <div class="mono" style="color:var(--ter);">Click a piece to drop it in, then drag it on the floor. Selected piece: R rotates, Delete removes.</div>
+        <div class="palette" id="palette"></div>
+        <div>
+          <div class="mono up" style="color:var(--ter); padding-bottom:8px;">Placed</div>
+          <div id="placedList"></div>
+        </div>
+        <div>
+          <div class="mono up" style="color:var(--ter); padding-bottom:8px;">Lighting</div>
+          <div class="palette" id="lighting"></div>
+        </div>
+        <div class="note mono">Cette scène est une maquette web. L'édition définitive passera par le pixel streaming Unreal — mêmes gestes, rendu du moteur.</div>
+      </aside>
+    </div>
+
+    <div id="drawer" role="dialog" aria-modal="true" aria-label="Cart">
+      <div id="scrim"></div>
+      <div id="sheet">
+        <div style="flex:none; padding:21px 34px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:13px;">
+          <h2 id="sheetTitle" style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px;">Your plots</h2>
+          <button class="linkbtn" id="sheetClose">Close</button>
+        </div>
+        <div id="sheetBody"></div>
+        <div id="sheetFoot"></div>
+      </div>
+    </div>
+
+    <div id="veil"></div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var t = document.getElementById('legendToggle'), l = document.getElementById('legend');
+    t.addEventListener('click', function () {
+      l.hidden = !l.hidden;
+      t.textContent = l.hidden ? 'Legend' : 'Hide legend';
+    });
+  })();
+</script>
+<script type="module" src="./map-app.js"></script>
+</body>
+</html>

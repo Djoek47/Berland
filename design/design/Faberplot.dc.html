@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+body { margin:0; background:#0A0A09; }
+a { color:#D4A24C; text-decoration:none; }
+a:hover { color:#E3B667; }
+</style>
+</helmet>
+<div style="background:{{ c.bg }}; color:{{ c.ink }}; font-family:'Inter',system-ui,sans-serif; font-size:16px; line-height:26px;">
+<div style="max-width:1240px; margin:0 auto; padding:0 34px;">
+
+  <div style="height:89px; display:flex; align-items:center; justify-content:space-between; gap:34px; border-bottom:1px solid {{ c.border }};">
+    <div style="display:flex; align-items:center; gap:13px;">
+      <img src="assets/mark-star.png" alt="" style="height:26px; width:26px; flex:none; object-fit:contain; display:block;" />
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><img src="assets/faberland-cream.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if><sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><img src="assets/faberland-ink.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if>
+    </div>
+    <div style="display:flex; align-items:center; gap:34px; font-size:14px; color:{{ c.sec }};">
+      <div style="color:{{ c.ink }};">Spaces</div><div>Showcase</div><div>Company</div><div>Get started</div>
+    </div>
+  </div>
+
+  <div style="padding:34px 0; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Spaces / Market District / Faberplot #1</div>
+
+  <div style="display:grid; grid-template-columns:minmax(0,61.9fr) minmax(0,38.1fr); gap:55px; align-items:start; padding-bottom:144px;">
+
+    <div style="display:flex; flex-direction:column; gap:34px;">
+      <div style="aspect-ratio:13/8; border-radius:10px; background-color:{{ c.surface }}; background-image:url(assets/shot-street-1.png); background-size:145% auto; background-position:0% 100%; background-repeat:no-repeat; border:1px solid {{ c.border }};"></div>
+      <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:34px;">
+        <div style="aspect-ratio:13/8; border-radius:10px; background-color:{{ c.surface }}; background-image:url(assets/shot-interior.png); background-size:145% auto; background-position:0% 100%; background-repeat:no-repeat; border:1px solid {{ c.border }};"></div>
+        <div style="aspect-ratio:13/8; border-radius:10px; background-color:{{ c.surface }}; background-image:url(assets/shot-street-2.png); background-size:145% auto; background-position:0% 100%; background-repeat:no-repeat; border:1px solid {{ c.border }};"></div>
+        <div style="aspect-ratio:13/8; border-radius:10px; background:{{ c.bg }}; border:1px dashed {{ c.borderStrong }}; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }}; text-align:center; padding:13px;">MOMENT 4.6<br />ORBITE 2 s<br />RÉSERVÉE</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:21px; border-top:1px solid {{ c.border }}; padding-top:34px;">
+        <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">The district</h2>
+        <div style="aspect-ratio:13/8; border-radius:10px; background-color:{{ c.surface }}; background-image:url(assets/shot-street-3.png); background-size:145% auto; background-position:0% 100%; background-repeat:no-repeat; border:1px solid {{ c.border }};"></div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:{{ c.ter }};">Aperçu du quartier. Captures provisoires — les panneaux de tiers sont à retirer du build avant publication.</div>
+      </div>
+    </div>
+
+    <div style="position:sticky; top:34px; display:flex; flex-direction:column; gap:34px;">
+      <div style="background:{{ c.surface }}; border:1px solid {{ c.border }}; border-radius:10px; padding:34px; display:flex; flex-direction:column; gap:21px;">
+        <div style="display:flex; flex-direction:column; gap:5px;">
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Faberplot #1</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:110px; line-height:110px; letter-spacing:-0.04em; color:{{ c.gold }}; font-variant-numeric:tabular-nums;">$65</div>
+          <div style="font-size:14px; color:{{ c.sec }};">per month</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+          <div style="font-size:14px; color:{{ c.sec }};">Market District · Small</div>
+          <div style="font-size:14px; color:{{ c.ter }}; font-variant-numeric:tabular-nums;">2,500 sq ft</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; align-self:flex-start; background:{{ c.surface2 }}; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ink }};"><span style="width:5px; height:5px; border-radius:999px; background:{{ c.pos }}; display:block;"></span>Available</div>
+
+        <div style="border-top:1px solid {{ c.border }}; padding-top:21px; display:flex; flex-direction:column;">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }}; padding-bottom:13px;">Term</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <sc-for list="{{ terms }}" as="t" hint-placeholder-count="3">
+              <button type="button" onClick="{{ t.pick }}" style="{{ t.style }}">
+                <span>{{ t.label }}</span>
+                <span style="color:{{ c.sec }}; font-size:14px;">{{ t.note }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid {{ c.border }}; padding-top:21px; display:flex; flex-direction:column; gap:13px;">
+          <div style="display:flex; justify-content:space-between; gap:13px; font-variant-numeric:tabular-nums;">
+            <span style="color:{{ c.sec }};">Total</span>
+            <span>{{ total }}</span>
+          </div>
+          <button type="button" style="height:55px; padding:0 21px; border:0; border-radius:10px; background:{{ c.gold }}; color:{{ c.bg }}; font-family:'Inter',sans-serif; font-weight:600; font-size:16px; cursor:pointer; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:{{ c.goldHover }};">Rent this space</button>
+          <div style="font-size:10px; line-height:16px; letter-spacing:0.02em; color:{{ c.ter }};">Stripe processes rent. Your sales settle to you.</div>
+        </div>
+      </div>
+
+      <div style="border:1px solid {{ c.border }}; border-radius:10px; padding:34px; display:flex; flex-direction:column; gap:21px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">What you get</div>
+        <div style="display:flex; flex-direction:column; gap:13px;">
+          <div style="display:flex; gap:13px;"><span style="color:{{ c.gold }};">·</span><span>Self-service fit-out — upload your own 3D objects, move them, price them, live.</span></div>
+          <div style="display:flex; gap:13px;"><span style="color:{{ c.gold }};">·</span><span>Instant renovation — change the whole look for Halloween or Christmas in minutes.</span></div>
+          <div style="display:flex; gap:13px;"><span style="color:{{ c.gold }};">·</span><span>No operating costs — no power, no cleaning, no security, no maintenance.</span></div>
+          <div style="display:flex; gap:13px;"><span style="color:{{ c.gold }};">·</span><span>Payments handled — Stripe processes rent. Your sales settle to you.</span></div>
+          <div style="display:flex; gap:13px;"><span style="color:{{ c.gold }};">·</span><span>Bigger inside — interior space can exceed the exterior footprint.</span></div>
+          <div style="display:flex; gap:13px;"><span style="color:{{ c.gold }};">·</span><span>Always open — no hours, no staff required, no geography.</span></div>
+        </div>
+      </div>
+
+      <div style="border:1px solid {{ c.warn }}; border-radius:10px; padding:34px; display:flex; flex-direction:column; gap:13px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.warn }};">Textes manquants</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:{{ c.ter }};">« How fit-out works » (trois lignes) et « Cancellation » (une ligne) ne figurent pas dans le brief. Ce sont des engagements contractuels : je ne les invente pas. Envoyez les deux blocs et je les pose ici.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid {{ c.border }}; padding:89px 0 144px; display:flex; flex-direction:column; gap:34px;">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Mobile · 390 px · barre d'action fixe en bas</div>
+    <div style="width:390px; max-width:100%; border:1px solid {{ c.borderStrong }}; border-radius:10px; overflow:hidden;">
+      <div style="height:55px; padding:0 21px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid {{ c.border }};">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <img src="assets/mark-star.png" alt="" style="height:21px; width:21px; flex:none; object-fit:contain; display:block;" />
+          <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><img src="assets/faberland-cream.png" alt="Faberland" style="height:13px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if><sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><img src="assets/faberland-ink.png" alt="Faberland" style="height:13px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:{{ c.ter }};">#1</div>
+      </div>
+      <div style="aspect-ratio:13/8; background-color:{{ c.surface }}; background-image:url(assets/shot-street-1.png); background-size:145% auto; background-position:0% 100%; background-repeat:no-repeat;"></div>
+      <div style="padding:21px; display:flex; flex-direction:column; gap:13px;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.03em; color:{{ c.gold }}; font-variant-numeric:tabular-nums;">$65</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px;">Faberplot #1</div>
+        <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Market District · Small</div>
+        <div style="font-size:14px; line-height:22px; color:{{ c.ter }}; font-variant-numeric:tabular-nums;">2,500 sq ft</div>
+        <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; align-self:flex-start; background:{{ c.surface2 }}; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase;"><span style="width:5px; height:5px; border-radius:999px; background:{{ c.pos }}; display:block;"></span>Available</div>
+      </div>
+      <div style="border-top:1px solid {{ c.border }}; padding:13px 21px; display:flex; align-items:center; justify-content:space-between; gap:13px; background:{{ c.surface }};">
+        <div style="display:flex; flex-direction:column;">
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; color:{{ c.gold }}; font-variant-numeric:tabular-nums;">$65</div>
+          <div style="font-size:10px; letter-spacing:0.02em; color:{{ c.ter }};">then monthly</div>
+        </div>
+        <div style="height:55px; padding:0 21px; border-radius:10px; background:{{ c.gold }}; color:{{ c.bg }}; font-weight:600; display:flex; align-items:center;">Rent this space</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;dark | light&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+const THEMES = {
+  dark: {
+    bg:'#0A0A09', surface:'#131210', surface2:'#1C1A17', raised:'#232019',
+    border:'#262420', borderStrong:'#35312A', borderFocus:'#4A443A',
+    ink:'#F4F1E9', sec:'#A8A093', ter:'#6E675C',
+    gold:'#D4A24C', goldHover:'#E3B667', onGold:'#0A0A09', warn:'#C08A3E', pos:'#4E8C6A', isDark:true,
+    scrim:'rgba(10,10,9,0.55)',
+    heroFade:'linear-gradient(0deg,#0A0A09 0%,rgba(10,10,9,0.93) 55%,rgba(10,10,9,0.62) 100%)',
+    heroFadeM:'linear-gradient(0deg,#0A0A09 0%,rgba(10,10,9,0.93) 58%,rgba(10,10,9,0.62) 100%)',
+  },
+  light: {
+    bg:'#F4F1E9', surface:'#EAE5DA', surface2:'#E1DACB', raised:'#FFFFFF',
+    border:'#D9D2C4', borderStrong:'#C4BBA9', borderFocus:'#8A8272',
+    ink:'#0A0A09', sec:'#4A443A', ter:'#6E675C',
+    gold:'#8A6C33', goldHover:'#6F561F', onGold:'#F4F1E9', warn:'#8A5A1E', pos:'#2F6B49', isDark:false,
+    scrim:'rgba(244,241,233,0.62)',
+    heroFade:'linear-gradient(0deg,#F4F1E9 0%,rgba(244,241,233,0.90) 42%,rgba(244,241,233,0.14) 100%)',
+    heroFadeM:'linear-gradient(0deg,#F4F1E9 0%,rgba(244,241,233,0.90) 46%,rgba(244,241,233,0.14) 100%)',
+  }
+};
+
+class Component extends DCLogic {
+  state = { term: 'Monthly' };
+  row(active, c) {
+    const base = "height:55px; padding:0 21px; border-radius:10px; font-family:'Inter',sans-serif; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:13px; text-align:left; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1), border-color 89ms cubic-bezier(0.16,1,0.3,1);";
+    return active
+      ? base + ' background:' + c.surface2 + '; border:1px solid ' + c.borderFocus + '; color:' + c.ink + '; font-weight:600;'
+      : base + ' background:transparent; border:1px solid ' + c.borderStrong + '; color:' + c.sec + '; font-weight:400;';
+  }
+  renderVals() {
+    const c = THEMES[this.props.theme ?? 'dark'] || THEMES.dark;
+    const price = 65;
+    const defs = [
+      { label:'Monthly', note:'', total: '$65 today, then monthly' },
+      { label:'Quarterly', note:'', total: '$' + (price * 3) + ' today, then quarterly' },
+      { label:'Yearly', note:'save 15%', total: '$' + Math.round(price * 12 * 0.85) + ' today, then yearly' }
+    ];
+    const cur = defs.find(d => d.label === this.state.term) || defs[0];
+    return {
+      c,
+      isDark: c.isDark,
+      isLight: !c.isDark,
+      terms: defs.map(d => ({
+        label: d.label,
+        note: d.note,
+        style: this.row(this.state.term === d.label, c),
+        pick: () => this.setState({ term: d.label })
+      })),
+      total: cur.total
+    };
+  }
+}
+</script>
+</body>
+</html>
