@@ -19,7 +19,7 @@ type BrandWordmarkProps = {
 export function BrandMark({ size = 42, className }: BrandMarkProps) {
   return (
     <Image
-      src="/images/mark-star.png"
+      src="/design/assets/mark-star.png"
       alt=""
       width={size}
       height={size}
@@ -37,10 +37,10 @@ export function BrandWordmark({ variant = "header", height = 34, className }: Br
 
   const isLight = mounted && resolvedTheme === "light"
   const src = isLight
-    ? "/images/faberland-ink.png"
+    ? "/design/assets/faberland-ink.png"
     : variant === "footer"
-      ? "/images/faberland-gold.png"
-      : "/images/faberland-cream.png"
+      ? "/design/assets/faberland-gold.png"
+      : "/design/assets/faberland-cream.png"
 
   // Intrinsic 1076×193
   const width = Math.round((height * 1076) / 193)
@@ -72,5 +72,28 @@ export function BrandLockup({
       <BrandMark size={markSize} />
       <BrandWordmark variant={variant} height={wordHeight} />
     </span>
+  )
+}
+
+/** Theme-aware Visser Studio wordmark from design/assets */
+export function VisserWordmark({ height = 42, className }: { height?: number; className?: string }) {
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
+  const isLight = mounted && resolvedTheme === "light"
+  const src = isLight ? "/design/assets/visser-ink.png" : "/design/assets/visser-cream.png"
+  // Approximate intrinsic ratio from handoff PNGs
+  const width = Math.round(height * 2.8)
+
+  return (
+    <Image
+      src={src}
+      alt="Visser Studio"
+      width={width}
+      height={height}
+      className={className}
+      style={{ height, width: "auto", flex: "none", objectFit: "contain", display: "block" }}
+    />
   )
 }

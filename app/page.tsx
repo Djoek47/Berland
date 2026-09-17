@@ -34,7 +34,7 @@ export default function HomePage() {
           position: "relative",
           minHeight: 610,
           backgroundColor: "var(--fl-bg)",
-          backgroundImage: "url('/images/stores/store1/1.0.PNG'), linear-gradient(180deg, var(--fl-surface2), var(--fl-bg))",
+          backgroundImage: "url('/design/assets/shot-street-1.png')",
           backgroundSize: "cover",
           backgroundPosition: "0% 100%",
           display: "flex",

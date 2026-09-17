@@ -1,9 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
 import { useState } from "react"
-import { BrandLockup } from "@/components/site/brand"
+import { BrandLockup, VisserWordmark } from "@/components/site/brand"
 import { ThemeToggle } from "@/components/site/theme-toggle"
 
 const NAV = [
@@ -130,13 +129,7 @@ export function SiteFooter() {
             VISSER STUDIO INC. · © <span className="fl-tabular">{year}</span>
           </div>
         </div>
-        <Image
-          src="/images/visser-studios-logo.png"
-          alt="Visser Studio"
-          width={120}
-          height={42}
-          style={{ height: 42, width: "auto", objectFit: "contain" }}
-        />
+        <VisserWordmark height={42} />
       </div>
     </footer>
   )

@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
-import Image from "next/image"
 import Link from "next/link"
+import { VisserWordmark } from "@/components/site/brand"
 import { SiteHeader, SiteFooter } from "@/components/site/chrome"
 
 export const metadata: Metadata = {
@@ -62,13 +62,7 @@ export default function CompanyPage() {
               gap: 21,
             }}
           >
-            <Image
-              src="/images/visser-studios-logo.png"
-              alt="Visser Studio"
-              width={160}
-              height={68}
-              style={{ height: 68, width: "auto", objectFit: "contain" }}
-            />
+            <VisserWordmark height={68} />
             <div className="fl-mono" style={{ color: "var(--fl-sec)" }}>
               VISSER STUDIO INC.
               <div style={{ paddingTop: 8, color: "var(--fl-ter)" }}>Incorporated 21 February 2025</div>
