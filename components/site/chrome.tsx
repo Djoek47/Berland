@@ -116,8 +116,7 @@ export function SiteFooter() {
             <Link href="/map" style={{ color: "var(--fl-sec)" }}>Map</Link>
           </div>
           <div className="fl-mono fl-ter">
-            VISSER STUDIO INC. · NEQ 1180646979 · 1815–3440 rue Durocher, Montréal (Québec) H2X 2E2 · ©{" "}
-            <span className="fl-tabular">{year}</span>
+            VISSER STUDIO INC. · © <span className="fl-tabular">{year}</span>
           </div>
         </div>
         <Image

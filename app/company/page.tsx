@@ -71,9 +71,6 @@ export default function CompanyPage() {
             />
             <div className="fl-mono" style={{ color: "var(--fl-sec)" }}>
               VISSER STUDIO INC.
-              <div>NEQ 1180646979</div>
-              <div>1815–3440 rue Durocher</div>
-              <div>Montréal (Québec) H2X 2E2</div>
               <div style={{ paddingTop: 8, color: "var(--fl-ter)" }}>Incorporated 21 February 2025</div>
             </div>
           </div>
