@@ -437,9 +437,9 @@ export function mountMapApp(): void {
     controls = new OrbitControls(camera, canvas);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
-    controls.target.set(0, 1.2, 0);
+    controls.target.set(0, 0.5, -2.2);
     controls.maxPolarAngle = Math.PI / 2.02;
-    controls.minDistance = 3;
+    controls.minDistance = 2.2;
     controls.maxDistance = 26;
 
     scene.add(new THREE.HemisphereLight(0xE8E2D2, 0x2A2721, 0.75));
@@ -555,16 +555,16 @@ export function mountMapApp(): void {
     resize();
     if (!raf) loop();
 
-    // camera flies in from above the shopfront
-    const from = new THREE.Vector3(0, 16, 26);
-    const to = new THREE.Vector3(0, 3.4, 12.5);
+    // land INSIDE the shell (front glass sits at z = +d/2), not outside it
+    const from = new THREE.Vector3(0, 14, 22);
+    const to = new THREE.Vector3(0, 4.0, 5.2);
     camera.position.copy(from);
     const t0 = performance.now();
     const fly = () => {
       const t = Math.min(1, (performance.now() - t0) / 900);
       const e = 1 - Math.pow(1 - t, 3);
       camera.position.lerpVectors(from, to, e);
-      controls.target.set(0, 1.2 + (1 - e) * 1.4, 0);
+      controls.target.set(0, 0.5 + (1 - e) * 2.0, -2.2);
       if (t < 1) requestAnimationFrame(fly);
     };
     fly();
