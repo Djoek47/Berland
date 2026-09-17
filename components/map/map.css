@@ -3,7 +3,7 @@
   .fl-map {
     --bg:#0A0A09; --surface:#131210; --surface2:#1C1A17;
     --border:#262420; --border-strong:#35312A; --border-focus:#4A443A;
-    --ink:#F4F1E9; --sec:#A8A093; --ter:#6E675C;
+    --ink:#F4F1E9; --sec:#A8A093; --ter:#9A9285;
     --gold:#D4A24C; --gold-hover:#E3B667; --pos:#4E8C6A; --warn:#C08A3E; --neg:#B4553F;
   }
   .fl-map * { box-sizing:border-box; }
@@ -13,6 +13,7 @@
   .fl-map a:hover { color:var(--gold-hover); }
   .fl-map button { font-family:var(--font-inter),sans-serif; cursor:pointer; }
   .fl-map .mono { font-family:var(--font-ibm-plex-mono),monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; }
+  .fl-map .mono-help { font-family:var(--font-ibm-plex-mono),monospace; font-size:12px; line-height:18px; letter-spacing:0.02em; color:var(--sec); }
   .fl-map .up { text-transform:uppercase; }
 
   .fl-map { position:fixed; inset:0; display:flex; flex-direction:column; z-index:50; }
@@ -162,7 +163,7 @@
   .fl-map .steps { display:flex; gap:8px; }
   .fl-map .steps span { flex:1; height:3px; border-radius:999px; background:var(--border-strong); }
   .fl-map .steps span.on { background:var(--gold); }
-  .fl-map .linkbtn { background:none; border:0; color:var(--ter); font-family:var(--font-ibm-plex-mono),monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; padding:0; }
+  .fl-map .linkbtn { background:none; border:0; color:var(--sec); font-family:var(--font-ibm-plex-mono),monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; padding:0; }
   .fl-map .linkbtn:hover { color:var(--ink); }
 
   @media (prefers-reduced-motion: reduce) {

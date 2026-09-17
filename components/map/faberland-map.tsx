@@ -43,7 +43,7 @@ export default function FaberlandMap() {
           />
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: 21 }}>
-          <div id="crumb" className="mono up" style={{ color: "var(--ter)" }}>
+          <div id="crumb" className="mono up" style={{ color: "var(--sec)" }}>
             Map · 48 plots
           </div>
           <button className="btn btn-sm" id="cartBtn" style={{ gap: 8 }} type="button">
@@ -65,11 +65,11 @@ export default function FaberlandMap() {
           </div>
 
           <div id="mapTitle">
-            <div className="mono up" style={{ color: "var(--ter)" }}>
+            <div className="mono up" style={{ color: "var(--sec)" }}>
               Faberland · top-down
             </div>
             <h1>Pick your exact store.</h1>
-            <div className="mono" style={{ color: "var(--ter)" }}>
+            <div className="mono-help">
               Click any lit plot to walk inside it in 3D. Scroll to zoom, drag to pan. Closer to the entrance
               portal costs more.
             </div>
@@ -132,7 +132,7 @@ export default function FaberlandMap() {
               <div className="plate" id="roomLabel" />
               <div className="plate" id="bigger">
                 <div>
-                  <div className="mono up" style={{ color: "var(--ter)" }}>
+                  <div className="mono up" style={{ color: "var(--sec)" }}>
                     Exterior
                   </div>
                   <div className="n" id="extArea">
@@ -148,7 +148,7 @@ export default function FaberlandMap() {
                     7,500
                   </div>
                 </div>
-                <div className="mono" style={{ color: "var(--ter)", flex: "1 1 144px", minWidth: 144, maxWidth: 216 }}>
+                <div className="mono-help" style={{ flex: "1 1 144px", minWidth: 144, maxWidth: 216 }}>
                   Bigger inside than out. The dotted floor line is the exterior footprint.
                 </div>
               </div>
@@ -166,7 +166,7 @@ export default function FaberlandMap() {
             <div id="streamPane">
               <div className="streamCard">
                 <div>
-                  <div className="mono up" style={{ color: "var(--ter)" }}>
+                  <div className="mono up" style={{ color: "var(--sec)" }}>
                     Pixel streaming · stub
                   </div>
                   <h2
@@ -199,7 +199,7 @@ export default function FaberlandMap() {
                 </div>
                 <div id="streamLog" className="mono" aria-live="polite" />
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 13 }}>
-                  <div className="mono" style={{ color: "var(--ter)" }}>
+                  <div className="mono-help">
                     Input forwarding, resolution and touch mapping are stubbed here.
                   </div>
                   <button className="btn btn-sm" id="streamBack" type="button">
@@ -212,18 +212,18 @@ export default function FaberlandMap() {
 
           <aside>
             <h2>Fit out the space</h2>
-            <div className="mono" style={{ color: "var(--ter)" }}>
+            <div className="mono-help">
               Click a piece to drop it in, then drag it on the floor. Selected piece: R rotates, Delete removes.
             </div>
             <div className="palette" id="palette" />
             <div>
-              <div className="mono up" style={{ color: "var(--ter)", paddingBottom: 8 }}>
+              <div className="mono up" style={{ color: "var(--sec)", paddingBottom: 8 }}>
                 Placed
               </div>
               <div id="placedList" />
             </div>
             <div>
-              <div className="mono up" style={{ color: "var(--ter)", paddingBottom: 8 }}>
+              <div className="mono up" style={{ color: "var(--sec)", paddingBottom: 8 }}>
                 Lighting
               </div>
               <div className="palette" id="lighting" />

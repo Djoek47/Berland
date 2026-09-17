@@ -412,12 +412,12 @@ export function mountMapApp(): void {
   function renderList() {
     const box = el('placedList');
     if (!placed.length) {
-      box.innerHTML = '<div class="mono" style="color:var(--ter);">Nothing placed yet.</div>';
+      box.innerHTML = '<div class="mono-help">Nothing placed yet.</div>';
       return;
     }
     box.innerHTML = placed.map((o, i) =>
       `<div class="rowline"><span style="color:${o === selected ? 'var(--gold)' : 'var(--ink)'}">${o.userData.kind}</span>` +
-      `<span class="mono" style="color:var(--ter);">#${String(i + 1).padStart(2, '0')}</span></div>`
+      `<span class="mono" style="color:var(--sec);">#${String(i + 1).padStart(2, '0')}</span></div>`
     ).join('');
   }
 
@@ -537,7 +537,7 @@ export function mountMapApp(): void {
     el('rentBtn').style.display = '';
     el('crumb').textContent = `Map / ${DISTRICT_OF(p.id)} / Faberplot #${p.id}`;
     el('roomLabel').innerHTML =
-      `<div class="mono up" style="color:var(--ter);">${DISTRICT_OF(p.id)} District · ${p.size}</div>` +
+      `<div class="mono up" style="color:var(--sec);">${DISTRICT_OF(p.id)} District · ${p.size}</div>` +
       `<div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px;">Faberplot #${p.id}` +
       `<span style="color:var(--gold);"> · $${p.price}/month</span></div>`;
     syncRentBtn();
@@ -601,7 +601,7 @@ export function mountMapApp(): void {
     const row = document.createElement('div');
     row.style.cssText = 'display:flex; gap:8px; align-items:baseline;';
     row.innerHTML =
-      `<span style="color:var(--ter);">${new Date().toLocaleTimeString('en-GB', { hour12: false })}</span>` +
+      `<span style="color:var(--sec);">${new Date().toLocaleTimeString('en-GB', { hour12: false })}</span>` +
       `<span style="color:${color || 'var(--sec)'};">${text}</span>`;
     streamLog.appendChild(row);
     streamLog.scrollTop = streamLog.scrollHeight;
@@ -697,7 +697,7 @@ export function mountMapApp(): void {
           <div class="line">
             <div>
               <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">Faberplot #${l.id}</div>
-              <div class="mono up" style="color:var(--ter);">${l.district} district · ${l.size}${l.sqft ? ' · ' + l.sqft.toLocaleString('en-US') + ' sq ft outside' : ''}</div>
+              <div class="mono up" style="color:var(--sec);">${l.district} district · ${l.size}${l.sqft ? ' · ' + l.sqft.toLocaleString('en-US') + ' sq ft outside' : ''}</div>
             </div>
             <div style="text-align:right;">
               <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px; color:var(--gold);">${fmt(l.price)}</div>
@@ -712,15 +712,15 @@ export function mountMapApp(): void {
       body.innerHTML = bar + `
         <div style="display:flex; flex-direction:column; gap:13px;">
           <label style="display:flex; flex-direction:column; gap:5px;">
-            <span class="mono up" style="color:var(--ter);">Brand or company</span>
+            <span class="mono up" style="color:var(--sec);">Brand or company</span>
             <span class="field"><input id="fBrand" placeholder="Faberg&eacute; Atelier" /></span>
           </label>
           <label style="display:flex; flex-direction:column; gap:5px;">
-            <span class="mono up" style="color:var(--ter);">Contact email</span>
+            <span class="mono up" style="color:var(--sec);">Contact email</span>
             <span class="field"><input id="fMail" placeholder="you@studio.com" /></span>
           </label>
           <label style="display:flex; flex-direction:column; gap:5px;">
-            <span class="mono up" style="color:var(--ter);">Opening date</span>
+            <span class="mono up" style="color:var(--sec);">Opening date</span>
             <span class="field"><input id="fDate" placeholder="01 / 10 / 2026" /></span>
           </label>
         </div>`;

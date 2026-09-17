@@ -10,14 +10,15 @@
   --fl-border-focus: #4a443a;
   --fl-ink: #f4f1e9;
   --fl-sec: #a8a093;
-  --fl-ter: #6e675c;
+  /* Dark tertiary was #6E675C — fails contrast on bg/surface at 10px mono; keep quieter than --sec but readable */
+  --fl-ter: #9a9285;
   --fl-gold: #d4a24c;
   --fl-gold-hover: #e3b667;
   --fl-on-gold: #0a0a09;
   --fl-pos: #4e8c6a;
   --fl-warn: #c08a3e;
   --fl-neg: #b4553f;
-  --fl-scrim: rgba(10, 10, 9, 0.55);
+  --fl-scrim: rgba(10, 10, 9, 0.88);
   --fl-radius: 10px;
   --fl-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --fl-t-fast: 89ms;
@@ -82,6 +83,15 @@
   font-size: 10px;
   line-height: 16px;
   letter-spacing: 0.02em;
+}
+
+/* Readable mono for instructions / UI help (not design-board annotations) */
+.fl-mono-help {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 0.02em;
+  color: var(--fl-sec);
 }
 
 .fl-up {

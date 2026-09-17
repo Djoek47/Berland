@@ -31,7 +31,6 @@ export function SiteHeader({
         justifyContent: "space-between",
         gap: 34,
         background: opaque ? "var(--fl-bg)" : "var(--fl-scrim)",
-        backdropFilter: opaque ? undefined : "blur(8px)",
         borderBottom: "1px solid var(--fl-border)",
         position: "sticky",
         top: 0,
@@ -44,10 +43,10 @@ export function SiteHeader({
 
       <nav
         className="hidden md:flex"
-        style={{ alignItems: "center", gap: 21, fontSize: 14, color: "var(--fl-sec)" }}
+        style={{ alignItems: "center", gap: 21, fontSize: 14, color: "var(--fl-ink)" }}
       >
         {NAV.map((item) => (
-          <Link key={item.href} href={item.href} style={{ color: "var(--fl-sec)" }}>
+          <Link key={item.href} href={item.href} style={{ color: "var(--fl-ink)" }}>
             {item.label}
           </Link>
         ))}

@@ -201,7 +201,7 @@ export default function SpacesPage() {
                         {DISTRICT_OF(p.id)} District · {p.size}
                       </div>
                       {sqft != null && (
-                        <div className="fl-tabular" style={{ fontSize: 14, lineHeight: "22px", color: "var(--fl-ter)" }}>
+                        <div className="fl-tabular" style={{ fontSize: 14, lineHeight: "22px", color: "var(--fl-sec)" }}>
                           {sqft.toLocaleString("en-US")} sq ft outside
                         </div>
                       )}
