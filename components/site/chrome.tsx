@@ -55,13 +55,13 @@ export function SiteHeader({
           Rent a space
         </Link>
         {trailing}
-        <ThemeToggle />
       </nav>
 
-      <div className="md:hidden" style={{ display: "flex", alignItems: "center", gap: 13 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 13, flex: "none" }}>
         <ThemeToggle />
         <button
           type="button"
+          className="md:hidden"
           aria-label="Menu"
           onClick={() => setOpen((v) => !v)}
           style={{ background: "none", border: 0, padding: 0, display: "flex", flexDirection: "column", gap: 5 }}
