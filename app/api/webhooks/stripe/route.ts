@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { PlotDatabase } from '@/lib/database'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-07-30.basil',
-})
+import { getStripe } from '@/lib/stripe'
 
 export async function POST(request: NextRequest) {
+  const stripe = getStripe()
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')!
 
@@ -21,11 +19,11 @@ export async function POST(request: NextRequest) {
 
   try {
     console.log('Webhook: Processing event:', event.type)
-    
+
     switch (event.type) {
       case 'checkout.session.completed':
         const session = event.data.object as Stripe.Checkout.Session
-        
+
         // Extract metadata with enhanced validation
         const plotId = session.metadata?.plotId
         const userAddress = session.metadata?.userAddress
@@ -55,7 +53,12 @@ export async function POST(request: NextRequest) {
             console.log('Webhook: Plot rental extended successfully')
           } else {
             // Mark plot as sold
-            await PlotDatabase.markPlotAsSold(parseInt(plotId), userAddress, userEmail, rentalTerm as 'monthly' | 'quarterly' | 'yearly')
+            await PlotDatabase.markPlotAsSold(
+              parseInt(plotId),
+              userAddress,
+              userEmail,
+              rentalTerm as 'monthly' | 'quarterly' | 'yearly'
+            )
             console.log('Webhook: Plot marked as sold successfully')
           }
         } catch (dbError) {
@@ -80,7 +83,6 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ received: true })
-
   } catch (error) {
     console.error('Webhook: Error processing event:', error)
     return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 })
