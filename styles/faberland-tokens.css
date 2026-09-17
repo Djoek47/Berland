@@ -18,7 +18,7 @@
   --fl-pos: #4e8c6a;
   --fl-warn: #c08a3e;
   --fl-neg: #b4553f;
-  --fl-scrim: rgba(10, 10, 9, 0.88);
+  --fl-scrim: rgba(10, 10, 9, 0.55);
   --fl-radius: 10px;
   --fl-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --fl-t-fast: 89ms;
