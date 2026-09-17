@@ -74,8 +74,8 @@ export default function ThreeDScene() {
     const textureLoader = new THREE.TextureLoader()
     textureLoader.crossOrigin = "anonymous"
 
-    const emblemTexture = textureLoader.load("/images/faberland-emblem.png")
-    const logoTexture = textureLoader.load("/images/faberland-logo.png")
+    const emblemTexture = textureLoader.load("/images/mark-star.png")
+    const logoTexture = textureLoader.load("/images/faberland-cream.png")
     const visserTexture = textureLoader.load("/images/visser-studios-logo.png")
 
     // Create a metaverse-like landscape

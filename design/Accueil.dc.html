@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+body { margin:0; background:#0A0A09; }
+a { color:#D4A24C; text-decoration:none; }
+a:hover { color:#E3B667; }
+</style>
+</helmet>
+<div style="background:{{ c.bg }}; color:{{ c.ink }}; font-family:'Inter',system-ui,sans-serif; font-size:16px; line-height:26px;">
+
+  <div style="position:relative; min-height:610px; background-color:{{ c.bg }}; background-image:url(assets/shot-street-1.png); background-size:cover; background-position:0% 100%; display:flex; flex-direction:column;">
+    <div style="height:89px; padding:0 34px; display:flex; align-items:center; justify-content:space-between; gap:34px; background:{{ c.scrim }}; backdrop-filter:blur(8px); border-bottom:1px solid {{ c.border }};">
+      <div style="display:flex; align-items:center; gap:13px;">
+        <img src="assets/mark-star.png" alt="" style="height:26px; width:26px; flex:none; object-fit:contain; display:block;" />
+        <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><img src="assets/faberland-cream.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if><sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><img src="assets/faberland-ink.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if>
+      </div>
+      <div style="display:flex; align-items:center; gap:34px; font-size:14px; color:{{ c.sec }};">
+        <div>Spaces</div><div>Showcase</div><div>Company</div><div>Get started</div>
+        <div style="height:55px; padding:0 21px; border-radius:10px; background:{{ c.gold }}; color:{{ c.bg }}; font-weight:600; font-size:16px; display:flex; align-items:center;">Rent a space</div>
+      </div>
+    </div>
+    <div style="flex:1; display:flex; align-items:flex-end; background:{{ c.heroFade }};">
+      <div style="max-width:1240px; margin:0 auto; width:100%; padding:0 34px 89px; display:grid; grid-template-columns:minmax(0,61.9fr) minmax(0,38.1fr); gap:55px; align-items:end;">
+        <h1 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:68px; line-height:70px; letter-spacing:-0.03em; text-wrap:balance;">Your storefront in a city that never closes.</h1>
+        <div style="display:flex; flex-direction:column; gap:34px;">
+          <p style="margin:0; color:{{ c.ink }};">Faberland is a 3D commercial district where customers walk in, look at your products from every angle, try them on at their real size, and buy. From $53 a month. No rent, no utilities, no build-out.</p>
+          <div style="display:flex; gap:21px; align-items:center; flex-wrap:wrap;">
+            <button type="button" style="height:55px; padding:0 21px; border:0; border-radius:10px; background:{{ c.gold }}; color:{{ c.bg }}; font-family:'Inter',sans-serif; font-weight:600; font-size:16px; cursor:pointer; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:{{ c.goldHover }};">See available spaces</button>
+            <button type="button" style="height:55px; padding:0 21px; border:1px solid {{ c.borderStrong }}; border-radius:10px; background:transparent; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-weight:500; font-size:16px; cursor:pointer;" style-hover="background:{{ c.surface2 }}; border-color:{{ c.borderFocus }};">What it looks like</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="position:absolute; right:34px; bottom:21px; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }}; text-align:right;">MOMENT 4.1 — SCÈNE 3D RÉSERVÉE · la caméra avance au défilement<br />capture provisoire · seule exception de flou du système : cette barre</div>
+  </div>
+
+  <div style="max-width:1240px; margin:0 auto; padding:0 34px;">
+
+    <div style="display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; border-bottom:1px solid {{ c.border }};">
+      <div style="padding:55px 21px 55px 0; display:flex; flex-direction:column; gap:8px;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; font-variant-numeric:tabular-nums;">48</div>
+        <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Commercial spaces built and priced</div>
+      </div>
+      <div style="padding:55px 21px; border-left:1px solid {{ c.border }}; display:flex; flex-direction:column; gap:8px;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; font-variant-numeric:tabular-nums;">5</div>
+        <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Districts — Market, Business, Arts, Entertainment, Central</div>
+      </div>
+      <div style="padding:55px 21px; border-left:1px solid {{ c.border }}; display:flex; flex-direction:column; gap:8px;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; font-variant-numeric:tabular-nums;">4</div>
+        <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Visitors per shared session, unlimited parallel sessions</div>
+      </div>
+      <div style="padding:55px 0 55px 21px; border-left:1px solid {{ c.border }}; display:flex; flex-direction:column; gap:8px;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em;">Instant</div>
+        <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Renovation — change your storefront for a season in minutes</div>
+      </div>
+    </div>
+
+    <div style="padding:144px 0 0; display:flex; flex-direction:column; gap:34px;">
+      <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:55px; align-items:end;">
+        <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; text-wrap:balance;">A storefront <span style="color:{{ c.gold }};">without</span> the building.</h2>
+        <p style="margin:0; color:{{ c.sec }}; max-width:68ch;">The same storefront, the two cost structures.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="border:1px solid {{ c.border }}; border-radius:10px; overflow:hidden;">
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }}; font-size:10px; line-height:16px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};"><div></div><div style="text-align:right;">Physical store</div><div style="text-align:right;">Faberland</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }}; font-variant-numeric:tabular-nums;"><div>Monthly rent</div><div style="text-align:right; color:{{ c.sec }};">$2,000 – $8,000</div><div style="text-align:right;">$53 – $95</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }};"><div>Power and heating</div><div style="text-align:right; color:{{ c.sec }};">Yes</div><div style="text-align:right;">None</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }};"><div>Cleaning</div><div style="text-align:right; color:{{ c.sec }};">Yes</div><div style="text-align:right;">None</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }};"><div>In-store staff</div><div style="text-align:right; color:{{ c.sec }};">Yes</div><div style="text-align:right;">Optional</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }}; font-variant-numeric:tabular-nums;"><div>Initial build-out</div><div style="text-align:right; color:{{ c.sec }};">$10,000 +</div><div style="text-align:right;">Included</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }};"><div>Seasonal renovation</div><div style="text-align:right; color:{{ c.sec }};">Closure and contractor</div><div style="text-align:right;">Instant</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }};"><div>Opening hours</div><div style="text-align:right; color:{{ c.sec }};">Limited</div><div style="text-align:right;">24/7</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px;"><div>Geographic reach</div><div style="text-align:right; color:{{ c.sec }};">The neighbourhood</div><div style="text-align:right;">The world</div></div>
+        </div>
+        <div style="font-size:10px; line-height:16px; letter-spacing:0.02em; color:{{ c.ter }}; font-style:italic;">Physical store costs are illustrative industry ranges, not quotes.</div>
+      </div>
+    </div>
+
+    <div style="padding:144px 0 0; display:flex; flex-direction:column; gap:34px;">
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em;">Four steps.</h2>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:34px;">
+        <div style="border-top:1px solid {{ c.borderStrong }}; padding-top:21px; display:flex; flex-direction:column; gap:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }};">01</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Pick a space</div>
+          <div style="color:{{ c.sec }};">Choose your district and size. Prices are published.</div>
+        </div>
+        <div style="border-top:1px solid {{ c.borderStrong }}; padding-top:21px; display:flex; flex-direction:column; gap:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }};">02</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Upload your products</div>
+          <div style="color:{{ c.sec }};">Drop in 3D models, or send us your catalogue.</div>
+        </div>
+        <div style="border-top:1px solid {{ c.borderStrong }}; padding-top:21px; display:flex; flex-direction:column; gap:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }};">03</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Open your doors</div>
+          <div style="color:{{ c.sec }};">Your store is live. Visitors walk in and browse.</div>
+        </div>
+        <div style="border-top:1px solid {{ c.borderStrong }}; padding-top:21px; display:flex; flex-direction:column; gap:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }};">04</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Sell</div>
+          <div style="color:{{ c.sec }};">They buy in-world or on your own site. You ship.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:144px 0 0; display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:55px; align-items:start;">
+      <div style="display:flex; flex-direction:column; gap:21px;">
+        <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; text-wrap:balance;">They know their <span style="color:{{ c.gold }};">size</span> before they buy.</h2>
+        <p style="margin:0; color:{{ c.sec }}; max-width:68ch;">Faberland measures a visitor's body using the headset and controllers — up to 120 points. Clothing is simulated at their real dimensions. If it doesn't fit, it doesn't go on. Shoes appear only in the visitor's size unless they turn the filter off.</p>
+        <div style="font-size:14px; color:{{ c.ink }};">Patent application in preparation.</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="aspect-ratio:13/8; background:{{ c.bg }}; border:1px dashed {{ c.borderStrong }}; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }}; text-align:center; padding:21px;">MOMENT 4.4 — SILHOUETTE FIL DE FER RÉSERVÉE<br />chevilles → genoux → hanches → torse → épaules · 89, 144, 233, 377 ms<br />puis le vêtement se pose · curseur de morphologie</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:{{ c.ter }};">Aucune mention de brevet en instance. La formule exacte est celle du brief.</div>
+      </div>
+    </div>
+
+    <div style="padding:144px 0 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:34px;">
+      <div style="background:{{ c.surface }}; border:1px solid {{ c.border }}; border-radius:10px; padding:34px; display:flex; flex-direction:column; gap:21px; min-height:233px; justify-content:space-between; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1), border-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:{{ c.surface2 }}; border-color:{{ c.borderStrong }};">
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Open a store</div>
+          <div style="color:{{ c.sec }};">From $53/month · 48 spaces available</div>
+        </div>
+        <div style="font-size:14px; color:{{ c.ink }}; border-bottom:1px solid {{ c.borderFocus }}; align-self:flex-start;">See available spaces</div>
+      </div>
+      <div style="background:{{ c.surface }}; border:1px solid {{ c.border }}; border-radius:10px; padding:34px; display:flex; flex-direction:column; gap:21px; min-height:233px; justify-content:space-between; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1), border-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:{{ c.surface2 }}; border-color:{{ c.borderStrong }};">
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Own a property</div>
+          <div style="color:{{ c.sec }};">Your own world, your own branding</div>
+        </div>
+        <div style="font-size:14px; color:{{ c.ink }}; border-bottom:1px solid {{ c.borderFocus }}; align-self:flex-start;">Faberland Estates</div>
+      </div>
+    </div>
+
+    <div style="margin-top:144px; border-top:1px solid {{ c.border }}; padding:55px 0 89px; display:flex; justify-content:space-between; align-items:flex-end; gap:34px; flex-wrap:wrap;">
+      <div style="display:flex; flex-direction:column; align-items:flex-start; gap:13px;">
+        <div style="display:flex; align-items:center; gap:13px;">
+          <img src="assets/mark-star.png" alt="" style="height:21px; width:21px; flex:none; object-fit:contain; display:block;" />
+          <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><img src="assets/faberland-gold.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if><sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><img src="assets/faberland-ink.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if>
+        </div>
+        <div style="display:flex; gap:21px; font-size:14px; color:{{ c.sec }}; flex-wrap:wrap;"><div>Spaces</div><div>Showcase</div><div>Company</div><div>Get started</div><div>Faberland Estates</div></div>
+        <div style="font-size:10px; line-height:16px; letter-spacing:0.02em; color:{{ c.ter }};">VISSER STUDIO INC. · NEQ 1180646979 · 1815–3440 rue Durocher, Montréal (Québec) H2X 2E2 · © <span style="font-variant-numeric:tabular-nums;">{{ year }}</span></div>
+      </div>
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><img src="assets/visser-cream.png" alt="Visser Studio" style="height:42px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if><sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><img src="assets/visser-ink.png" alt="Visser Studio" style="height:42px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if>
+    </div>
+
+    <div style="border-top:1px solid {{ c.border }}; padding:89px 0 144px; display:flex; flex-direction:column; gap:34px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Mobile · 390 px · Display à 42</div>
+      <div style="width:390px; max-width:100%; border:1px solid {{ c.borderStrong }}; border-radius:10px; overflow:hidden;">
+        <div style="min-height:466px; background-color:{{ c.bg }}; background-image:url(assets/shot-street-1.png); background-size:cover; background-position:30% 100%; display:flex; flex-direction:column;">
+          <div style="height:55px; padding:0 21px; display:flex; align-items:center; justify-content:space-between; background:{{ c.scrim }}; backdrop-filter:blur(8px); border-bottom:1px solid {{ c.border }};">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <img src="assets/mark-star.png" alt="" style="height:21px; width:21px; flex:none; object-fit:contain; display:block;" />
+              <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><img src="assets/faberland-cream.png" alt="Faberland" style="height:13px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if><sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><img src="assets/faberland-ink.png" alt="Faberland" style="height:13px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:5px;"><div style="width:21px; height:1px; background:{{ c.ink }};"></div><div style="width:21px; height:1px; background:{{ c.ink }};"></div></div>
+          </div>
+          <div style="flex:1; display:flex; align-items:flex-end; background:{{ c.heroFadeM }};">
+            <div style="padding:21px; display:flex; flex-direction:column; gap:21px;">
+              <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.03em; text-wrap:balance;">Your storefront in a city that never closes.</h2>
+              <p style="margin:0; font-size:14px; line-height:22px;">Faberland is a 3D commercial district where customers walk in, look at your products from every angle, try them on at their real size, and buy. From $53 a month.</p>
+              <div style="height:55px; padding:0 21px; border-radius:10px; background:{{ c.gold }}; color:{{ c.bg }}; font-weight:600; display:flex; align-items:center; align-self:flex-start;">See available spaces</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0;">
+          <div style="padding:21px; border-right:1px solid {{ c.border }}; border-bottom:1px solid {{ c.border }};"><div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; font-variant-numeric:tabular-nums;">48</div><div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Commercial spaces built and priced</div></div>
+          <div style="padding:21px; border-bottom:1px solid {{ c.border }};"><div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; font-variant-numeric:tabular-nums;">5</div><div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Districts</div></div>
+          <div style="padding:21px; border-right:1px solid {{ c.border }};"><div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; font-variant-numeric:tabular-nums;">4</div><div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Visitors per shared session</div></div>
+          <div style="padding:21px;"><div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px;">Instant</div><div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Renovation</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;dark | light&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+const THEMES = {
+  dark: {
+    bg:'#0A0A09', surface:'#131210', surface2:'#1C1A17', raised:'#232019',
+    border:'#262420', borderStrong:'#35312A', borderFocus:'#4A443A',
+    ink:'#F4F1E9', sec:'#A8A093', ter:'#6E675C',
+    gold:'#D4A24C', goldHover:'#E3B667', onGold:'#0A0A09', warn:'#C08A3E', pos:'#4E8C6A', isDark:true,
+    scrim:'rgba(10,10,9,0.55)',
+    heroFade:'linear-gradient(0deg,#0A0A09 0%,rgba(10,10,9,0.93) 55%,rgba(10,10,9,0.62) 100%)',
+    heroFadeM:'linear-gradient(0deg,#0A0A09 0%,rgba(10,10,9,0.93) 58%,rgba(10,10,9,0.62) 100%)',
+  },
+  light: {
+    bg:'#F4F1E9', surface:'#EAE5DA', surface2:'#E1DACB', raised:'#FFFFFF',
+    border:'#D9D2C4', borderStrong:'#C4BBA9', borderFocus:'#8A8272',
+    ink:'#0A0A09', sec:'#4A443A', ter:'#6E675C',
+    gold:'#8A6C33', goldHover:'#6F561F', onGold:'#F4F1E9', warn:'#8A5A1E', pos:'#2F6B49', isDark:false,
+    scrim:'rgba(244,241,233,0.62)',
+    heroFade:'linear-gradient(0deg,rgba(244,241,233,0.01) 0%,rgba(244,241,233,0.01) 100%)',
+    heroFadeM:'linear-gradient(0deg,rgba(244,241,233,0.01) 0%,rgba(244,241,233,0.01) 100%)',
+  }
+};
+
+class Component extends DCLogic {
+  renderVals() { const c = THEMES[this.props.theme ?? 'dark'] || THEMES.dark; return { c, isDark: c.isDark, isLight: !c.isDark, year: String(new Date().getFullYear()) }; }
+}
+</script>
+</body>
+</html>

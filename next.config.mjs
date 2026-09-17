@@ -19,6 +19,18 @@ const nextConfig = {
   },
   serverExternalPackages: ['redis'],
   
+  async redirects() {
+    return [
+      { source: "/marketplace", destination: "/spaces", permanent: true },
+      { source: "/about", destination: "/company", permanent: true },
+      { source: "/discover", destination: "/", permanent: true },
+      { source: "/screenshots", destination: "/showcase", permanent: true },
+      { source: "/business-advantages", destination: "/spaces", permanent: true },
+      { source: "/roadmap", destination: "/get-started", permanent: true },
+      { source: "/installation-guide", destination: "/get-started", permanent: true },
+    ]
+  },
+
   // Security headers
   async headers() {
     return [

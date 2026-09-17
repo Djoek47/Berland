@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+body { margin:0; background:#0A0A09; }
+a { color:#D4A24C; text-decoration:none; }
+a:hover { color:#E3B667; }
+</style>
+</helmet>
+<div style="background:#0A0A09; color:#F4F1E9; font-family:'Inter',system-ui,sans-serif; font-size:16px; line-height:26px; padding:55px 34px 144px;">
+<div style="max-width:1240px; margin:0 auto; display:flex; flex-direction:column; gap:144px;">
+
+  <header style="display:flex; flex-direction:column; gap:34px;">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:34px; flex-wrap:wrap; border-bottom:1px solid #262420; padding-bottom:21px;">
+      <img src="assets/faberland-cream.png" alt="Faberland" style="height:34px; width:auto; display:block;" />
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; text-transform:uppercase; color:#6E675C;">Planche de style · à valider avant les maquettes</div>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:34px;">
+      <h1 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; text-wrap:balance;">Le <span style="color:#D4A24C;">langage</span> avant les pages.</h1>
+      <p style="margin:0; max-width:68ch; color:#A8A093;">Space Grotesk 600 en titres, Inter 400 en corps. Échelle construite sur 16 px. Espacement en 5 · 8 · 13 · 21 · 34 · 55 · 89 · 144. Aucune ombre, aucun flou, aucun dégradé. Les annotations grises ne sont pas destinées à l'écran final.</p>
+    </div>
+  </header>
+
+  <section style="display:flex; flex-direction:column; gap:34px;">
+    <div style="display:flex; align-items:baseline; gap:13px; border-bottom:1px solid #262420; padding-bottom:13px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">01</div>
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Couleur</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:34px;">
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#6E675C;">Surfaces</div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#0A0A09; border:1px solid #35312A;"></div><div><div style="font-size:14px;">--surface-0</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#0A0A09 · fond de page</div></div></div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#131210; border:1px solid #35312A;"></div><div><div style="font-size:14px;">--surface-1</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#131210 · cartes</div></div></div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#1C1A17; border:1px solid #35312A;"></div><div><div style="font-size:14px;">--surface-2</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#1C1A17 · survol</div></div></div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#232019; border:1px solid #35312A;"></div><div><div style="font-size:14px;">--surface-raised</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#232019 · modales</div></div></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#6E675C;">Bordures</div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#131210; border:1px solid #262420;"></div><div><div style="font-size:14px;">--border-subtle</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#262420</div></div></div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#131210; border:1px solid #35312A;"></div><div><div style="font-size:14px;">--border-default</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#35312A</div></div></div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#131210; border:1px solid #4A443A;"></div><div><div style="font-size:14px;">--border-strong</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#4A443A · focus</div></div></div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C; padding-top:8px;">Épaisseur 1 px partout. Elle ne suit pas Fibonacci.</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#6E675C;">Texte</div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#F4F1E9;"></div><div><div style="font-size:14px;">--text-primary</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#F4F1E9 · crème</div></div></div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#A8A093;"></div><div><div style="font-size:14px;">--text-secondary</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#A8A093</div></div></div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#6E675C;"></div><div><div style="font-size:14px;">--text-tertiary</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#6E675C</div></div></div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#0A0A09; border:1px solid #35312A;"></div><div><div style="font-size:14px;">--text-inverse</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#0A0A09 · sur l'or</div></div></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#6E675C;">Accent et états</div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#D4A24C;"></div><div><div style="font-size:14px;">--accent</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#D4A24C · trois usages par écran</div></div></div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#E3B667;"></div><div><div style="font-size:14px;">--accent-hover</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#E3B667</div></div></div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#4E8C6A;"></div><div><div style="font-size:14px;">--positive</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#4E8C6A · available</div></div></div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#C08A3E;"></div><div><div style="font-size:14px;">--warning</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#C08A3E · reserved</div></div></div>
+        <div style="display:flex; align-items:center; gap:13px;"><div style="width:55px; height:55px; border-radius:10px; background:#B4553F;"></div><div><div style="font-size:14px;">--negative</div><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; color:#6E675C;">#B4553F</div></div></div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:34px; border-top:1px solid #262420; padding-top:21px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#6E675C;">Les trois usages de l'or, sur un même écran</div>
+      <div style="display:flex; gap:34px; flex-wrap:wrap; align-items:center;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; color:#D4A24C; font-variant-numeric:tabular-nums;">$65</div>
+        <div style="height:55px; padding:0 21px; border-radius:10px; background:#D4A24C; color:#0A0A09; font-weight:600; display:flex; align-items:center;">Rent this space</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Published <span style="color:#D4A24C;">prices</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:55px;">
+    <div style="display:flex; align-items:baseline; gap:13px; border-bottom:1px solid #262420; padding-bottom:13px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">02</div>
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Échelle typographique</h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:34px; align-items:start;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">68 / 70 · −0.03em · Space Grotesk 600<div>titre de page · 42 sur mobile</div></div>
+      <h3 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:68px; line-height:70px; letter-spacing:-0.03em; text-wrap:balance;">Your storefront in a city that never closes.</h3>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:34px; align-items:start;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">42 / 46 · −0.02em · Space Grotesk 600<div>titre de section · 26 sur mobile</div></div>
+      <h3 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; text-wrap:balance;">48 commercial spaces. <span style="color:#D4A24C;">Published</span> prices. No lease negotiation.</h3>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:34px; align-items:start;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">26 / 34 · −0.01em<div>sous-section, titre de carte</div></div>
+      <h3 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">They know their size before they buy.</h3>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:34px; align-items:start;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">21 / 30 · intermédiaire admis<div>annotation dense</div></div>
+      <div style="font-size:21px; line-height:30px; color:#A8A093;">Market District · Small · 2,500 sq ft</div>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:34px; align-items:start;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">16 / 26 · Inter 400<div>corps · 68 caractères maximum</div></div>
+      <p style="margin:0; max-width:68ch;">Faberland is a 3D commercial district where customers walk in, look at your products from every angle, try them on at their real size, and buy. From $53 a month. No rent, no utilities, no build-out.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:34px; align-items:start;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">10 / 16 · +0.02em<div>mention, en-tête de tableau</div></div>
+      <div style="font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">Physical store costs are illustrative industry ranges, not quotes.</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:34px; align-items:center; border-top:1px solid #262420; padding-top:34px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">110 / 110 · −0.04em<div style="color:#C08A3E;">Un seul usage sur tout le site. Les deux candidats sont montrés ici; il faut en retirer un.</div></div>
+      <div style="display:flex; gap:89px; flex-wrap:wrap; align-items:flex-end;">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:110px; line-height:110px; letter-spacing:-0.04em; font-variant-numeric:tabular-nums;">48</div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">Candidat A — accueil, nombre d'espaces</div>
+        </div>
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:110px; line-height:110px; letter-spacing:-0.04em; color:#D4A24C; font-variant-numeric:tabular-nums;">$65</div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">Candidat B — /faberplot/[id], le prix</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:34px;">
+    <div style="display:flex; align-items:baseline; gap:13px; border-bottom:1px solid #262420; padding-bottom:13px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">03</div>
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Élévation et rayons</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:34px;">
+      <div style="background:#0A0A09; border:1px dashed #262420; border-radius:10px; padding:21px; min-height:144px; display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px;">Fond</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C;">surface-0<div>aucune bordure</div></div>
+      </div>
+      <div style="background:#131210; border:1px solid #262420; border-radius:10px; padding:21px; min-height:144px; display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px;">Repos</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C;">surface-1<div>border-subtle</div></div>
+      </div>
+      <div style="background:#1C1A17; border:1px solid #35312A; border-radius:10px; padding:21px; min-height:144px; display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px;">Survol</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C;">surface-2<div>border-default</div></div>
+      </div>
+      <div style="background:#232019; border:1px solid #35312A; border-radius:10px; padding:21px; min-height:144px; display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px;">Élevé</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C;">surface-raised<div>modale, menu</div></div>
+      </div>
+    </div>
+    <div style="display:flex; gap:34px; flex-wrap:wrap; align-items:flex-end; border-top:1px solid #262420; padding-top:34px;">
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="width:144px; height:89px; background:#131210; border:1px solid #35312A; border-radius:10px;"></div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">--radius-card · 10 px · tout</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="height:34px; padding:0 13px; background:#1C1A17; border:1px solid #35312A; border-radius:999px; display:flex; align-items:center; font-size:10px; letter-spacing:0.02em; color:#A8A093;">PILL</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">--radius-pill · pastilles seulement</div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C; max-width:34ch;">Deux valeurs, pas six. Le rayon ne se force pas à 8 ou 13 pour suivre la suite : la forme prime.</div>
+    </div>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:34px;">
+    <div style="display:flex; align-items:baseline; gap:13px; border-bottom:1px solid #262420; padding-bottom:13px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">04</div>
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Carte d'espace</h2>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">Aperçu en 13:8. Le prix est plus lisible que le nom. Au survol : surface-2 et border-default en 89 ms, aucun agrandissement.</div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:34px;">
+
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="background:#131210; border:1px solid #262420; border-radius:10px; overflow:hidden;">
+          <div style="aspect-ratio:13/8; background:#0A0A09; overflow:hidden;"><img src="assets/shot-street-1.png" alt="" style="width:100%; height:100%; object-fit:cover; object-position:0% 100%; transform:scale(1.45); transform-origin:0% 100%; display:block;" /></div>
+          <div style="padding:21px; display:flex; flex-direction:column; gap:5px;">
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em; color:#D4A24C; font-variant-numeric:tabular-nums;">$65 <span style="font-size:14px; color:#A8A093; font-family:'Inter',sans-serif; font-weight:400; letter-spacing:0;">/month</span></div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">Faberplot #1</div>
+            <div style="font-size:14px; line-height:22px; color:#A8A093;">Market District · Small</div>
+            <div style="font-size:14px; line-height:22px; color:#6E675C; font-variant-numeric:tabular-nums;">2,500 sq ft</div>
+            <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; margin-top:8px; align-self:flex-start; background:#1C1A17; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#F4F1E9;"><span style="width:5px; height:5px; border-radius:999px; background:#4E8C6A; display:block;"></span>Available</div>
+          </div>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">Repos · disponible</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="background:#1C1A17; border:1px solid #35312A; border-radius:10px; overflow:hidden;">
+          <div style="aspect-ratio:13/8; background:#0A0A09; overflow:hidden;"><img src="assets/shot-street-2.png" alt="" style="width:100%; height:100%; object-fit:cover; object-position:0% 100%; transform:scale(1.45); transform-origin:0% 100%; display:block;" /></div>
+          <div style="padding:21px; display:flex; flex-direction:column; gap:5px;">
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em; color:#D4A24C; font-variant-numeric:tabular-nums;">$78 <span style="font-size:14px; color:#A8A093; font-family:'Inter',sans-serif; font-weight:400; letter-spacing:0;">/month</span></div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">Faberplot #12</div>
+            <div style="font-size:14px; line-height:22px; color:#A8A093;">Central District · Medium</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:22px; color:#6E675C;">superficie à confirmer</div>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:13px; margin-top:8px;">
+              <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; background:#232019; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#F4F1E9;"><span style="width:5px; height:5px; border-radius:999px; background:#4E8C6A; display:block;"></span>Available</div>
+              <div style="font-size:14px; color:#F4F1E9; border-bottom:1px solid #4A443A;">View space</div>
+            </div>
+          </div>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">Survol · l'action se révèle</div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="background:#131210; border:1px solid #262420; border-radius:10px; overflow:hidden;">
+          <div style="aspect-ratio:13/8; background:#0A0A09; overflow:hidden;"><img src="assets/shot-street-3.png" alt="" style="width:100%; height:100%; object-fit:cover; object-position:0% 100%; transform:scale(1.45); transform-origin:0% 100%; display:block; opacity:0.38;" /></div>
+          <div style="padding:21px; display:flex; flex-direction:column; gap:5px;">
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em; color:#6E675C; font-variant-numeric:tabular-nums;">$95 <span style="font-size:14px; font-family:'Inter',sans-serif; font-weight:400; letter-spacing:0;">/month</span></div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px; color:#A8A093;">Faberplot #7</div>
+            <div style="font-size:14px; line-height:22px; color:#6E675C;">Entrance zone · Large</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:22px; color:#6E675C;">superficie à confirmer</div>
+            <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; margin-top:8px; align-self:flex-start; background:#131210; border:1px solid #262420; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#6E675C;"><span style="width:5px; height:5px; border-radius:999px; background:#6E675C; display:block;"></span>Leased</div>
+          </div>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">Loué · sans action</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:34px; align-items:start; border-top:1px solid #262420; padding-top:34px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">Survol vivant — passez le curseur. Transition 89 ms, courbe d'entrée.</div>
+      <div style="max-width:380px; background:#131210; border:1px solid #262420; border-radius:10px; overflow:hidden; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1), border-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:#1C1A17; border-color:#35312A;">
+        <div style="aspect-ratio:13/8; background:#0A0A09; overflow:hidden;"><img src="assets/shot-interior.png" alt="" style="width:100%; height:100%; object-fit:cover; object-position:0% 100%; transform:scale(1.45); transform-origin:0% 100%; display:block;" /></div>
+        <div style="padding:21px; display:flex; flex-direction:column; gap:5px;">
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em; color:#D4A24C; font-variant-numeric:tabular-nums;">$53 <span style="font-size:14px; color:#A8A093; font-family:'Inter',sans-serif; font-weight:400; letter-spacing:0;">/month</span></div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">Faberplot #31</div>
+          <div style="font-size:14px; line-height:22px; color:#A8A093;">Arts District · Small</div>
+          <div style="font-size:14px; line-height:22px; color:#6E675C; font-variant-numeric:tabular-nums;">2,500 sq ft</div>
+          <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; margin-top:8px; align-self:flex-start; background:#1C1A17; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#F4F1E9;"><span style="width:5px; height:5px; border-radius:999px; background:#4E8C6A; display:block;"></span>Available</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:34px;">
+    <div style="display:flex; align-items:baseline; gap:13px; border-bottom:1px solid #262420; padding-bottom:13px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">05</div>
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Boutons, pastilles, champs</h2>
+    </div>
+    <div style="display:flex; gap:34px; flex-wrap:wrap; align-items:center;">
+      <button type="button" style="height:55px; padding:0 21px; border:0; border-radius:10px; background:#D4A24C; color:#0A0A09; font-family:'Inter',sans-serif; font-weight:600; font-size:16px; cursor:pointer; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:#E3B667;">Rent this space</button>
+      <button type="button" style="height:55px; padding:0 21px; border:1px solid #35312A; border-radius:10px; background:transparent; color:#F4F1E9; font-family:'Inter',sans-serif; font-weight:500; font-size:16px; cursor:pointer; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1), border-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:#1C1A17; border-color:#4A443A;">See available spaces</button>
+      <button type="button" style="height:55px; padding:0; border:0; background:transparent; color:#A8A093; font-family:'Inter',sans-serif; font-size:16px; cursor:pointer; border-bottom:1px solid transparent; transition:color 89ms linear;" style-hover="color:#F4F1E9; border-bottom-color:#4A443A;">What it looks like</button>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C; max-width:30ch;">55 px de haut — exception d'accessibilité assumée. Un seul bouton principal par écran.</div>
+    </div>
+    <div style="display:flex; gap:21px; flex-wrap:wrap; align-items:center;">
+      <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; background:#1C1A17; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#F4F1E9;"><span style="width:5px; height:5px; border-radius:999px; background:#4E8C6A; display:block;"></span>Available</div>
+      <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; background:#131210; border:1px solid #262420; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#6E675C;"><span style="width:5px; height:5px; border-radius:999px; background:#6E675C; display:block;"></span>Leased</div>
+      <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; background:#1C1A17; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:#F4F1E9;"><span style="width:5px; height:5px; border-radius:999px; background:#C08A3E; display:block;"></span>Reserved</div>
+      <input type="text" placeholder="Search a district" style="height:55px; padding:0 21px; background:#131210; border:1px solid #35312A; border-radius:10px; color:#F4F1E9; font-family:'Inter',sans-serif; font-size:16px; min-width:233px;" />
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C; font-variant-numeric:tabular-nums;">Showing 34 of 48</div>
+    </div>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:34px;">
+    <div style="display:flex; align-items:baseline; gap:13px; border-bottom:1px solid #262420; padding-bottom:13px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">06</div>
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Tableau</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,61.9fr) minmax(0,38.1fr); gap:34px; align-items:start;">
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="border:1px solid #262420; border-radius:10px; overflow:hidden;">
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid #262420; font-size:10px; line-height:16px; letter-spacing:0.02em; text-transform:uppercase; color:#6E675C;"><div></div><div style="text-align:right;">Physical store</div><div style="text-align:right;">Faberland</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid #262420; font-variant-numeric:tabular-nums;"><div>Monthly rent</div><div style="text-align:right; color:#A8A093;">$2,000 – $8,000</div><div style="text-align:right;">$53 – $95</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid #262420;"><div>Power and heating</div><div style="text-align:right; color:#A8A093;">Yes</div><div style="text-align:right;">None</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid #262420; font-variant-numeric:tabular-nums;"><div>Initial build-out</div><div style="text-align:right; color:#A8A093;">$10,000 +</div><div style="text-align:right;">Included</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid #262420;"><div>Seasonal renovation</div><div style="text-align:right; color:#A8A093;">Closure and contractor</div><div style="text-align:right;">Instant</div></div>
+          <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px;"><div>Opening hours</div><div style="text-align:right; color:#A8A093;">Limited</div><div style="text-align:right;">24/7</div></div>
+        </div>
+        <div style="font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C; font-style:italic;">Physical store costs are illustrative industry ranges, not quotes.</div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">Lisible, pas décoré. Aucun fond alterné, en-tête en micro, chiffres tabulaires alignés à droite. La mention est obligatoire : sans elle, le tableau est un chiffre invérifiable.<div style="color:#C08A3E; padding-top:13px;">C'est le seul endroit du site où figurent des chiffres externes.</div></div>
+    </div>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:34px;">
+    <div style="display:flex; align-items:baseline; gap:13px; border-bottom:1px solid #262420; padding-bottom:13px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">07</div>
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Placement des logos</h2>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:13px;">
+      <div style="height:89px; padding:0 34px; background:#0A0A09; border:1px solid #262420; border-radius:10px; display:flex; align-items:center; justify-content:space-between; gap:34px;">
+        <img src="assets/faberland-cream.png" alt="Faberland" style="height:21px; width:auto; display:block;" />
+        <div style="display:flex; align-items:center; gap:34px; font-size:14px; color:#A8A093;">
+          <div>Spaces</div><div>Showcase</div><div>Company</div><div>Get started</div>
+          <div style="height:55px; padding:0 21px; border-radius:10px; background:#D4A24C; color:#0A0A09; font-weight:600; font-size:16px; display:flex; align-items:center;">See spaces</div>
+        </div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">Barre de navigation · 89 px au repos, 55 px réduite. Mot-symbole crème. Seule exception de flou du système : au-dessus de la scène 3D de l'accueil.</div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:34px;">
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="background:#131210; border:1px solid #262420; border-radius:10px; padding:34px; display:flex; align-items:center; justify-content:space-between; gap:21px;">
+          <img src="assets/faberland-cream.png" alt="Faberland" style="height:16px; width:auto; display:block;" />
+          <img src="assets/visser-cream.png" alt="Visser Studio" style="height:26px; width:auto; display:block;" />
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C;">Pied de page · Visser en petit, à droite. Page entreprise et pied de page uniquement.</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="background:#0A0A09; border:1px solid #262420; border-radius:10px; padding:34px; display:flex; align-items:center; justify-content:center; min-height:110px;">
+          <img src="assets/faberland-gold.png" alt="Faberland" style="height:34px; width:auto; display:block;" />
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C;">Version or · seule sur fond très sombre. Aucune lueur, aucun contour, aucune déformation.</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <div style="background:#F4F1E9; border:1px solid #35312A; border-radius:10px; padding:34px; display:flex; flex-direction:column; align-items:flex-start; gap:21px; min-height:110px;">
+          <img src="assets/faberland-ink.png" alt="Faberland" style="height:21px; width:auto; display:block;" />
+          <div style="color:#0A0A09; font-size:14px; line-height:22px;">Surface claire — facture, contrat, dossier imprimé. <span style="color:#8A6C33; font-weight:600;">L'or devient #8A6C33</span> pour tenir le contraste.</div>
+          <img src="assets/visser-ink.png" alt="Visser Studio" style="height:26px; width:auto; display:block;" />
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C;">Le site reste sombre. La surface claire existe pour les documents, pas pour une bascule de thème.</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:34px;">
+    <div style="display:flex; align-items:baseline; gap:13px; border-bottom:1px solid #262420; padding-bottom:13px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">08</div>
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Mouvement</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:34px; align-items:start;">
+      <div style="display:flex; flex-direction:column; gap:21px;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">Cinq durées, décalées de 55 ms. La séquence se déploie au lieu de défiler. Plafond absolu 700 ms.<div style="padding-top:13px;">Entrée cubic-bezier(0.16, 1, 0.3, 1)<div>Sortie cubic-bezier(0.7, 0, 0.84, 0)</div><div>Déplacement cubic-bezier(0.65, 0, 0.35, 1)</div></div></div>
+        <button type="button" onClick="{{ play }}" style="height:55px; padding:0 21px; border:1px solid #35312A; border-radius:10px; background:transparent; color:#F4F1E9; font-family:'Inter',sans-serif; font-weight:500; font-size:16px; cursor:pointer; align-self:flex-start;" style-hover="background:#1C1A17; border-color:#4A443A;">Rejouer la séquence</button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:13px;">
+        <sc-for list="{{ durations }}" as="d" hint-placeholder-count="5">
+          <div style="display:grid; grid-template-columns:89px minmax(0,1fr); gap:21px; align-items:center; border-bottom:1px solid #262420; padding-bottom:13px;">
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#A8A093; font-variant-numeric:tabular-nums;">{{ d.label }}</div>
+            <div style="height:21px; display:flex; align-items:center;">
+              <div style="{{ d.style }}"></div>
+            </div>
+          </div>
+        </sc-for>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C;">Rien n'entre de plus de 21 px. Opacité et position, jamais l'échelle. prefers-reduced-motion respecté.</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:34px;">
+    <div style="display:flex; align-items:baseline; gap:13px; border-bottom:1px solid #262420; padding-bottom:13px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">09</div>
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Les moments signature — espace réservé et intention</h2>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">Aucune animation n'est simulée ici. Chaque cadre indique la place qu'elle occupe, ce qui bouge et en combien de temps. L'implémentation se fait chez Cursor.</div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:34px;">
+
+      <div style="background:#131210; border:1px solid #262420; border-radius:10px; padding:21px; display:flex; flex-direction:column; gap:13px;">
+        <div style="aspect-ratio:13/8; background:#0A0A09; border:1px dashed #35312A; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C; text-align:center; padding:13px;">SCÈNE 3D RÉSERVÉE<br />rue de Faberland · &lt; 2 Mo</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">4.1 · La rue qui défile</div>
+        <div style="font-size:14px; line-height:22px; color:#A8A093;">Accueil, en-tête. Caméra sur rail à hauteur d'homme, elle avance au défilement. Trois ou quatre devantures croisées. Titre et prix restent lisibles par-dessus.</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C;">610 ms au changement de scène · repli image fixe sur appareil faible</div>
+      </div>
+
+      <div style="background:#131210; border:1px solid #262420; border-radius:10px; padding:21px; display:flex; flex-direction:column; gap:13px;">
+        <div style="aspect-ratio:13/8; background:#0A0A09; border:1px dashed #35312A; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:13px; padding:13px;">
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">MÊME GÉOMÉTRIE · 4 JEUX DE TEXTURES</div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+            <div style="height:34px; padding:0 13px; border:1px solid #4A443A; border-radius:999px; display:flex; align-items:center; font-size:10px; letter-spacing:0.02em; color:#F4F1E9;">Standard</div>
+            <div style="height:34px; padding:0 13px; border:1px solid #35312A; border-radius:999px; display:flex; align-items:center; font-size:10px; letter-spacing:0.02em; color:#6E675C;">Halloween</div>
+            <div style="height:34px; padding:0 13px; border:1px solid #35312A; border-radius:999px; display:flex; align-items:center; font-size:10px; letter-spacing:0.02em; color:#6E675C;">Christmas</div>
+            <div style="height:34px; padding:0 13px; border:1px solid #35312A; border-radius:999px; display:flex; align-items:center; font-size:10px; letter-spacing:0.02em; color:#6E675C;">Snow</div>
+          </div>
+        </div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">4.2 · La rénovation instantanée</div>
+        <div style="font-size:14px; line-height:22px; color:#A8A093;">Accueil et /spaces. On clique, la scène change immédiatement. La brutalité du changement est l'argument.</div>
+        <div style="font-size:14px; line-height:22px; color:#F4F1E9;">A physical store closes for three days and pays a contractor. Yours changes in one click.</div>
+      </div>
+
+      <div style="background:#131210; border:1px solid #262420; border-radius:10px; padding:21px; display:flex; flex-direction:column; gap:13px;">
+        <div style="aspect-ratio:13/8; background:#0A0A09; border:1px dashed #35312A; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C; text-align:center; padding:13px;">VIDÉO RÉSERVÉE<br />devanture étroite → intérieur trois fois plus vaste</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">4.3 · Plus grand dedans que dehors</div>
+        <div style="font-size:14px; line-height:22px; color:#A8A093;">/spaces, section « ce qui est inclus ». Deux temps : la rue, puis l'entrée. Un compteur affiche la superficie extérieure puis intérieure.</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C;">Séquence vidéo · 377 ms de transition de section</div>
+      </div>
+
+      <div style="background:#131210; border:1px solid #262420; border-radius:10px; padding:21px; display:flex; flex-direction:column; gap:13px;">
+        <div style="aspect-ratio:13/8; background:#0A0A09; border:1px dashed #35312A; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C; text-align:center; padding:13px;">SILHOUETTE FIL DE FER RÉSERVÉE<br />points de mesure : 89 → 144 → 233 → 377 ms</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">4.4 · Le système Vitruvien</div>
+        <div style="font-size:14px; line-height:22px; color:#A8A093;">Accueil, section technologie. Chevilles, genoux, hanches, torse, épaules s'illuminent en séquence, distances affichées. Puis un vêtement se pose et s'ajuste. Un curseur modifie la morphologie.</div>
+        <div style="font-size:14px; line-height:22px; color:#F4F1E9;">Patent application in preparation.</div>
+      </div>
+
+      <div style="background:#131210; border:1px solid #262420; border-radius:10px; padding:21px; display:flex; flex-direction:column; gap:13px;">
+        <div style="aspect-ratio:13/8; background:#0A0A09; border:1px dashed #35312A; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C; text-align:center; padding:13px;">BOUCLE DE 3 s RÉSERVÉE<br />panneau → traversée → intérieur de la boutique</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">4.5 · Le panneau traversable</div>
+        <div style="font-size:14px; line-height:22px; color:#A8A093;">/spaces, section publicité. La caméra accélère, traverse le panneau, arrive devant le produit annoncé. Sur mobile, un appui déclenche la même séquence.</div>
+        <div style="font-size:14px; line-height:22px; color:#F4F1E9;">Advertising you fly through, not click.</div>
+      </div>
+
+      <div style="background:#131210; border:1px solid #262420; border-radius:10px; padding:21px; display:flex; flex-direction:column; gap:13px;">
+        <div style="aspect-ratio:13/8; background:#0A0A09; border:1px dashed #35312A; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C; text-align:center; padding:13px;">ORBITE DE 2 s RÉSERVÉE<br />une seule active à la fois · rien sur mobile lent</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">4.6 · L'aperçu vivant d'un espace</div>
+        <div style="font-size:14px; line-height:22px; color:#A8A093;">/spaces, sur chaque carte. Au survol, la vignette AVIF se remplace par une courte orbite silencieuse. 48 cartes ne peuvent pas porter 48 vidéos.</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#6E675C;">Chargement à l'approche du curseur · 233 ms d'apparition</div>
+      </div>
+
+      <div style="background:#131210; border:1px solid #C08A3E; border-radius:10px; padding:21px; display:flex; flex-direction:column; gap:13px;">
+        <div style="aspect-ratio:13/8; background:#0A0A09; border:1px dashed #35312A; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C; text-align:center; padding:13px;">EN ATTENTE DE VOTRE CAPTURE<br />l'œuf décoré, ouvert, et la terre circulaire</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">À définir · L'œuf qui s'ouvre</div>
+        <div style="font-size:14px; line-height:22px; color:#A8A093;">Votre idée : un œuf décoré s'ouvre et découvre une terre circulaire plate portant une rue commerciale. Ce moment n'est dans aucun des trois documents — il faut décider s'il remplace 4.1 en en-tête d'accueil, ou s'il devient l'en-tête de /eggs.</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:#C08A3E;">Je ne peux pas générer ni retoucher d'image. Envoyez la capture et je cadre l'espace réservé dessus.</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="display:flex; flex-direction:column; gap:34px;">
+    <div style="display:flex; align-items:baseline; gap:13px; border-bottom:1px solid #262420; padding-bottom:13px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:#6E675C;">10</div>
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em;">Proportion et espace</h2>
+    </div>
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:34px; align-items:stretch;">
+      <div style="background:#131210; border:1px solid #262420; border-radius:10px; padding:21px; display:flex; align-items:flex-end; min-height:144px;"><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">38,1 % — texte<div>8 colonnes sur 21</div></div></div>
+      <div style="background:#131210; border:1px solid #262420; border-radius:10px; padding:21px; display:flex; align-items:flex-end; min-height:144px;"><div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">61,9 % — visuel<div>13 colonnes sur 21 · s'inverse d'une section à l'autre</div></div></div>
+    </div>
+    <div style="display:flex; gap:34px; flex-wrap:wrap; align-items:flex-end; border-top:1px solid #262420; padding-top:34px;">
+      <div style="display:flex; align-items:flex-end; gap:8px;">
+        <div style="width:5px; height:5px; background:#35312A;"></div>
+        <div style="width:8px; height:8px; background:#3d3831;"></div>
+        <div style="width:13px; height:13px; background:#4A443A;"></div>
+        <div style="width:21px; height:21px; background:#57503f;"></div>
+        <div style="width:34px; height:34px; background:#6E675C;"></div>
+        <div style="width:55px; height:55px; background:#8A6C33;"></div>
+        <div style="width:89px; height:89px; background:#A8A093;"></div>
+        <div style="width:144px; height:144px; background:#D4A24C;"></div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C; max-width:34ch;">5 icône·libellé · 8 pastille · 13 bouton · 21 carte · 34 grille · 55 blocs · 89 sections mobile · 144 sections desktop. Largeur de contenu 1240, section à 766 / 474.</div>
+    </div>
+  </section>
+
+  <footer style="border-top:1px solid #262420; padding-top:34px; display:flex; justify-content:space-between; align-items:flex-end; gap:34px; flex-wrap:wrap;">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; letter-spacing:0.02em; color:#6E675C;">Trois questions ouvertes : le 110 px (candidat A ou B), le sort de l'œuf, et les captures de rue qui portent des marques de tiers.</div>
+    <img src="assets/visser-cream.png" alt="Visser Studio" style="height:26px; width:auto; display:block;" />
+  </footer>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320}}">
+class Component extends DCLogic {
+  state = { on: false };
+  componentDidMount() { this.timer = setTimeout(() => this.setState({ on: true }), 400); }
+  componentWillUnmount() { clearTimeout(this.timer); }
+  play = () => {
+    this.setState({ on: false });
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => this.setState({ on: true }), 89);
+  };
+  renderVals() {
+    const ms = [89, 144, 233, 377, 610];
+    const labels = ['89 ms', '144 ms', '233 ms', '377 ms', '610 ms'];
+    const on = this.state.on;
+    return {
+      play: this.play,
+      durations: ms.map((m, i) => ({
+        label: labels[i],
+        style: [
+          'width:34px', 'height:5px', 'background:#D4A24C', 'border-radius:999px',
+          'opacity:' + (on ? 1 : 0),
+          'transform:translateX(' + (on ? 21 : 0) + 'px)',
+          'transition:transform ' + m + 'ms cubic-bezier(0.16,1,0.3,1) ' + (i * 55) + 'ms, opacity ' + m + 'ms cubic-bezier(0.16,1,0.3,1) ' + (i * 55) + 'ms'
+        ].join('; ')
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

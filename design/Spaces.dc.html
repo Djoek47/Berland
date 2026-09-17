@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+body { margin:0; background:#0A0A09; }
+a { color:#D4A24C; text-decoration:none; }
+a:hover { color:#E3B667; }
+input[type=range] { accent-color:#D4A24C; }
+</style>
+</helmet>
+<div style="background:{{ c.bg }}; color:{{ c.ink }}; font-family:'Inter',system-ui,sans-serif; font-size:16px; line-height:26px;">
+
+<div style="max-width:1240px; margin:0 auto; padding:0 34px;">
+
+  <div style="height:89px; display:flex; align-items:center; justify-content:space-between; gap:34px; border-bottom:1px solid {{ c.border }};">
+    <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><img src="assets/faberland-cream.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if><sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><img src="assets/faberland-ink.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if>
+    <div style="display:flex; align-items:center; gap:34px; font-size:14px; color:{{ c.sec }};">
+      <div style="color:{{ c.ink }};">Spaces</div>
+      <div>Showcase</div>
+      <div>Company</div>
+      <div>Get started</div>
+      <div style="height:55px; padding:0 21px; border-radius:10px; background:{{ c.gold }}; color:{{ c.bg }}; font-family:'Inter',sans-serif; font-weight:600; display:flex; align-items:center;">Rent a space</div>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:minmax(0,61.9fr) minmax(0,38.1fr); gap:55px; padding:89px 0 55px; align-items:end;">
+    <h1 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:68px; line-height:70px; letter-spacing:-0.03em; text-wrap:balance;">48 commercial spaces. Published prices. No lease negotiation.</h1>
+    <p style="margin:0; color:{{ c.sec }}; max-width:68ch;">Every space in Faberland has a fixed monthly price, visible before you commit. Closer to the entrance portal costs more, exactly like a high street. Pick one, fit it out, open.</p>
+  </div>
+
+  <div style="position:sticky; top:0; z-index:5; background:{{ c.bg }}; border-top:1px solid {{ c.border }}; border-bottom:1px solid {{ c.border }}; padding:21px 0;">
+    <div style="display:flex; gap:21px; align-items:center; flex-wrap:wrap;">
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <sc-for list="{{ districts }}" as="d" hint-placeholder-count="6">
+          <button type="button" onClick="{{ d.pick }}" style="{{ d.style }}">{{ d.label }}</button>
+        </sc-for>
+      </div>
+      <div style="width:1px; height:34px; background:{{ c.border }};"></div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <sc-for list="{{ sizes }}" as="s" hint-placeholder-count="4">
+          <button type="button" onClick="{{ s.pick }}" style="{{ s.style }}">{{ s.label }}</button>
+        </sc-for>
+      </div>
+      <div style="width:1px; height:34px; background:{{ c.border }};"></div>
+      <label style="display:flex; align-items:center; gap:13px; font-size:14px; color:{{ c.sec }};">
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Max price</span>
+        <input type="range" min="53" max="95" step="1" value="{{ maxPrice }}" onInput="{{ setMax }}" style="width:144px;" />
+        <span style="font-variant-numeric:tabular-nums; color:{{ c.ink }};">{{ maxPriceLabel }}</span>
+      </label>
+      <div style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.sec }}; font-variant-numeric:tabular-nums;">{{ showing }}</div>
+    </div>
+  </div>
+
+  <div style="padding:55px 0 0;">
+    <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+      <div style="border:1px solid {{ c.border }}; border-radius:10px; padding:55px 21px; display:flex; flex-direction:column; align-items:center; gap:13px; text-align:center;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px;">No space matches those filters.</div>
+        <div style="color:{{ c.sec }};">Widen the price range or clear a district.</div>
+        <button type="button" onClick="{{ reset }}" style="height:55px; padding:0 21px; margin-top:8px; border:1px solid {{ c.borderStrong }}; border-radius:10px; background:transparent; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-weight:500; font-size:16px; cursor:pointer;">Clear filters</button>
+      </div>
+    </sc-if>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:34px;">
+      <sc-for list="{{ plots }}" as="p" hint-placeholder-count="9">
+        <div style="background:{{ c.surface }}; border:1px solid {{ c.border }}; border-radius:10px; overflow:hidden; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1), border-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:{{ c.surface2 }}; border-color:{{ c.borderStrong }};">
+          <div style="aspect-ratio:13/8; background-color:{{ c.bg }}; background-size:145% auto; background-position:0% 100%; background-repeat:no-repeat; overflow:hidden; background-image:{{ p.bg }};"></div>
+          <div style="padding:21px; display:flex; flex-direction:column; gap:5px;">
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em; color:{{ c.gold }}; font-variant-numeric:tabular-nums;">{{ p.price }} <span style="font-size:14px; color:{{ c.sec }}; font-family:'Inter',sans-serif; font-weight:400; letter-spacing:0;">/month</span></div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">{{ p.name }}</div>
+            <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">{{ p.meta }}</div>
+            <sc-if value="{{ p.area }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:14px; line-height:22px; color:{{ c.ter }}; font-variant-numeric:tabular-nums;">{{ p.area }}</div>
+            </sc-if>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:13px; margin-top:8px;">
+              <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; background:{{ c.surface2 }}; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ink }};"><span style="width:5px; height:5px; border-radius:999px; background:{{ c.pos }}; display:block;"></span>Available</div>
+              <div style="font-size:14px; color:{{ c.sec }};">View space</div>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:55px; padding:144px 0 0; align-items:start;">
+    <div style="display:flex; flex-direction:column; gap:21px;">
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; text-wrap:balance;">How the <span style="color:{{ c.gold }};">price</span> is set.</h2>
+      <p style="margin:0; color:{{ c.sec }}; max-width:68ch;">Distance from the entrance portal, exactly like a high street.</p>
+    </div>
+    <div style="border:1px solid {{ c.border }}; border-radius:10px; overflow:hidden;">
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) minmax(0,0.8fr); gap:21px; padding:21px; border-bottom:1px solid {{ c.border }}; align-items:baseline;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px;">Entrance zone</div>
+        <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Every visitor passes here</div>
+        <div style="font-size:14px; text-align:right;">Highest price</div>
+      </div>
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) minmax(0,0.8fr); gap:21px; padding:21px; border-bottom:1px solid {{ c.border }}; align-items:baseline;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px;">Main districts</div>
+        <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Regular foot traffic</div>
+        <div style="font-size:14px; text-align:right;">Mid range</div>
+      </div>
+      <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) minmax(0,0.8fr); gap:21px; padding:21px; align-items:baseline;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px;">Outer plots</div>
+        <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Destination shopping</div>
+        <div style="font-size:14px; text-align:right;">Entry price</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:144px 0 0; display:flex; flex-direction:column; gap:34px;">
+    <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; max-width:38ch; text-wrap:balance;">What's <span style="color:{{ c.gold }};">included</span>.</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:34px;">
+      <div style="border-top:1px solid {{ c.borderStrong }}; padding-top:21px; display:flex; flex-direction:column; gap:5px;"><div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">Self-service fit-out</div><div style="color:{{ c.sec }};">Upload your own 3D objects, move them, price them, live.</div></div>
+      <div style="border-top:1px solid {{ c.borderStrong }}; padding-top:21px; display:flex; flex-direction:column; gap:5px;"><div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">Instant renovation</div><div style="color:{{ c.sec }};">Change the whole look for Halloween or Christmas in minutes.</div></div>
+      <div style="border-top:1px solid {{ c.borderStrong }}; padding-top:21px; display:flex; flex-direction:column; gap:5px;"><div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">No operating costs</div><div style="color:{{ c.sec }};">No power, no cleaning, no security, no maintenance.</div></div>
+      <div style="border-top:1px solid {{ c.borderStrong }}; padding-top:21px; display:flex; flex-direction:column; gap:5px;"><div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">Payments handled</div><div style="color:{{ c.sec }};">Stripe processes rent. Your sales settle to you.</div></div>
+      <div style="border-top:1px solid {{ c.borderStrong }}; padding-top:21px; display:flex; flex-direction:column; gap:5px;"><div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">Bigger inside</div><div style="color:{{ c.sec }};">Interior space can exceed the exterior footprint.</div></div>
+      <div style="border-top:1px solid {{ c.borderStrong }}; padding-top:21px; display:flex; flex-direction:column; gap:5px;"><div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">Always open</div><div style="color:{{ c.sec }};">No hours, no staff required, no geography.</div></div>
+    </div>
+  </div>
+
+  <div style="padding:144px 0 0; display:grid; grid-template-columns:minmax(0,61.9fr) minmax(0,38.1fr); gap:55px; align-items:start;">
+    <div style="display:flex; flex-direction:column; gap:21px;">
+      <div style="aspect-ratio:13/8; background:{{ c.bg }}; border:1px dashed {{ c.borderStrong }}; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:13px; padding:21px; text-align:center;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }};">MOMENT 4.2 — ESPACE RÉSERVÉ · MÊME GÉOMÉTRIE, 4 JEUX DE TEXTURES</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+          <div style="height:34px; padding:0 13px; border:1px solid {{ c.borderFocus }}; border-radius:999px; display:flex; align-items:center; font-size:10px; letter-spacing:0.02em; color:{{ c.ink }};">Standard</div>
+          <div style="height:34px; padding:0 13px; border:1px solid {{ c.borderStrong }}; border-radius:999px; display:flex; align-items:center; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }};">Halloween</div>
+          <div style="height:34px; padding:0 13px; border:1px solid {{ c.borderStrong }}; border-radius:999px; display:flex; align-items:center; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }};">Christmas</div>
+          <div style="height:34px; padding:0 13px; border:1px solid {{ c.borderStrong }}; border-radius:999px; display:flex; align-items:center; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }};">Snow</div>
+        </div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:{{ c.ter }};">Le sélecteur change la scène immédiatement, sans transition longue. Implémentation chez Cursor.</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:21px;">
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; text-wrap:balance;">Instant renovation.</h2>
+      <p style="margin:0; color:{{ c.sec }}; max-width:68ch;">A physical store closes for three days and pays a contractor. Yours changes in one click.</p>
+      <div style="aspect-ratio:13/8; background:{{ c.bg }}; border:1px dashed {{ c.borderStrong }}; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }}; text-align:center; padding:13px;">MOMENT 4.3 — VIDÉO RÉSERVÉE<br />devanture étroite → intérieur trois fois plus vaste</div>
+    </div>
+  </div>
+
+  <div style="padding:144px 0 0; display:flex; flex-direction:column; gap:34px;">
+    <div style="display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:55px; align-items:end;">
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; text-wrap:balance;">Physical store <span style="color:{{ c.gold }};">against</span> Faberland.</h2>
+      <p style="margin:0; color:{{ c.sec }}; max-width:68ch;">The same storefront, the two cost structures.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:13px;">
+      <div style="border:1px solid {{ c.border }}; border-radius:10px; overflow:hidden;">
+        <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }}; font-size:10px; line-height:16px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};"><div></div><div style="text-align:right;">Physical store</div><div style="text-align:right;">Faberland</div></div>
+        <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }}; font-variant-numeric:tabular-nums;"><div>Monthly rent</div><div style="text-align:right; color:{{ c.sec }};">$2,000 – $8,000</div><div style="text-align:right;">$53 – $95</div></div>
+        <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }};"><div>Power and heating</div><div style="text-align:right; color:{{ c.sec }};">Yes</div><div style="text-align:right;">None</div></div>
+        <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }};"><div>Cleaning</div><div style="text-align:right; color:{{ c.sec }};">Yes</div><div style="text-align:right;">None</div></div>
+        <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }};"><div>In-store staff</div><div style="text-align:right; color:{{ c.sec }};">Yes</div><div style="text-align:right;">Optional</div></div>
+        <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }}; font-variant-numeric:tabular-nums;"><div>Initial build-out</div><div style="text-align:right; color:{{ c.sec }};">$10,000 +</div><div style="text-align:right;">Included</div></div>
+        <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }};"><div>Seasonal renovation</div><div style="text-align:right; color:{{ c.sec }};">Closure and contractor</div><div style="text-align:right;">Instant</div></div>
+        <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px; border-bottom:1px solid {{ c.border }};"><div>Opening hours</div><div style="text-align:right; color:{{ c.sec }};">Limited</div><div style="text-align:right;">24/7</div></div>
+        <div style="display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:21px; padding:13px 21px;"><div>Geographic reach</div><div style="text-align:right; color:{{ c.sec }};">The neighbourhood</div><div style="text-align:right;">The world</div></div>
+      </div>
+      <div style="font-size:10px; line-height:16px; letter-spacing:0.02em; color:{{ c.ter }}; font-style:italic;">Physical store costs are illustrative industry ranges, not quotes.</div>
+    </div>
+  </div>
+
+  <div style="padding:144px 0 0; display:grid; grid-template-columns:minmax(0,38.1fr) minmax(0,61.9fr); gap:55px; align-items:start;">
+    <div style="display:flex; flex-direction:column; gap:21px;">
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; text-wrap:balance;">What it takes to cover the rent.</h2>
+      <p style="margin:0; color:{{ c.sec }}; max-width:68ch;">Three numbers you already know. Nothing here is a forecast — it is arithmetic on your own figures.</p>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; line-height:16px; color:{{ c.ter }};">Remplace le calculateur actuel de 1 146 lignes. Trois entrées, une sortie.</div>
+    </div>
+    <div style="border:1px solid {{ c.border }}; border-radius:10px; background:{{ c.surface }}; padding:34px; display:flex; flex-direction:column; gap:34px;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:21px;">
+        <label style="display:flex; flex-direction:column; gap:8px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Your product price</span>
+          <input type="number" min="1" value="{{ calcPrice }}" onInput="{{ setCalcPrice }}" style="height:55px; padding:0 21px; background:{{ c.bg }}; border:1px solid {{ c.borderStrong }}; border-radius:10px; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-size:16px; font-variant-numeric:tabular-nums;" />
+        </label>
+        <label style="display:flex; flex-direction:column; gap:8px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Your margin, %</span>
+          <input type="number" min="1" max="100" value="{{ calcMargin }}" onInput="{{ setCalcMargin }}" style="height:55px; padding:0 21px; background:{{ c.bg }}; border:1px solid {{ c.borderStrong }}; border-radius:10px; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-size:16px; font-variant-numeric:tabular-nums;" />
+        </label>
+        <label style="display:flex; flex-direction:column; gap:8px;">
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Monthly rent</span>
+          <input type="number" min="53" max="95" value="{{ calcRent }}" onInput="{{ setCalcRent }}" style="height:55px; padding:0 21px; background:{{ c.bg }}; border:1px solid {{ c.borderStrong }}; border-radius:10px; color:{{ c.ink }}; font-family:'Inter',sans-serif; font-size:16px; font-variant-numeric:tabular-nums;" />
+        </label>
+      </div>
+      <div style="border-top:1px solid {{ c.border }}; padding-top:34px; display:flex; align-items:baseline; gap:21px; flex-wrap:wrap;">
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:68px; line-height:70px; letter-spacing:-0.03em; color:{{ c.gold }}; font-variant-numeric:tabular-nums;">{{ calcOut }}</div>
+        <div style="color:{{ c.sec }}; max-width:34ch;">{{ calcOutLabel }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:144px 0; display:grid; grid-template-columns:minmax(0,61.9fr) minmax(0,38.1fr); gap:55px; align-items:end; border-bottom:1px solid {{ c.border }};">
+    <div style="display:flex; flex-direction:column; gap:21px;">
+      <div style="aspect-ratio:13/8; background:{{ c.bg }}; border:1px dashed {{ c.borderStrong }}; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; color:{{ c.ter }}; text-align:center; padding:13px;">MOMENT 4.5 — BOUCLE DE 3 s RÉSERVÉE<br />panneau → traversée → intérieur de la boutique annoncée</div>
+      <div style="font-size:14px; color:{{ c.ink }};">Advertising you fly through, not click.</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:21px; padding-bottom:34px;">
+      <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.02em; text-wrap:balance;">Pick a space.</h2>
+      <button type="button" style="height:55px; padding:0 21px; border:0; border-radius:10px; background:{{ c.gold }}; color:{{ c.bg }}; font-family:'Inter',sans-serif; font-weight:600; font-size:16px; cursor:pointer; align-self:flex-start; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1);" style-hover="background:{{ c.goldHover }};">See available spaces</button>
+    </div>
+  </div>
+
+  <div style="padding:55px 0 144px; display:flex; justify-content:space-between; align-items:flex-end; gap:34px; flex-wrap:wrap;">
+    <div style="display:flex; flex-direction:column; align-items:flex-start; gap:13px;">
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><img src="assets/faberland-gold.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if><sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><img src="assets/faberland-ink.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if>
+      <div style="font-size:10px; line-height:16px; letter-spacing:0.02em; color:{{ c.ter }};">VISSER STUDIO INC. · NEQ 1180646979 · 1815–3440 rue Durocher, Montréal (Québec) H2X 2E2</div>
+    </div>
+    <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><img src="assets/visser-cream.png" alt="Visser Studio" style="height:42px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if><sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><img src="assets/visser-ink.png" alt="Visser Studio" style="height:42px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if>
+  </div>
+
+  <div style="border-top:1px solid {{ c.border }}; padding:89px 0 144px; display:flex; flex-direction:column; gap:34px;">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Mobile · 390 px · Display à 42, sections à 89</div>
+    <div style="width:390px; max-width:100%; border:1px solid {{ c.borderStrong }}; border-radius:10px; overflow:hidden; background:{{ c.bg }};">
+      <div style="height:55px; padding:0 21px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid {{ c.border }};">
+        <sc-if value="{{ isDark }}" hint-placeholder-val="{{ true }}"><img src="assets/faberland-gold.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if><sc-if value="{{ isLight }}" hint-placeholder-val="{{ false }}"><img src="assets/faberland-ink.png" alt="Faberland" style="height:21px; width:auto; flex:none; object-fit:contain; display:block;" /></sc-if>
+        <div style="display:flex; flex-direction:column; gap:5px;"><div style="width:21px; height:1px; background:{{ c.ink }};"></div><div style="width:21px; height:1px; background:{{ c.ink }};"></div></div>
+      </div>
+      <div style="padding:34px 21px 21px; display:flex; flex-direction:column; gap:21px;">
+        <h2 style="margin:0; font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:42px; line-height:46px; letter-spacing:-0.03em; text-wrap:balance;">48 commercial spaces. Published prices.</h2>
+        <p style="margin:0; font-size:14px; line-height:22px; color:{{ c.sec }};">Every space in Faberland has a fixed monthly price, visible before you commit. Pick one, fit it out, open.</p>
+      </div>
+      <div style="padding:13px 21px; border-top:1px solid {{ c.border }}; border-bottom:1px solid {{ c.border }}; display:flex; gap:8px; overflow:hidden; align-items:center;">
+        <div style="height:34px; padding:0 13px; border-radius:999px; background:{{ c.gold }}; color:{{ c.bg }}; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; font-weight:600; display:flex; align-items:center; white-space:nowrap;">All</div>
+        <div style="height:34px; padding:0 13px; border-radius:999px; border:1px solid {{ c.borderStrong }}; color:{{ c.sec }}; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; display:flex; align-items:center; white-space:nowrap;">Market</div>
+        <div style="height:34px; padding:0 13px; border-radius:999px; border:1px solid {{ c.borderStrong }}; color:{{ c.sec }}; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; display:flex; align-items:center; white-space:nowrap;">Business</div>
+        <div style="height:34px; padding:0 13px; border-radius:999px; border:1px solid {{ c.borderStrong }}; color:{{ c.sec }}; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; display:flex; align-items:center; white-space:nowrap;">Arts</div>
+      </div>
+      <div style="padding:13px 21px; display:flex; justify-content:space-between; font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }}; font-variant-numeric:tabular-nums;"><div>Showing 48 of 48</div><div style="color:{{ c.sec }};">Max $95</div></div>
+      <div style="padding:8px 21px 34px; display:flex; flex-direction:column; gap:34px;">
+        <div style="background:{{ c.surface }}; border:1px solid {{ c.border }}; border-radius:10px; overflow:hidden;">
+          <div style="aspect-ratio:13/8; background:{{ c.bg }}; overflow:hidden;"><img src="assets/shot-street-1.png" alt="" style="width:100%; height:100%; object-fit:cover; object-position:0% 100%; transform:scale(1.45); transform-origin:0% 100%; display:block;" /></div>
+          <div style="padding:21px; display:flex; flex-direction:column; gap:5px;">
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em; color:{{ c.gold }}; font-variant-numeric:tabular-nums;">$65 <span style="font-size:14px; color:{{ c.sec }}; font-family:'Inter',sans-serif; font-weight:400; letter-spacing:0;">/month</span></div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">Faberplot #1</div>
+            <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Market District · Small</div>
+            <div style="font-size:14px; line-height:22px; color:{{ c.ter }}; font-variant-numeric:tabular-nums;">2,500 sq ft</div>
+            <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; margin-top:8px; align-self:flex-start; background:{{ c.surface2 }}; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ink }};"><span style="width:5px; height:5px; border-radius:999px; background:{{ c.pos }}; display:block;"></span>Available</div>
+          </div>
+        </div>
+        <div style="background:{{ c.surface }}; border:1px solid {{ c.border }}; border-radius:10px; overflow:hidden;">
+          <div style="aspect-ratio:13/8; background:{{ c.bg }}; overflow:hidden;"><img src="assets/shot-interior.png" alt="" style="width:100%; height:100%; object-fit:cover; object-position:0% 100%; transform:scale(1.45); transform-origin:0% 100%; display:block;" /></div>
+          <div style="padding:21px; display:flex; flex-direction:column; gap:5px;">
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:26px; line-height:34px; letter-spacing:-0.01em; color:{{ c.gold }}; font-variant-numeric:tabular-nums;">$58 <span style="font-size:14px; color:{{ c.sec }}; font-family:'Inter',sans-serif; font-weight:400; letter-spacing:0;">/month</span></div>
+            <div style="font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:21px; line-height:30px;">Faberplot #2</div>
+            <div style="font-size:14px; line-height:22px; color:{{ c.sec }};">Business District · Small</div>
+            <div style="font-size:14px; line-height:22px; color:{{ c.ter }}; font-variant-numeric:tabular-nums;">2,500 sq ft</div>
+            <div style="display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; margin-top:8px; align-self:flex-start; background:{{ c.surface2 }}; border-radius:999px; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ink }};"><span style="width:5px; height:5px; border-radius:999px; background:{{ c.pos }}; display:block;"></span>Available</div>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid {{ c.border }}; padding:13px 21px; display:flex; align-items:center; justify-content:space-between; gap:13px; background:{{ c.surface }};">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; color:{{ c.ter }};">Barre d'action fixe</div>
+        <div style="height:55px; padding:0 21px; border-radius:10px; background:{{ c.gold }}; color:{{ c.bg }}; font-weight:600; font-size:16px; display:flex; align-items:center;">Rent a space</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;dark | light&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+const PRICES = {1:65,2:58,3:72,4:55,5:68,6:62,7:59,8:75,9:53,10:70,11:64,12:57,13:73,14:56,15:69,16:78,17:71,18:80,19:67,20:76,21:74,22:79,23:81,24:66,25:77,26:72,27:75,28:82,29:65,30:78,31:85,32:88,33:90,34:83,35:87,36:84,37:89,38:92,39:82,40:86,41:85,42:88,43:91,44:84,45:87,46:83,47:89,48:95};
+const DISTRICT_BY_ID = {1:'Market',2:'Business',3:'Arts',4:'Entertainment',5:'Central',6:'Market',7:'Business',8:'Arts',9:'Entertainment',10:'Central',11:'Market',12:'Business',13:'Arts',14:'Entertainment',15:'Central',16:'Market',17:'Business',18:'Arts',19:'Entertainment',20:'Central',21:'Market',22:'Business',23:'Arts',24:'Entertainment',25:'Central',26:'Market',27:'Business',28:'Arts',29:'Entertainment',30:'Central',31:'Market',32:'Business',33:'Arts',34:'Entertainment',35:'Central',36:'Market',37:'Business',38:'Arts',39:'Entertainment',40:'Central',41:'Market',42:'Business',43:'Arts',44:'Entertainment',45:'Central',46:'Market',47:'Central',48:'Central'};
+const IMGS = ['assets/shot-street-1.png','assets/shot-interior.png','assets/shot-street-2.png','assets/shot-street-3.png'];
+// Only 2,500 sq ft is documented in the brief. Medium and Large stay blank
+// until Visser supplies the real footprints — no unverifiable numbers on screen.
+const AREA = { Small:'2,500 sq ft', Medium:'', Large:'' };
+
+const THEMES = {
+  dark: {
+    bg:'#0A0A09', surface:'#131210', surface2:'#1C1A17', raised:'#232019',
+    border:'#262420', borderStrong:'#35312A', borderFocus:'#4A443A',
+    ink:'#F4F1E9', sec:'#A8A093', ter:'#6E675C',
+    gold:'#D4A24C', goldHover:'#E3B667', onGold:'#0A0A09', warn:'#C08A3E', pos:'#4E8C6A', isDark:true,
+    scrim:'rgba(10,10,9,0.55)',
+    heroFade:'linear-gradient(0deg,#0A0A09 0%,rgba(10,10,9,0.93) 55%,rgba(10,10,9,0.62) 100%)',
+    heroFadeM:'linear-gradient(0deg,#0A0A09 0%,rgba(10,10,9,0.93) 58%,rgba(10,10,9,0.62) 100%)',
+  },
+  light: {
+    bg:'#F4F1E9', surface:'#EAE5DA', surface2:'#E1DACB', raised:'#FFFFFF',
+    border:'#D9D2C4', borderStrong:'#C4BBA9', borderFocus:'#8A8272',
+    ink:'#0A0A09', sec:'#4A443A', ter:'#6E675C',
+    gold:'#8A6C33', goldHover:'#6F561F', onGold:'#F4F1E9', warn:'#8A5A1E', pos:'#2F6B49', isDark:false,
+    scrim:'rgba(244,241,233,0.62)',
+    heroFade:'linear-gradient(0deg,#F4F1E9 0%,rgba(244,241,233,0.90) 42%,rgba(244,241,233,0.14) 100%)',
+    heroFadeM:'linear-gradient(0deg,#F4F1E9 0%,rgba(244,241,233,0.90) 46%,rgba(244,241,233,0.14) 100%)',
+  }
+};
+
+class Component extends DCLogic {
+  state = { district:'All', size:'All', maxPrice:95, calcPrice:80, calcMargin:40, calcRent:65 };
+
+  all() {
+    const out = [];
+    for (let i = 1; i <= 48; i++) {
+      const size = i <= 15 ? 'Small' : i <= 30 ? 'Medium' : 'Large';
+      out.push({ id:i, price:PRICES[i], district:DISTRICT_BY_ID[i], size:size });
+    }
+    return out;
+  }
+
+  chip(active, c) {
+    const base = 'height:34px; padding:0 13px; border-radius:999px; font-family:\'Inter\',sans-serif; font-size:10px; letter-spacing:0.02em; text-transform:uppercase; cursor:pointer; display:flex; align-items:center; transition:background-color 89ms cubic-bezier(0.16,1,0.3,1), border-color 89ms cubic-bezier(0.16,1,0.3,1);';
+    return active
+      ? base + ' background:' + c.gold + '; border:1px solid ' + c.gold + '; color:' + c.onGold + '; font-weight:600;'
+      : base + ' background:transparent; border:1px solid ' + c.borderStrong + '; color:' + c.sec + '; font-weight:400;';
+  }
+
+  renderVals() {
+    const c = THEMES[this.props.theme ?? 'dark'] || THEMES.dark;
+    const s = this.state;
+    const list = this.all().filter(p =>
+      (s.district === 'All' || p.district === s.district) &&
+      (s.size === 'All' || p.size === s.size) &&
+      p.price <= s.maxPrice
+    );
+
+    const districts = ['All','Market','Business','Arts','Entertainment','Central'].map(d => ({
+      label: d,
+      style: this.chip(s.district === d, c),
+      pick: () => this.setState({ district: d })
+    }));
+    const sizes = ['All','Small','Medium','Large'].map(z => ({
+      label: z,
+      style: this.chip(s.size === z, c),
+      pick: () => this.setState({ size: z })
+    }));
+
+    const price = Number(s.calcPrice) || 0;
+    const margin = Number(s.calcMargin) || 0;
+    const rent = Number(s.calcRent) || 0;
+    const unit = price * margin / 100;
+    const need = unit > 0 ? Math.ceil(rent / unit) : 0;
+
+    return {
+      c,
+      isDark: c.isDark,
+      isLight: !c.isDark,
+      districts, sizes,
+      maxPrice: s.maxPrice,
+      maxPriceLabel: '$' + s.maxPrice,
+      setMax: e => this.setState({ maxPrice: Number(e.target.value) }),
+      showing: 'Showing ' + list.length + ' of 48',
+      empty: list.length === 0,
+      reset: () => this.setState({ district:'All', size:'All', maxPrice:95 }),
+      plots: list.map((p, i) => ({
+        price: '$' + p.price,
+        name: 'Faberplot #' + p.id,
+        meta: p.district + ' District · ' + p.size,
+        area: AREA[p.size],
+        bg: 'url(' + IMGS[i % IMGS.length] + ')'
+      })),
+      calcPrice: s.calcPrice,
+      calcMargin: s.calcMargin,
+      calcRent: s.calcRent,
+      setCalcPrice: e => this.setState({ calcPrice: e.target.value }),
+      setCalcMargin: e => this.setState({ calcMargin: e.target.value }),
+      setCalcRent: e => this.setState({ calcRent: e.target.value }),
+      calcOut: need > 0 ? String(need) : '—',
+      calcOutLabel: need > 0
+        ? 'sales a month cover the rent. At $' + price.toFixed(0) + ' and ' + margin + '% margin, each sale returns $' + unit.toFixed(2) + '.'
+        : 'Enter a price and a margin above zero.'
+    };
+  }
+}
+</script>
+</body>
+</html>

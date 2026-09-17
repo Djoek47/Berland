@@ -1,18 +1,34 @@
 import Stripe from 'stripe'
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not set in environment variables')
+let stripeInstance: Stripe | null = null
+
+/** Lazy Stripe client — avoids crashing `next build` when env is unset during page-data collection. */
+export function getStripe(): Stripe {
+  if (stripeInstance) return stripeInstance
+  const key = process.env.STRIPE_SECRET_KEY
+  if (!key) {
+    throw new Error('STRIPE_SECRET_KEY is not set in environment variables')
+  }
+  stripeInstance = new Stripe(key, {
+    apiVersion: '2025-07-30.basil',
+    typescript: true,
+  })
+  return stripeInstance
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-07-30.basil',
-  typescript: true,
+/** Backward-compatible export; defers construction until first property access. */
+export const stripe: Stripe = new Proxy({} as Stripe, {
+  get(_target, prop, receiver) {
+    const client = getStripe()
+    const value = Reflect.get(client as object, prop, receiver)
+    return typeof value === 'function' ? (value as (...args: unknown[]) => unknown).bind(client) : value
+  },
 })
 
 // Price IDs for different rental terms (you'll need to create these in your Stripe dashboard)
 export const STRIPE_PRICE_IDS = {
   monthly: process.env.STRIPE_MONTHLY_PRICE_ID || 'price_monthly_placeholder',
-  quarterly: process.env.STRIPE_QUARTERLY_PRICE_ID || 'price_quarterly_placeholder', 
+  quarterly: process.env.STRIPE_QUARTERLY_PRICE_ID || 'price_quarterly_placeholder',
   yearly: process.env.STRIPE_YEARLY_PRICE_ID || 'price_yearly_placeholder',
 }
 
